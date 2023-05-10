@@ -1,0 +1,32 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+}
+
+.rootWrapper {
+    display: flex;
+}
+
+.sidebar {
+    margin-top: 65px;
+    height: 100vh;
+    position: fixed;
+}
+
+.mainContent {
+    z-index: -10;
+    position: relative;
+    left: 200px;
+    margin-top: 65px;
+    width: 85.91vw;
+    height: inherit;
+}
