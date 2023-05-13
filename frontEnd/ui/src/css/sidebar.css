@@ -16,4 +16,9 @@
 .item {
     margin-bottom: 15px;
     list-style: none;
+    cursor: pointer;
 }
+
+/* 
+Invoice pages should conatins list of all invoices with pagination at the bottom
+and should conatins some filter such as paid, pending, payment mode etc. */
