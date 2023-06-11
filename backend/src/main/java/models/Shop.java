@@ -1,11 +1,12 @@
 package models;
 
-import java.util.List;
 import utils.Date;
 
+import java.util.List;
+
 public class Shop {
+    private String gstInNumber;
     private String name;
-    private String gstinNumber;
     private List<Partner> partners;
     private Date establishmentDate;
     private long budget;
