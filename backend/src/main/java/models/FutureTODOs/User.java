@@ -1,24 +1,34 @@
-package models;
+package models.FutureTODOs;
 
-import utils.Address;
+import jakarta.persistence.*;
 import utils.Date;
 
+@Entity
+@Table(name = "_partner")
 public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "_partner_id_seq")
+    @SequenceGenerator(name = "_partner_id_seq", sequenceName = "_partner_id_seq", allocationSize = 1)
     private int id;
 
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
+    @Column(name = "last_name", nullable = false)
     private String lastName;
 
+    @Column(name = "email", nullable = false)
     private String email;
-
+    @Column(name = "password", nullable = false)
     private String password;
 
+    @Column(name = "date_of_birth", nullable = false)
     private Date dateOfBirth;
 
-    private Address address;
 
     public User () {}
+
     public User(int id, String firstName, String lastName, String email, String password, Date dateOfBirth, Address address) {
         this.id = id;
         this.firstName = firstName;
@@ -26,7 +36,6 @@ public class User {
         this.email = email;
         this.password = password;
         this.dateOfBirth = dateOfBirth;
-        this.address = address;
     }
 
     public int getId() {
@@ -77,14 +86,6 @@ public class User {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public Address getAddress() {
-        return address;
-    }
-
-    public void setAddress(Address address) {
-        this.address = address;
-    }
-
     @Override
     public String toString() {
         return "User{" +
@@ -94,7 +95,6 @@ public class User {
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", dateOfBirth=" + dateOfBirth +
-                ", address=" + address +
                 '}';
     }
 }

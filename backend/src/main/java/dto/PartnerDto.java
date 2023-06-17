@@ -1,52 +1,41 @@
-package models;
-
-import jakarta.persistence.*;
+package dto;
 
 import java.util.Date;
+import models.util.Address;
 
 
-@Entity
-@Table (name = "_partner")
-public class Partner {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "_partner_id_seq")
-    @SequenceGenerator(name = "_partner_id_seq", sequenceName = "_partner_id_seq", allocationSize = 1)
+public class PartnerDto {
     private int id;
 
-    @Column(name = "owner", nullable = false)
-    private boolean isOwner;
+    private Boolean isOwner;
 
-    @Column(name = "firstname", nullable = false)
     private String firstName;
 
-    @Column(name = "lastname", nullable = false)
     private String lastName;
 
-    @Column(name = "email", nullable = false)
     private String email;
 
-    @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "date_of_birth", nullable = false)
     private Date dateOfBirth;
 
-    @Column(name = "gender", nullable = false)
-    private String gender;
+    private Address address;
 
-    @Column(name = "mobile", nullable = false)
     private long mobile;
 
-    public Partner () {}
+    private String gender;
 
-    public Partner(int id, String firstName, String lastName, String email, String password, Date dateOfBirth, String gender) {
+    public PartnerDto() {}
+
+    public PartnerDto(int id, String firstName, String lastName, String email, String password, Date dateOfBirth, Address address, long mobile, String gender) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.dateOfBirth = dateOfBirth;
+        this.mobile = mobile;
+        this.address = address;
         this.gender = gender;
     }
 
@@ -98,12 +87,20 @@ public class Partner {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public boolean isOwner() {
+    public Boolean getOwner() {
         return isOwner;
     }
 
-    public void setOwner(boolean owner) {
+    public void setOwner(Boolean owner) {
         isOwner = owner;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
     }
 
     public long getMobile() {
@@ -124,16 +121,13 @@ public class Partner {
 
     @Override
     public String toString() {
-        return "Partner{" +
+        return "User{" +
                 "id=" + id +
-                ", isOwner=" + isOwner +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", dateOfBirth=" + dateOfBirth +
-                ", gender='" + gender + '\'' +
-                ", mobile=" + mobile +
                 '}';
     }
 }
