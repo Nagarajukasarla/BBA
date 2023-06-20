@@ -1,37 +1,25 @@
-package models.util;
+package dto;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
 
-@Entity
-@Table(name = "_address")
-public class Address {
+public class AddressDto {
 
-    @Id
-    @SequenceGenerator(name = "_address_id_seq", sequenceName = "_address_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "_address_id_seq")
     private int id;
 
-    @Column(name = "block_number", nullable = false)
     private String blockNumber;
 
-    @Column(name = "street", nullable = false)
     private String street;
 
-    @Column(name = "city", nullable = false)
     private String city;
 
-    @Column(name = "state", nullable = false)
     private String state;
 
-    @Column(name = "zipcode", nullable = false)
     private int zipcode;
 
-    @Column(name = "email", nullable = false)
     private String email;
+    public AddressDto () {}
 
-    public Address () {}
-
-    public Address(int id, String blockNumber, String street, String city, String state, int zipcode, String email) {
+    public AddressDto(int id, String blockNumber, String street, String city, String state, int zipcode, String email) {
         this.id = id;
         this.blockNumber = blockNumber;
         this.street = street;
@@ -95,5 +83,18 @@ public class Address {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @Override
+    public String toString() {
+        return "AddressDto{" +
+                "id=" + id +
+                ", blockNumber='" + blockNumber + '\'' +
+                ", street='" + street + '\'' +
+                ", city='" + city + '\'' +
+                ", state='" + state + '\'' +
+                ", zipcode=" + zipcode +
+                ", email='" + email + '\'' +
+                '}';
     }
 }

@@ -121,13 +121,17 @@ public class PartnerDto {
 
     @Override
     public String toString() {
-        return "User{" +
+        return "PartnerDto{" +
                 "id=" + id +
+                ", isOwner=" + isOwner +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", dateOfBirth=" + dateOfBirth +
+                ", address=" + address +
+                ", mobile=" + mobile +
+                ", gender='" + gender + '\'' +
                 '}';
     }
 }

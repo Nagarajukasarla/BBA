@@ -14,33 +14,33 @@ public class Partner {
     @SequenceGenerator(name = "_partner_id_seq", sequenceName = "_partner_id_seq", allocationSize = 1)
     private int id;
 
-    @Column(name = "owner", nullable = false)
+    @Column(name = "owner", length = 256, nullable = false)
     private boolean isOwner;
 
-    @Column(name = "firstname", nullable = false)
+    @Column(name = "firstname", length = 256, nullable = false)
     private String firstName;
 
-    @Column(name = "lastname", nullable = false)
+    @Column(name = "lastname", length = 256, nullable = false)
     private String lastName;
 
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", length = 256,  nullable = false)
     private String email;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "password", length = 256, nullable = false)
     private String password;
 
     @Column(name = "date_of_birth", nullable = false)
     private Date dateOfBirth;
 
-    @Column(name = "gender", nullable = false)
+    @Column(name = "gender", length = 128, nullable = false)
     private String gender;
 
-    @Column(name = "mobile", nullable = false)
+    @Column(name = "mobile", length = 13, nullable = false)
     private long mobile;
 
     public Partner () {}
 
-    public Partner(int id, String firstName, String lastName, String email, String password, Date dateOfBirth, String gender) {
+    public Partner(int id, String firstName, String lastName, String email, String password, Date dateOfBirth, String gender, long mobile) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -48,6 +48,7 @@ public class Partner {
         this.password = password;
         this.dateOfBirth = dateOfBirth;
         this.gender = gender;
+        this.mobile = mobile;
     }
 
     public int getId() {

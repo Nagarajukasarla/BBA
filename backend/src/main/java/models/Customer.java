@@ -1,5 +1,6 @@
 package models;
 
+import models.util.Address;
 import utils.DateTime;
 
 import java.util.List;

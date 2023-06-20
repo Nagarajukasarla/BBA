@@ -1,13 +1,12 @@
 package controllers;
 
 import dto.PartnerDto;
-import models.Partner;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import services.PartnerService;
+
+import java.util.Map;
 
 @RestController
 @CrossOrigin
@@ -15,11 +14,16 @@ import services.PartnerService;
 public class UserController {
 
     @Autowired
-    public PartnerService partnerService;
+    private PartnerService partnerService;
 
-    public ResponseEntity<PartnerDto> saveUser (PartnerDto partnerDto) {
-        Partner user = partnerService.addPartner(partnerDto);
+    @PostMapping(path = "/save")
+    public ResponseEntity<PartnerDto> saveUser (@RequestBody PartnerDto partnerDto) {
+        return partnerService.addPartner(partnerDto);
+    }
 
+    @GetMapping(path = "/get")
+    public ResponseEntity<PartnerDto> getUser (@RequestParam Map<String, String> data) {
+        return partnerService.findPartner(data.get("email"), data.get("password"));
     }
 
 }
