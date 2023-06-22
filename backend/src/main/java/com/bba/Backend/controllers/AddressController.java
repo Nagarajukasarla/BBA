@@ -1,12 +1,12 @@
-package controllers;
+package com.bba.Backend.controllers;
 
 
-import dto.AddressDto;
-import models.util.Address;
+import com.bba.Backend.dto.AddressDto;
+import com.bba.Backend.models.util.Address;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import services.AddressService;
+import com.bba.Backend.services.AddressService;
 
 @RestController
 @CrossOrigin
@@ -16,17 +16,13 @@ public class AddressController {
     @Autowired
     public AddressService addressService;
 
-    @PostMapping(path = "/save-address")
+    @PostMapping(path = "/save")
     public ResponseEntity<AddressDto> addAddress (@RequestBody  AddressDto addressDto) {
-        Address address = addressService.saveAddress(addressDto);
-        AddressDto savedAddress = new AddressDto();
-        savedAddress.setBlockNumber(address.getBlockNumber());
-        savedAddress.setStreet(address.getStreet());
-        savedAddress.setCity(address.getCity());
-        savedAddress.setState(address.getState());
-        savedAddress.setZipcode(address.getZipcode());
-        savedAddress.setEmail(address.getEmail());
-        return ResponseEntity.ok(savedAddress);
+         return addressService.saveAddress(addressDto);
     }
 
+    @GetMapping(path = "/get")
+    public ResponseEntity<?> getAddress (@RequestBody String email) {
+        return addressService.getAddress(email);
+    }
 }

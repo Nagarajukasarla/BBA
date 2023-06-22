@@ -1,10 +1,9 @@
-package services;
+package com.bba.Backend.services;
 
-import dto.AddressDto;
-import models.util.Address;
+import com.bba.Backend.dto.AddressDto;
 import org.springframework.http.ResponseEntity;
 
 public interface AddressService {
-    public Address saveAddress (AddressDto addressDto);
-    public Address getAddress (String email);
+    public ResponseEntity<AddressDto> saveAddress (AddressDto addressDto);
+    public ResponseEntity<?> getAddress (String email);
 }

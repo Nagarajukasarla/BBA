@@ -1,6 +1,6 @@
-package repositories;
+package com.bba.Backend.repositories;
 
-import models.Partner;
+import com.bba.Backend.models.Partner;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Repository;

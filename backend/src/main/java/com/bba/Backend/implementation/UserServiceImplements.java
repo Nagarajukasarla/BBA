@@ -1,17 +1,15 @@
-package implementation;
+package com.bba.Backend.implementation;
 
-import dto.PartnerDto;
-import models.Partner;
-import models.util.Address;
+import com.bba.Backend.dto.PartnerDto;
+import com.bba.Backend.models.Partner;
+import com.bba.Backend.models.util.Address;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import repositories.AddressRepository;
-import repositories.PartnerRepository;
-import services.PartnerService;
-
-
-import java.util.stream.Stream;
+import com.bba.Backend.repositories.AddressRepository;
+import com.bba.Backend.repositories.PartnerRepository;
+import com.bba.Backend.services.PartnerService;
 
 @Service
 public class UserServiceImplements implements PartnerService {
@@ -39,6 +37,7 @@ public class UserServiceImplements implements PartnerService {
         addressRepository.save(userAddress);
 
         PartnerDto responsePartnerDto = new PartnerDto();
+        responsePartnerDto.setId(newUser.getId());
         responsePartnerDto.setFirstName(newUser.getFirstName());
         responsePartnerDto.setLastName(newUser.getLastName());
         responsePartnerDto.setEmail(newUser.getEmail());
@@ -49,7 +48,7 @@ public class UserServiceImplements implements PartnerService {
         return ResponseEntity.ok(responsePartnerDto);
     }
 
-    public ResponseEntity<PartnerDto> findPartner (String email, String password) {
+    public ResponseEntity<?> findPartner (String email, String password) {
         Partner validPartner =  partnerRepository.findAll()
                 .stream()
                 .filter(obj -> obj.getEmail().equals(email))
@@ -63,16 +62,20 @@ public class UserServiceImplements implements PartnerService {
                 .orElse(null);
 
         PartnerDto responsePartnerDto = new PartnerDto();
-        assert validPartner != null;
-        responsePartnerDto.setFirstName(validPartner.getFirstName());
-        responsePartnerDto.setLastName(validPartner.getLastName());
-        responsePartnerDto.setEmail(validPartner.getEmail());
-        responsePartnerDto.setPassword("*********");
-        responsePartnerDto.setGender(validPartner.getGender());
-        responsePartnerDto.setMobile(validPartner.getMobile());
-        responsePartnerDto.setDateOfBirth(validPartner.getDateOfBirth());
-        responsePartnerDto.setAddress(validAddress);
-
-        return ResponseEntity.ok(responsePartnerDto);
+        if (validPartner != null) {
+            responsePartnerDto.setId(validPartner.getId());
+            responsePartnerDto.setFirstName(validPartner.getFirstName());
+            responsePartnerDto.setLastName(validPartner.getLastName());
+            responsePartnerDto.setEmail(validPartner.getEmail());
+            responsePartnerDto.setPassword("*********");
+            responsePartnerDto.setGender(validPartner.getGender());
+            responsePartnerDto.setMobile(validPartner.getMobile());
+            responsePartnerDto.setDateOfBirth(validPartner.getDateOfBirth());
+            responsePartnerDto.setAddress(validAddress);
+        }
+        String errorMessage = "User Not found";
+        return (responsePartnerDto.getId() != 0)
+                ? ResponseEntity.ok(responsePartnerDto)
+                : ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
     }
 }

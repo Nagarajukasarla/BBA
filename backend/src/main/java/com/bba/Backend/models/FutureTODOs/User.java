@@ -1,7 +1,8 @@
-package models.FutureTODOs;
+package com.bba.Backend.models.FutureTODOs;
 
 import jakarta.persistence.*;
-import utils.Date;
+
+import java.util.Date;
 
 @Entity
 @Table(name = "_partner")

@@ -1,17 +1,30 @@
-package models;
+package com.bba.Backend.models;
 
-import models.util.Address;
-import utils.DateTime;
+import jakarta.persistence.*;
 
-import java.util.List;
+import java.util.Date;
 
+@Entity
+@Table(name = "_customer")
 public class Customer {
-    private int id;
+
+    @Id
+    @SequenceGenerator(name = "_customer_id_seq", sequenceName = "_customer_id_seq" , allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "_customer_id_seq")
+    private Integer id;
+
+    @Column(name = "name", length = 256, nullable = false)
     private String name;
+
+    @Column(name = "email", length = 256, nullable = false)
     private String email;
-    private Address address;
-    private List<Invoice> invoices;
+
+    @Column(name = "pending_amount")
     private long pendingAmount;
-    private DateTime dueDate;
+
+    @Column(name = "due_date")
+    private Date dueDate;
+
+    @Column(name = "total_purchase_amount")
     private long totalPurchaseAmount;
 }

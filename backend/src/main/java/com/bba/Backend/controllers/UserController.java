@@ -1,10 +1,10 @@
-package controllers;
+package com.bba.Backend.controllers;
 
-import dto.PartnerDto;
+import com.bba.Backend.dto.PartnerDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import services.PartnerService;
+import com.bba.Backend.services.PartnerService;
 
 import java.util.Map;
 
@@ -21,8 +21,8 @@ public class UserController {
         return partnerService.addPartner(partnerDto);
     }
 
-    @GetMapping(path = "/get")
-    public ResponseEntity<PartnerDto> getUser (@RequestParam Map<String, String> data) {
+    @PostMapping(path = "/get")
+    public ResponseEntity<?> getUser (@RequestBody Map<String, String> data) {
         return partnerService.findPartner(data.get("email"), data.get("password"));
     }
 

@@ -1,4 +1,4 @@
-package models;
+package com.bba.Backend.models;
 
 import jakarta.persistence.*;
 
@@ -17,10 +17,10 @@ public class Partner {
     @Column(name = "owner", length = 256, nullable = false)
     private boolean isOwner;
 
-    @Column(name = "firstname", length = 256, nullable = false)
+    @Column(name = "first_name", length = 256, nullable = false)
     private String firstName;
 
-    @Column(name = "lastname", length = 256, nullable = false)
+    @Column(name = "last_name", length = 256, nullable = false)
     private String lastName;
 
     @Column(name = "email", length = 256,  nullable = false)

@@ -1,11 +1,25 @@
-package models;
+package com.bba.Backend.models;
 
-import java.util.List;
+import jakarta.persistence.*;
 
-public class Invoice extends Shop {
-    private String id;
-    private int number;
-    private String generationDate;
-    private List<Item> items;
-    private Customer customer;
+import java.util.Date;
+
+@Entity
+@Table(name = "_invoice")
+public class Invoice {
+
+    @Id
+    @SequenceGenerator(name = "_invoice_id_seq", sequenceName = "_invoice_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "_invoice_id_seq")
+    private Integer id;
+
+    @Column(name = "number", nullable = false)
+    private String number;
+
+    @Column(name = "generation_date", nullable = false)
+    private Date generationDate;
+
+//    private List<Item> items;
+//    private Customer customer;
+
 }

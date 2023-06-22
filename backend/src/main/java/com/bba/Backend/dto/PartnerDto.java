@@ -1,7 +1,7 @@
-package dto;
+package com.bba.Backend.dto;
 
 import java.util.Date;
-import models.util.Address;
+import com.bba.Backend.models.util.Address;
 
 
 public class PartnerDto {
