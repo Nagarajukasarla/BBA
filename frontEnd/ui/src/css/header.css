@@ -1,15 +1,3 @@
-/* .titleContinaer {
-    display: flex;
-    height: 60px;
-    padding: 10px 10px;
-} */
-
-.headerContainer {
-    background: #FFFFFF;
-    display: flex;
-    height: 65px;
-}
-
 .titleContinaer {
     background: rgb(35, 46, 62);
     height: 65px;
@@ -23,6 +11,11 @@
     color: #FFFFFF;
 }
 
+.header {
+    background: #FFFFFF;
+    display: flex;
+    height: 65px;
+}
 
 .profileContainer {
     width: 200px;

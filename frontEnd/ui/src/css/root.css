@@ -4,29 +4,26 @@
     box-sizing: border-box;
 }
 
+.main {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
+}
+
 .header {
     position: fixed;
-    top: 0;
-    left: 0;
+    z-index: 1000;
     width: 100%;
-    height: 60px;
+    height: 65px;
 }
 
-.rootWrapper {
-    display: flex;
+.dashboardWrapper {
+    margin-top: 50px;
+    margin-left: 200px;
 }
 
-.sidebar {
+.sidebarWrapper {
     margin-top: 65px;
-    height: 100vh;
     position: fixed;
-}
-
-.mainContent {
-    z-index: -10;
-    position: relative;
-    left: 200px;
-    margin-top: 65px;
-    width: 85.91vw;
-    height: inherit;
 }

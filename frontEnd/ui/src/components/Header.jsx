@@ -6,7 +6,7 @@ import pic from '../Img/pic.jpg'
 class Header extends Component {
     render () {
         return (
-            <div className='headerContainer'>
+            <div className='header'>
                 <div className="titleContinaer">
                     <p className="appTitle">Billing App</p>
                 </div>
