@@ -1,23 +1,20 @@
 import { Space } from 'antd';
-
-import { Component } from 'react';
-import Header from './Header';
-import SideBar from './SideBar';
-import Dashboard from './Dashboard';
+import { Header } from './AppHeader/Header';
+import { SideBar } from './AppSidebar/SideBar';
+import { AppFooter } from './AppFooter/AppFooter';
+import { AppContent } from './AppContent/AppContent';
 import '../css/root.css';
 
-class Root extends Component {
-    render () {
-        return (
-            <div className='main'>
-                <Header className="header"/>
-                <Space>
-                    <SideBar className="sideBar"/>
-                    <Dashboard className="sideBar"/>
-                </Space>
-            </div>
-        );
-    }
-}
 
-export default Root;
+export const Root = () => {
+    return (
+        <div className='main'>
+            <Header />
+            <Space className='sideMenuWithDashborad'>
+                <SideBar />
+                <AppContent />
+            </Space>
+            <AppFooter/>
+        </div>
+    );
+}

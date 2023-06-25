@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import "../css/login.css";
+import "../../css/login.css";
 
 export const Login = () => {
     const [email, setEmail] = useState("");
@@ -54,7 +54,7 @@ export const Login = () => {
                 <div className="head-txt">
                     <p>Login</p>
                 </div>
-                {true && (
+                {showErrorMessage && (
                     <div className="login-error">
                         <img src="../../Img/warning.png" alt="warning" />
                         <p>Invalid Username or Password</p>

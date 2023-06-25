@@ -15,7 +15,7 @@ body {
     background-color: #315ACA;
     justify-content: center;
     align-items: center;
-    width: 100vw;
+    width: 100%;
     padding: 20px 0;
     box-shadow: 0.5px 2px 16px #000000;
 }

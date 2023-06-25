@@ -1,26 +1,18 @@
 
-*{
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-}
-
 .dashboardWrapper {
-    position: absolute;
     scroll-behavior: smooth;
-    width: inherit;
-    height: inherit;
-    background-color: #E8E8E8;
-    padding-bottom: 20px;
+    /* background-color: red; */
+    /* padding-bottom: 20px; */
 }
 
 .upperChartsWrapper {
-    padding-top: 50px;
+    /* padding-top: 50px; */
     display: flex;
 }
 
 .chart {
     padding-top: 10px;
+    z-index: 1;
     width: 360px;
     height: 300px;
     background-color: #FFFFFF;
@@ -28,9 +20,9 @@
     border-radius: 5px;
 }
 
-.chart1 {
+/* .chart1 {
 
-}
+} */
 
 .chart2 {
     margin-left: 85px;
