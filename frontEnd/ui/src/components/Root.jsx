@@ -12,7 +12,9 @@ export const Root = () => {
             <Header />
             <Space className='sideMenuWithDashborad'>
                 <SideBar />
-                <AppContent />
+                <div className='appContentContainer'>
+                    <AppContent />
+                </div>
             </Space>
             <AppFooter/>
         </div>

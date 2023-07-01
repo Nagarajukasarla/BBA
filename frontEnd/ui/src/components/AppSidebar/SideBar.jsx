@@ -7,7 +7,7 @@ import {
     CreditCardOutlined,
     InfoCircleOutlined,
     SlackOutlined,
-    SettingOutlined
+    SettingOutlined,
 } from "@ant-design/icons";
 
 import "../../css/sidebar.css";
@@ -17,7 +17,8 @@ export const SideBar = () => {
     const navigate = useNavigate();
     return (
         <div className="sidebarWrapper">
-            <Menu className="sidebarMenu"
+            <Menu
+                className="sidebarMenu"
                 onClick={(item) => {
                     navigate(item.key);
                 }}
@@ -58,11 +59,10 @@ export const SideBar = () => {
                         key: "/settings",
                     },
                 ]}
-            >
-            </Menu>
+            ></Menu>
         </div>
     );
-}
+};
 
 // Create root page and assemble SideBar and Header
 // Click action for every item in SideBar

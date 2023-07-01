@@ -1,0 +1,16 @@
+.editButton {
+    background-color: rgb(49, 116, 177);
+}
+
+.editRecord {
+    font-size: 18px;
+}
+
+.editRecord:hover {
+    color: rgb(49, 116, 177);
+}
+
+.invoiceHeader {
+    font-size: 18px;
+    margin-left: 5px;
+}

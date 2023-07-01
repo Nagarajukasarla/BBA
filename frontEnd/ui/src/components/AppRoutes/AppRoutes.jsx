@@ -8,6 +8,7 @@ import { Subscriptions } from "../Pages/Subscriptions/Subscriptions";
 import { About } from "../Pages/About/About";
 import { Settings } from "../Pages/Settings/Settings";
 import { IconsWindow } from "../IconsWindow";
+import { NewInvoice } from "../Pages/Invoice/NewInvoice";
 
 
 export const AppRoutes = () => {
@@ -15,6 +16,7 @@ export const AppRoutes = () => {
         <Routes>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/invoice" element={<Invoice />} />
+            <Route path="/invoice/new" element={<NewInvoice />} />
             <Route path="/customer" element={<Customer />} />
             <Route path="/stocks" element={<Stocks />} />
             <Route path="/subscriptions" element={<Subscriptions />} />

@@ -1,0 +1,74 @@
+.invoiceComponentsHeader {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.customerSelectionDropdown {
+    width: 300px;
+    text-align: start;
+    border: .8px solid rgb(156, 156, 156);
+    border-radius: 6px;
+    outline: none;
+}
+
+.customerSelectionDropdown:hover {
+    border: .8px solid #4096FF;
+}
+
+.customerSelectionDropdown:active {
+    border: .8px solid #4096FF;
+}
+
+.invoiceInputFields {
+    border: 1px solid rgb(156, 156, 156);
+}
+
+
+/* --------- Button Styles ---------- */
+
+.invoiceEmailButton {
+    letter-spacing: .3px;
+    font-size: 14px;
+    border: 2px solid rgb(30, 34, 46);
+    padding: 5px 10px;
+    border-radius: 6px;
+    color: white;
+    background-color: rgb(30, 34, 46);
+}
+
+.invoiceEmailButton:active {
+    border: 2px solid rgb(16, 18, 25);
+    background-color: rgb(16, 18, 25);
+}
+
+.invoiceSaveButton {
+    letter-spacing: .3px;
+    font-size: 14px;
+    border: 2px solid rgb(19, 150, 118);
+    padding: 5px 10px;
+    border-radius: 6px;
+    color: white;
+    background-color: rgb(19, 150, 118);
+}
+
+.invoiceSaveButton:active {
+    border: 2px solid rgb(12, 101, 79);
+    background-color: rgb(12, 101, 79);
+}
+
+.invoicePrintButton {
+    letter-spacing: .3px;
+    font-size: 14px;
+    border: 2px solid rgb(14, 103, 129);
+    padding: 5px 10px;
+    border-radius: 6px;
+    color: white;
+    background-color: rgb(14, 103, 129);
+}
+
+.invoicePrintButton:active {
+    border: 2px solid rgb(4, 77, 100);
+    background-color: rgb(4, 77, 100);
+}
+
+/* --------- Button Styles ---------- */

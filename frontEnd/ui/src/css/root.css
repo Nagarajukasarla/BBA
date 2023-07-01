@@ -21,6 +21,7 @@
 .sidebarWrapper {
     width: 200px;
     height: 85vh;
+    
 }
 
 .sideMenuWithDashborad {
@@ -31,8 +32,13 @@
 }
 
 .appContent {
-    padding: 20px 30px;
-    
+    padding: 10px 0px 5px 5px;
+}
+
+.appContentContainer {
+    max-height: 85vh;
+    overflow-y: scroll;
+    border: 1px solid red;
 }
 
 .appFooter {
