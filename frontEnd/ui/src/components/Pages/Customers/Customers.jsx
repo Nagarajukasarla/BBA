@@ -5,10 +5,10 @@ import { PlusCircleOutlined, EditOutlined } from "@ant-design/icons";
 import "./css/customer.css";
 import { useNavigate } from "react-router-dom";
 
-export const Customer = () => {
+export const Customers = () => {
 
     const navigate = useNavigate(); 
-    const customerColumns = [
+    const customersColumns = [
         {
             key: "1",
             title: "S.No",
@@ -244,7 +244,7 @@ export const Customer = () => {
                         >
                             <p className="customerHeader">My Customers</p>
                             <Table
-                                columns={customerColumns}
+                                columns={customersColumns}
                                 dataSource={data}
                                 pagination={false}
                             ></Table>
