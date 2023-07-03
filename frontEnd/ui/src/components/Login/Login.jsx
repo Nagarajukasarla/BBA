@@ -27,7 +27,7 @@ export const Login = () => {
             .then((response) => {
                 if (response.ok) {
                     // const obj = response.json();
-                    navigate("/root");
+                    navigate("/dashboard");
                 }
             })
             .catch((error) => {

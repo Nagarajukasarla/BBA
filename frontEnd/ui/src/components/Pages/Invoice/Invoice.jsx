@@ -5,7 +5,9 @@ import "./css/invoiceStyle.css";
 import { useNavigate } from "react-router-dom";
 
 export const Invoice = () => {
+
     const navigator = useNavigate();
+    
     const data = [
         {
             key: "1",
@@ -46,10 +48,10 @@ export const Invoice = () => {
         <div className="invoiceWrapper">
             <Col span={24}>
                 <Space direction="vertical" size={"large"}>
-                    <Row>
+                    <Row style={{ padding: "0 20px" }}>
                         <Typography.Title level={4}>Invoice</Typography.Title>
                     </Row>
-                    <Row>
+                    <Row style={{ padding: "0 20px" }}>
                         <Space direction="horizontal" size={"large"}>
                             <Button onClick={newInvoice} type="primary" shape="round" size="large">
                                 New Invoice
@@ -61,7 +63,7 @@ export const Invoice = () => {
                             </Button>
                         </Space>
                     </Row>
-                    <Row>
+                    <Row style={{ padding: "0 20px" }}>
                         <Space direction="vertical" size={"large"} style={{textAlign: "start", marginTop: "20px"}}>
                             <p className="invoiceHeader">Recent Orders</p>
                             <Table

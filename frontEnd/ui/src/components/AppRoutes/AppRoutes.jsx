@@ -9,6 +9,8 @@ import { About } from "../Pages/About/About";
 import { Settings } from "../Pages/Settings/Settings";
 import { IconsWindow } from "../IconsWindow";
 import { NewInvoice } from "../Pages/Invoice/NewInvoice";
+import { NewCustomer } from "../Pages/Customers/NewCustomer";
+import { Companies } from "../Pages/Companies/Companies";
 
 
 export const AppRoutes = () => {
@@ -23,7 +25,8 @@ export const AppRoutes = () => {
             <Route path="/about" element={<About />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/icons" element={<IconsWindow />} />        
-
+            <Route path="/new-customer" element={<NewCustomer />} />
+            <Route path="/companies" element={<Companies />} />
         </Routes>
 
     )

@@ -30,10 +30,14 @@ export const Dashboard = () => {
     //     height: "350px",
     // };
 
-    const DashboardCard = ({ icon, title, value }) => {
+    const DashboardCard = ({ icon, title, value, margin }) => {
         return (
-            <Card style={{ width: "200px" }}>
-                <Space direction="horizontal">
+            <Card style={{ width: "220px", marginLeft: margin }}>
+                <Space direction="horizontal"
+                    style={{
+                        marginLeft: "-10px",
+                    }}
+                >
                     {icon}
                     <Statistic title={title} value={value} />
                 </Space>
@@ -252,35 +256,78 @@ export const Dashboard = () => {
         <div className="dashboardWrapper">
             <Col span={24}>
                 <Space direction="vertical" size={"large"}>
-                    <Row>
+                    <Row style={{ paddingLeft: "20px" }}>
                         <Typography.Title level={4}>Dashboard</Typography.Title>
                     </Row>
-                    <Row>
+                    <Row style={{ padding: "0 20px" }}>
                         <Space size={"large"}>
                             <DashboardCard
-                                icon={<ShoppingCartOutlined />}
+                                icon={
+                                    <ShoppingCartOutlined
+                                        style={{ 
+                                            fontSize: "24px",
+                                            color: "rgb(68, 141, 2029)",
+                                            backgroundColor: "rgb(156, 232, 241)",
+                                            borderRadius: "50px",
+                                            padding: "5px"
+                                        }}
+                                    />
+                                }
                                 title={"Orders"}
                                 value={"1,234"}
                             />
                             <DashboardCard
-                                icon={<CheckCircleOutlined />}
+                                icon={
+                                    <CheckCircleOutlined 
+                                        style={{
+                                            fontSize: "24px",
+                                            color: "green",
+                                            backgroundColor: "rgba(0, 225, 0, 0.25)",
+                                            borderRadius: "50px",
+                                            padding: "5px"
+                                        }}
+                                    />
+                                }
+                                margin={"40px"}
                                 title={"Bills Closed"}
                                 value={"1,234"}
                             />
                             <DashboardCard
-                                icon={<RiseOutlined />}
+                                icon={
+                                    <RiseOutlined 
+                                        style={{
+                                            fontSize: "24px",
+                                            color: "red",
+                                            backgroundColor: "#D09C9C",
+                                            borderRadius: "50px",
+                                            padding: "5px"
+                                        }}
+                                    />
+                                }
+                                margin={"40px"}
                                 title={"Todays Revenue"}
                                 value={"1,234"}
                             />
                             <DashboardCard
-                                icon={<LineChartOutlined />}
+                                icon={
+                                    <LineChartOutlined
+                                        style={{
+                                            fontSize: "24px",
+                                            color: "#3F4112",
+                                            backgroundColor: "#C7CA84",
+                                            borderRadius: "50px",
+                                            padding: "5px"
+                                        }}
+                                    />
+                                }
+                                margin={"40px"}
                                 title={"This Month"}
                                 value={"1,234"}
                             />
                         </Space>
                     </Row>
-                    <Row>
-                        <Space direction="horizontal" size="large">
+                    <Row style={{ padding: "0 20px" }}>
+                        <Space direction="horizontal" size={"large"}>
                             <Card>
                                 <div style={pieChartHeader}>
                                     <p>Analysis</p>
@@ -295,7 +342,7 @@ export const Dashboard = () => {
                             </Card>
                         </Space>
                     </Row>
-                    <Row>
+                    <Row style={{ padding: "0 20px" }}>
                         <Card>
                             <div style={annualBarChartDropdown}>
                                 <AnalysisDropDown items={items} />

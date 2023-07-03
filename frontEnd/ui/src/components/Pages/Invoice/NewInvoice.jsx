@@ -13,6 +13,7 @@ import {
 } from "antd";
 
 import "./css/newInvoice.css";
+import "../../coreComponents/Styles/primaryStyle.css";
 
 import {
     onPressedEnterOnCompanyField,
@@ -351,9 +352,7 @@ export const NewInvoice = () => {
     return (
         <>
             <div
-                className="newInvoiceWrapper"
-                style={{ border: "1px solid green" }}
-            >
+                className="newInvoiceWrapper">
                 <Col span={24}>
                     <Row>
                         <Typography.Title
@@ -369,7 +368,7 @@ export const NewInvoice = () => {
                                 direction="vertical"
                                 style={{ textAlign: "start" }}
                             >
-                                <Typography.Text className="invoiceComponentsHeader">
+                                <Typography.Text className="primary-input-field-header-style">
                                     Customer
                                 </Typography.Text>
                                 <Select
@@ -390,7 +389,7 @@ export const NewInvoice = () => {
                                     marginLeft: "100px",
                                 }}
                             >
-                                <Typography.Text className="invoiceComponentsHeader">
+                                <Typography.Text className="primary-input-field-header-style">
                                     Payment Mode
                                 </Typography.Text>
                                 <Radio.Group
@@ -407,7 +406,7 @@ export const NewInvoice = () => {
                                 direction="vertical"
                                 style={{ textAlign: "start" }}
                             >
-                                <Typography.Text className="invoiceComponentsHeader">
+                                <Typography.Text className="primary-input-field-header-style">
                                     Product
                                 </Typography.Text>
                                 <Select
@@ -432,7 +431,7 @@ export const NewInvoice = () => {
                                     marginLeft: "20px",
                                 }}
                             >
-                                <Typography.Text className="invoiceComponentsHeader">
+                                <Typography.Text className="primary-input-field-header-style">
                                     Company
                                 </Typography.Text>
                                 <Input
@@ -454,7 +453,7 @@ export const NewInvoice = () => {
                                     marginLeft: "20px",
                                 }}
                             >
-                                <Typography.Text className="invoiceComponentsHeader">
+                                <Typography.Text className="primary-input-field-header-style">
                                     Quantity
                                 </Typography.Text>
                                 <Input
@@ -477,7 +476,7 @@ export const NewInvoice = () => {
                                     marginLeft: "20px",
                                 }}
                             >
-                                <Typography.Text className="invoiceComponentsHeader">
+                                <Typography.Text className="primary-input-field-header-style">
                                     Mf Date
                                 </Typography.Text>
                                 <Input
@@ -501,7 +500,7 @@ export const NewInvoice = () => {
                                     marginLeft: "20px",
                                 }}
                             >
-                                <Typography.Text className="invoiceComponentsHeader">
+                                <Typography.Text className="primary-input-field-header-style">
                                     Exp Date
                                 </Typography.Text>
                                 <Input
@@ -524,7 +523,7 @@ export const NewInvoice = () => {
                                     marginLeft: "20px",
                                 }}
                             >
-                                <Typography.Text className="invoiceComponentsHeader">
+                                <Typography.Text className="primary-input-field-header-style">
                                     SGST
                                 </Typography.Text>
                                 <Input
@@ -547,7 +546,7 @@ export const NewInvoice = () => {
                                     marginLeft: "20px",
                                 }}
                             >
-                                <Typography.Text className="invoiceComponentsHeader">
+                                <Typography.Text className="primary-input-field-header-style">
                                     CGST
                                 </Typography.Text>
                                 <Input
@@ -570,7 +569,7 @@ export const NewInvoice = () => {
                                     marginLeft: "20px",
                                 }}
                             >
-                                <Typography.Text className="invoiceComponentsHeader">
+                                <Typography.Text className="primary-input-field-header-style">
                                     IGST
                                 </Typography.Text>
                                 <Input
@@ -593,7 +592,7 @@ export const NewInvoice = () => {
                                     marginLeft: "20px",
                                 }}
                             >
-                                <Typography.Text className="invoiceComponentsHeader">
+                                <Typography.Text className="primary-input-field-header-style">
                                     Discount
                                 </Typography.Text>
                                 <Input
@@ -616,7 +615,7 @@ export const NewInvoice = () => {
                                     marginLeft: "20px",
                                 }}
                             >
-                                <Typography.Text className="invoiceComponentsHeader">
+                                <Typography.Text className="primary-input-field-header-style">
                                     Price
                                 </Typography.Text>
                                 <Input
@@ -659,7 +658,7 @@ export const NewInvoice = () => {
                         >
                             <Space direction="horizontal">
                                 <button className="invoiceEmailButton confirmButtons">Email</button>
-                                <button className="invoiceSaveButton confirmButtons" >Save</button>
+                                <button className="primary-save-button-style" >Save</button>
                                 <button className="invoicePrintButton confirmButtons" >Save & Print</button>
                             </Space>
                         </Row>
