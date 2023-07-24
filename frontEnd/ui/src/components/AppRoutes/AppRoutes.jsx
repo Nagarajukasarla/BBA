@@ -11,8 +11,6 @@ import { IconsWindow } from "../IconsWindow";
 import { NewInvoice } from "../Pages/Invoice/NewInvoice";
 import { NewCustomer } from "../Pages/Customers/NewCustomer";
 import { Companies } from "../Pages/Companies/Companies";
-
-
 export const AppRoutes = () => {
     return (
         <Routes>

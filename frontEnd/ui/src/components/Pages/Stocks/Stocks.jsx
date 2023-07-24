@@ -1,6 +1,6 @@
 import React from "react";
-import { Col, Row, Typography, Space, Button, Table } from "antd";
-import { PlusCircleOutlined } from "@ant-design/icons";
+import { Col, Row, Typography, Space, Button, Table, Tooltip } from "antd";
+import { PlusCircleOutlined, EditOutlined } from "@ant-design/icons";
 
 export const Stocks = () => {
     const data = [
