@@ -1,4 +1,4 @@
 Additonal libraries
 
-1. apexcharts
-2. fontawesome
+1. Recharts
+2. AntDesign
