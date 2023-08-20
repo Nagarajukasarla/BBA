@@ -29,7 +29,6 @@ public class UserServiceImplements implements PartnerService {
         newUser.setLastName(partnerDto.getLastName());
         newUser.setEmail(partnerDto.getEmail());
         newUser.setPassword(partnerDto.getPassword());
-        newUser.setDateOfBirth(partnerDto.getDateOfBirth());
         newUser.setMobile(partnerDto.getMobile());
         newUser.setGender(partnerDto.getGender());
 
@@ -44,7 +43,7 @@ public class UserServiceImplements implements PartnerService {
         responsePartnerDto.setPassword("*********");
         responsePartnerDto.setGender(newUser.getGender());
         responsePartnerDto.setMobile(newUser.getMobile());
-        responsePartnerDto.setDateOfBirth(newUser.getDateOfBirth());
+//        responsePartnerDto.setDateOfBirth(newUser.getDateOfBirth());
         return ResponseEntity.ok(responsePartnerDto);
     }
 
@@ -70,7 +69,7 @@ public class UserServiceImplements implements PartnerService {
             responsePartnerDto.setPassword("*********");
             responsePartnerDto.setGender(validPartner.getGender());
             responsePartnerDto.setMobile(validPartner.getMobile());
-            responsePartnerDto.setDateOfBirth(validPartner.getDateOfBirth());
+//            responsePartnerDto.setDateOfBirth(validPartner.getDateOfBirth());
             responsePartnerDto.setAddress(validAddress);
         }
         String errorMessage = "User Not found";

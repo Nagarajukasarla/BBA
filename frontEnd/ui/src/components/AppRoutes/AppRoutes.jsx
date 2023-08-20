@@ -26,6 +26,5 @@ export const AppRoutes = () => {
             <Route path="/new-customer" element={<NewCustomer />} />
             <Route path="/companies" element={<Companies />} />
         </Routes>
-
     )
 }
