@@ -3,13 +3,13 @@ package com.bba.Backend.implementation;
 import com.bba.Backend.dto.PartnerDto;
 import com.bba.Backend.models.Partner;
 import com.bba.Backend.models.util.Address;
+import com.bba.Backend.repositories.AddressRepository;
+import com.bba.Backend.repositories.PartnerRepository;
+import com.bba.Backend.services.PartnerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import com.bba.Backend.repositories.AddressRepository;
-import com.bba.Backend.repositories.PartnerRepository;
-import com.bba.Backend.services.PartnerService;
 
 @Service
 public class UserServiceImplements implements PartnerService {

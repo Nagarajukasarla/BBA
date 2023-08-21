@@ -2,8 +2,9 @@ package com.bba.Backend.services;
 
 import com.bba.Backend.dto.AddressDto;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 public interface AddressService {
-    public ResponseEntity<AddressDto> saveAddress (AddressDto addressDto);
-    public ResponseEntity<?> getAddress (String email);
+    ResponseEntity<AddressDto> saveAddress (AddressDto addressDto);
+    ResponseEntity<?> getAddress (String email);
 }

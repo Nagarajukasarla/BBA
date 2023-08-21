@@ -2,7 +2,7 @@ package com.bba.Backend.controllers;
 
 
 import com.bba.Backend.dto.AddressDto;
-import com.bba.Backend.models.util.Address;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,10 +11,11 @@ import com.bba.Backend.services.AddressService;
 @RestController
 @CrossOrigin
 @RequestMapping(path = "api/v1/address")
+@RequiredArgsConstructor
 public class AddressController {
 
-    @Autowired
-    public AddressService addressService;
+
+    private AddressService addressService;
 
     @PostMapping(path = "/save")
     public ResponseEntity<AddressDto> addAddress (@RequestBody  AddressDto addressDto) {
