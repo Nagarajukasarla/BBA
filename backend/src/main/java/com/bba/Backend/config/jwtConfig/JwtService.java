@@ -18,6 +18,7 @@ import java.util.function.Function;
 public class JwtService {
 
     private static final String SECRET_KEY = "4eda1835b2772c21fc8a284e41bd85b781a53fbbc339957f34b404d0bf740bf4";
+    public static long MINUTES = 20;
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -38,7 +39,6 @@ public class JwtService {
     }
 
     public String generateToken(UserDetails userDetails) {
-        String temp = generateToken(new HashMap<>(), userDetails);
         return generateToken(new HashMap<>(), userDetails);
     }
 
@@ -46,12 +46,13 @@ public class JwtService {
             Map<String, Object> extraClaims,
             UserDetails userDetails
     ) {
+
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
+                .setExpiration(new Date(System.currentTimeMillis() + (1000 * (60 * MINUTES))))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -67,6 +68,10 @@ public class JwtService {
 
     private Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
+    }
+
+    public Date getTokenExpirationDate (String token) {
+        return extractExpiration(token);
     }
 
     private Key getSignInKey() {

@@ -40,7 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        logger.info(" Authorization Header: {" + authHeader + "}");
+        logger.info(" Authorization Header: " + authHeader);
 
         jwt = authHeader.substring(7);
 
