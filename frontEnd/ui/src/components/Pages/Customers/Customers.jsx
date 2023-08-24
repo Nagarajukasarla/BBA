@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Col, Row, Typography, Space, Button, Table, Tooltip } from "antd";
 
 import { PlusCircleOutlined, EditOutlined } from "@ant-design/icons";
@@ -213,7 +213,7 @@ export const Customers = () => {
 
     // OnClick Handlers
     const onClickNewCustomer = () => {
-        navigate("/new-customer");
+        navigate('/app/customer/new');
     };
 
     return (

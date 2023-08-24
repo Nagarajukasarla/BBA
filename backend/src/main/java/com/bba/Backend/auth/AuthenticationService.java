@@ -38,7 +38,6 @@ public class AuthenticationService {
         return ResponseEntity.ok("User -> " + request.getFirstname() + " is successfully registered !");
     }
 
-
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(

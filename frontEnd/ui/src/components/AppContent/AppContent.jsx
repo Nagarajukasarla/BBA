@@ -1,9 +1,9 @@
 import React from 'react';
-import { AppRoutes } from '../AppRoutes/AppRoutes';
+import { ContentRoutes } from '../ContentRoutes/ContentRoutes';
 export const AppContent = () => {
     return (
         <div className="appContent">
-            <AppRoutes />
+            <ContentRoutes />
         </div>
     );
 }

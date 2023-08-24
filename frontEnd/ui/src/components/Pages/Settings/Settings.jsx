@@ -9,11 +9,11 @@ export const Settings = () => {
     const navigate = useNavigate();
 
     const onClickMnageCompanies = () => {
-        navigate('/companies');
+        navigate('/app/settings/companies');
     }
 
     return (
-        <div className="invoiceWrapper">
+        <div className="settingsWrapper">
             <Col span={24}>
                 <Space direction="vertical" size={"large"}>
                     <Row style={{ padding: "0 20px" }}>

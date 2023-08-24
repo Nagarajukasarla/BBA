@@ -26,37 +26,37 @@ export const SideBar = () => {
                     {
                         label: "Dashboard",
                         icon: <AppstoreAddOutlined />,
-                        key: "/dashboard",
+                        key: "/app/dashboard",
                     },
                     {
                         label: "Invoice",
                         icon: <LayoutOutlined />,
-                        key: "/invoice",
+                        key: "/app/invoice",
                     },
                     {
                         label: "Customers",
                         icon: <UserOutlined />,
-                        key: "/customer",
+                        key: "/app/customer",
                     },
                     {
                         label: "Stocks",
                         icon: <CreditCardOutlined />,
-                        key: "/stocks",
+                        key: "/app/stocks",
                     },
                     {
                         label: "Subscriptions",
                         icon: <SlackOutlined />,
-                        key: "/subscriptions",
+                        key: "/app/subscriptions",
                     },
                     {
                         label: "About",
                         icon: <InfoCircleOutlined />,
-                        key: "/about",
+                        key: "/app/about",
                     },
                     {
                         label: "Settings",
                         icon: <SettingOutlined />,
-                        key: "/settings",
+                        key: "/app/settings",
                     },
                 ]}
             ></Menu>

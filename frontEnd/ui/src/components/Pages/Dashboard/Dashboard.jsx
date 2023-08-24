@@ -1,5 +1,4 @@
 import React from "react";
-// import PieChart from "../../PieChart";
 
 import { Col, Row, Space, Typography, Card, Statistic, Dropdown } from "antd";
 import {
@@ -9,7 +8,6 @@ import {
     LineChartOutlined,
     DownOutlined,
 } from "@ant-design/icons";
-// import BarChart from "./BarChart";
 import {
     PieChart,
     Pie,

@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 export const Invoice = () => {
 
-    const navigator = useNavigate();
+    const navigate = useNavigate();
     
     const data = [
         {
@@ -41,7 +41,7 @@ export const Invoice = () => {
     ];
 
     const newInvoice = () => {
-        navigator('/invoice/new');
+        navigate('/app/invoice/newop');
     }
 
     return (
