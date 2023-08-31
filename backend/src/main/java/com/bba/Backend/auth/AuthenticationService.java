@@ -50,6 +50,7 @@ public class AuthenticationService {
                 .orElseThrow();
 
         var jwtToken = jwtService.generateToken(user);
+        logger.info(jwtToken);
         logger.info(String.valueOf(new Date(System.currentTimeMillis())));
         logger.info(String.valueOf(jwtService.getTokenExpirationDate(jwtToken)));
 

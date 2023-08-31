@@ -16,6 +16,9 @@ public class Item {
     @Column(name = "name", length = 256, nullable = false)
     private String name;
 
+    @Column(name = "company", length = 256, nullable = false)
+    private String company;
+
     @Column(name = "description", length = 256)
     private String description;
 

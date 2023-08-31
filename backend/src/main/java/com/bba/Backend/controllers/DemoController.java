@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@CrossOrigin
-@RequestMapping("/api/v1")
+@CrossOrigin(originPatterns = "http://localhost:8080")
+@RequestMapping(path = "api/v1")
 public class DemoController {
 
-    @GetMapping("/demo-controller")
+    @GetMapping(path = "/demo-controller")
     public ResponseEntity<String> sayHello () {
         return ResponseEntity.ok("Hello from secured end point!");
     }
