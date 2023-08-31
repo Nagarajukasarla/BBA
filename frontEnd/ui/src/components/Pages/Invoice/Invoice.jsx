@@ -41,7 +41,7 @@ export const Invoice = () => {
     ];
 
     const newInvoice = () => {
-        navigate('/app/invoice/newop');
+        navigate("/app/new-invoice");
     }
 
     return (

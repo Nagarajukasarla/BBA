@@ -14,7 +14,7 @@ export const Login = () => {
         setPassword(event.target.value);
         // handel null check here
 
-        fetch("http://localhost:8080/api/v1/user/get", {
+        fetch("http://localhost:8080/api/v1/auth/authenticate", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -26,10 +26,18 @@ export const Login = () => {
         })
             .then((response) => {
                 if (response.ok) {
-                    // const obj = response.json();
-                    navigate("/dashboard");
+                    return response.json();
+                } else {
+                    console.error("Authentication Failed");
                 }
             })
+            .then((data) => {
+                if (data && data.token) {
+                    localStorage.setItem("token", data.token);
+                    navigate("/app/dashboard");
+                }
+            })
+
             .catch((error) => {
                 console.log("Error: ", error);
                 setShowErrorMessage(true);

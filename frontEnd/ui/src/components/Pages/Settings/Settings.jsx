@@ -9,7 +9,7 @@ export const Settings = () => {
     const navigate = useNavigate();
 
     const onClickMnageCompanies = () => {
-        navigate('/app/settings/companies');
+        navigate('/app/companies');
     }
 
     return (

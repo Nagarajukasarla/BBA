@@ -213,7 +213,7 @@ export const Customers = () => {
 
     // OnClick Handlers
     const onClickNewCustomer = () => {
-        navigate('/app/customer/new');
+        navigate('/app/new-customer');
     };
 
     return (

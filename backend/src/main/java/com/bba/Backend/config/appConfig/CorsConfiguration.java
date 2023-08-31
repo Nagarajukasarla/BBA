@@ -1,5 +1,6 @@
 package com.bba.Backend.config.appConfig;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -11,12 +12,14 @@ public class CorsConfiguration {
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
             @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:3000")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE")
-                        .allowedHeaders("Content-Type");
+            public void addCorsMappings(@NotNull CorsRegistry registry) {
+                registry.addMapping("/api/v1/**") // Specify the path you want to allow CORS for
+                        .allowedOrigins("http://localhost:3000") // Specify the allowed origin
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Specify the allowed HTTP methods
+                        .allowCredentials(true);
             }
         };
     }
+
+    // When you get issues regarding api accessing try to put localhost:8080 in allowedOrigins method
 }

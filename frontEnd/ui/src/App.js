@@ -14,31 +14,25 @@ import { NewInvoice } from "./components/Pages/Invoice/NewInvoice";
 import { NewCustomer } from "./components/Pages/Customers/NewCustomer";
 import { Companies } from "./components/Pages/Companies/Companies";
 import { IconsWindow } from "./components/IconsWindow";
+import { AuthLoader } from "./components/loaders/AuthLoader";
 
 function App() {
     return (
         <Routes>
+            <Route path="/" element={<AuthLoader />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
-            <Route path="/app" element={<Root />}>
+            <Route path="/app/*" element={<Root />}>
                 <Route path="dashboard" element={<Dashboard />} />
-
-                <Route path="invoice" element={<Invoice />}>
-                    <Route path="newop" element={<NewInvoice />} />
-                </Route>
-
-                <Route path="customer" element={<Customers />}>
-                    <Route path="new" element={<NewCustomer />} />
-                </Route>
-
+                <Route path="invoice" element={<Invoice />} />
+                <Route path="new-invoice" element={<NewInvoice />} />
+                <Route path="customer" element={<Customers />} />
+                <Route path="new-customer" element={<NewCustomer />} />
                 <Route path="stocks" element={<Stocks />} />
                 <Route path="subscriptions" element={<Subscriptions />} />
                 <Route path="about" element={<About />} />
-
-                <Route path="settings" element={<Settings />}>
-                    <Route path="companies" element={<Companies />} />
-                </Route>
-
+                <Route path="settings" element={<Settings />} />
+                <Route path="companies" element={<Companies />} />
                 <Route path="icons" element={<IconsWindow />} />
             </Route>
         </Routes>

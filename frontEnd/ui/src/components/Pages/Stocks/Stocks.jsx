@@ -314,7 +314,7 @@ export const Stocks = () => {
                         >
                             <p className="customerHeader">My Customers</p>
                             <Table
-                                columns={[]}
+                                columns={stockColumns}
                                 dataSource={data}
                                 pagination={false}
                             ></Table>

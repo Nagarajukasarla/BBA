@@ -28,12 +28,14 @@ export const Dashboard = () => {
     //     height: "350px",
     // };
 
+
+
     const DashboardCard = ({ icon, title, value, margin }) => {
         return (
             <Card style={{ width: "220px", marginLeft: margin }}>
                 <Space direction="horizontal"
                     style={{
-                        marginLeft: "-10px",
+                        marginLeft: "12px",
                     }}
                 >
                     {icon}
