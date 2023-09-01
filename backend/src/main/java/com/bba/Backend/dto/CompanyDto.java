@@ -10,7 +10,5 @@ import lombok.*;
 @ToString
 public class CompanyDto {
 
-    public Integer id;
-
     public String name;
 }

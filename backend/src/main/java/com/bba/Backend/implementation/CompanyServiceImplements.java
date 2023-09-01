@@ -19,7 +19,6 @@ public class CompanyServiceImplements implements CompanyService {
     @Override
     public ResponseEntity<CompanyDto> saveCompany(CompanyDto companyDto) {
         var company = Company.builder()
-                .id(companyDto.getId())
                 .name(companyDto.getName())
                 .build();
         companyRepository.save(company);

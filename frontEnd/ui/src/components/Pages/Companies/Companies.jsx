@@ -18,8 +18,8 @@ export const Companies = () => {
             setConfirmLoading(false);
         }, 2000);
         setCompany("");
-    };
-    
+    };    
+
     const handleCancel = () => {
         console.log('Clicked cancel button');
         setCompany("");
