@@ -1,0 +1,28 @@
+
+# dependencies
+frontend/ui/node_modules/
+
+frontend/ui/.pnp
+frontend/ui/.pnp.js
+
+# testing
+frontend/ui/coverage
+
+# production
+frontend/ui/build
+
+# misc
+frontend/ui/.DS_Store
+frontend/ui/.env.local
+frontend/ui/.env.development.local
+frontend/ui/.env.test.local
+frontend/ui/.env.production.local
+frontend/ui/npm-debug.log*
+frontend/ui/yarn-debug.log*
+frontend/ui/yarn-error.log*
+
+#idea and maven content
+/backend/.idea/
+/backend/.mvn/
+/backend/mvnw
+/backend/mvnw.cmd

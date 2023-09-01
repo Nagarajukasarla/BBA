@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ClipLoader from "react-spinners/ClipLoader";
+import './style.css'
 
 export const AuthLoader = () => {
     const navigate = useNavigate();
@@ -37,7 +38,7 @@ export const AuthLoader = () => {
     }, []);
 
     return (
-        <>
+        <div className="authLoader">
             <ClipLoader
                 color={"#772c00"}
                 loading={true}
@@ -45,6 +46,6 @@ export const AuthLoader = () => {
                 aria-label="Loading Spinner"
                 data-testid="loader"
             />
-        </>
+        </div>
     );
 };
