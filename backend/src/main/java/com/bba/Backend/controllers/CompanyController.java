@@ -14,12 +14,12 @@ public class CompanyController {
 
     private final CompanyService companyService;
     @PostMapping(path = "/save")
-    public ResponseEntity<CompanyDto> addCompany (CompanyDto companyDto) {
+    public ResponseEntity<CompanyDto> addCompany (@RequestBody CompanyDto companyDto) {
         return companyService.saveCompany(companyDto);
     }
 
     @GetMapping(path = "/get")
-    public ResponseEntity<CompanyDto> getCompany (String name) {
+    public ResponseEntity<CompanyDto> getCompany (@RequestBody String name) {
         return companyService.getCompany(name);
     }
 

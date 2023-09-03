@@ -1,27 +1,34 @@
 package com.bba.Backend.dto;
 
+import lombok.*;
+
 import java.util.Date;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@ToString
 public class ItemDto {
 
-    private Integer id;
+    public Integer id;
 
-    private String name;
+    public String name;
 
-    private String description;
+    public String description;
 
-    private Integer price;
+    public Integer price;
 
-    private Integer SGSTInPercent;
+    public Integer SGSTInPercent;
 
-    private Integer CGSTInPercent;
+    public Integer CGSTInPercent;
 
-    private Integer GSTInPercent;
+    public Integer GSTInPercent;
 
-    private Date manufacturingDate;
+    public Date manufacturingDate;
 
-    private Date expiryDate;
+    public Date expiryDate;
 
-    private boolean isFastMoving;
+    public Boolean isFastMoving;
 
 }

@@ -15,6 +15,9 @@ import { NewCustomer } from "./components/Pages/Customers/NewCustomer";
 import { Companies } from "./components/Pages/Companies/Companies";
 import { IconsWindow } from "./components/IconsWindow";
 import { AuthLoader } from "./components/loaders/AuthLoader";
+import { Server } from "./components/notifiers/Server";
+import { AddStock } from "./components/Pages/Stocks/AddStock";
+import { EditStock } from "./components/Pages/Stocks/EditStock";
 
 function App() {
     return (
@@ -28,13 +31,17 @@ function App() {
                 <Route path="new-invoice" element={<NewInvoice />} />
                 <Route path="customer" element={<Customers />} />
                 <Route path="new-customer" element={<NewCustomer />} />
-                <Route path="stocks" element={<Stocks />} />
+                <Route path="stocks" element={<Stocks />} >
+                    <Route path="add" element={<AddStock />} />
+                    <Route path="edit" element={<EditStock />} />
+                </Route>
                 <Route path="subscriptions" element={<Subscriptions />} />
                 <Route path="about" element={<About />} />
                 <Route path="settings" element={<Settings />} />
                 <Route path="companies" element={<Companies />} />
                 <Route path="icons" element={<IconsWindow />} />
             </Route>
+            <Route path="/server-down" element={<Server />} />
         </Routes>
     );
 }

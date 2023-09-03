@@ -41,5 +41,6 @@ public class Item {
     private Date expiryDate;
 
     @Column(name = "is_fast_moving", nullable = false)
-    private boolean isFastMoving;
+    private Boolean isFastMoving;
+
 }

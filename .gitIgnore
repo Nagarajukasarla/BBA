@@ -26,3 +26,6 @@ frontend/ui/yarn-error.log*
 /backend/.mvn/
 /backend/mvnw
 /backend/mvnw.cmd
+
+#vscode
+.vscode
