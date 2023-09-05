@@ -29,10 +29,8 @@ import {
 export const NewInvoice = () => {
     // DOM Elements
     const productSearchDropdown = document.getElementById("productSearch");
-    const quantityField = document.getElementById("quantityField");
-    const manufacturingDateField = document.getElementById(
-        "manufacturingDateField"
-    );
+    const quantityField = document.getElementById("`quantityField`");
+    const manufacturingDateField = document.getElementById("manufacturingDateField");
     const expiryDateField = document.getElementById("expiryDateField");
     const sGstField = document.getElementById("sGstField");
     const cGstField = document.getElementById("cGstField");

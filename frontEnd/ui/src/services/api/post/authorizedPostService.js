@@ -28,6 +28,7 @@ export const createCompany = async (token, companyName) => {
     }
 };
 
+
 // Fectching product
 export const getProduct = async (productName, token) => {
     try {
@@ -50,7 +51,6 @@ export const getProduct = async (productName, token) => {
 
 
 // Saving new product
-
 export const saveProduct = async (product, token) => {
     try {
         const response = await fetch("http://localhost:8080/api/v1/product/save", {

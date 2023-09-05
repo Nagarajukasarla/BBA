@@ -1,10 +1,16 @@
 package com.bba.Backend.models;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.util.Date;
 
 @Entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@ToString
 @Table(name = "_item")
 public class Item {
 
@@ -19,6 +25,9 @@ public class Item {
     @Column(name = "company", length = 256, nullable = false)
     private String company;
 
+    @Column(name = "quantity", nullable = false)
+    private Integer quantity;
+
     @Column(name = "description", length = 256)
     private String description;
 
@@ -32,7 +41,7 @@ public class Item {
     private Integer CGSTInPercent;
 
     @Column(name = "gst_in_percent", nullable = false)
-    private Integer GSTInPercent;
+    private Integer IGSTInPercent;
 
     @Column(name = "manufacturing_date", nullable = false)
     private Date manufacturingDate;

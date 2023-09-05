@@ -15,6 +15,10 @@ public class ItemDto {
 
     public String name;
 
+    public String company;
+
+    public Integer quantity;
+
     public String description;
 
     public Integer price;
