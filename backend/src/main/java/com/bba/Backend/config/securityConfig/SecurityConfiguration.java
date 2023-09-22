@@ -26,6 +26,7 @@ public class SecurityConfiguration {
     private final LogoutHandler logoutHandler;
     private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthFilter;
+    private final JwtAuthEntryPoint entryPoint;
 
     @Bean
     public SecurityFilterChain securityFilterChain (HttpSecurity http) throws Exception {
@@ -45,6 +46,7 @@ public class SecurityConfiguration {
                         .addLogoutHandler(logoutHandler)
                         .logoutSuccessHandler(((request, response, authentication) -> SecurityContextHolder.clearContext()))
                 )
+                .exceptionHandling(exception -> exception.authenticationEntryPoint(entryPoint))
                 .httpBasic(Customizer.withDefaults())
         ;
         return http.build();

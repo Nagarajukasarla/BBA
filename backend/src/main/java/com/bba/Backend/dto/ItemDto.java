@@ -1,5 +1,6 @@
 package com.bba.Backend.dto;
 
+import jakarta.persistence.Column;
 import lombok.*;
 
 import java.util.Date;
@@ -19,15 +20,15 @@ public class ItemDto {
 
     public Integer quantity;
 
-    public String description;
+    public String batchNumber;
 
-    public Integer price;
+    public Integer rate;
 
     public Integer SGSTInPercent;
 
     public Integer CGSTInPercent;
 
-    public Integer GSTInPercent;
+    public Integer IGSTInPercent;
 
     public Date manufacturingDate;
 

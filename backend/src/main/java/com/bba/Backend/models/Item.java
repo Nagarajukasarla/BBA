@@ -28,11 +28,11 @@ public class Item {
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
-    @Column(name = "description", length = 256)
-    private String description;
+    @Column(name = "batch_number", length = 256, nullable = false)
+    private String batchNumber;
 
-    @Column(name = "price", nullable = false)
-    private Integer price;
+    @Column(name = "rate", nullable = false)
+    private Integer rate;
 
     @Column(name = "s_gst_in_percent", nullable = false)
     private Integer SGSTInPercent;
@@ -40,7 +40,7 @@ public class Item {
     @Column(name = "c_gst_in_percent", nullable = false)
     private Integer CGSTInPercent;
 
-    @Column(name = "gst_in_percent", nullable = false)
+    @Column(name = "i_gst_in_percent", nullable = false)
     private Integer IGSTInPercent;
 
     @Column(name = "manufacturing_date", nullable = false)

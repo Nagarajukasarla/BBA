@@ -1,10 +1,14 @@
 package com.bba.Backend.services;
 
 import com.bba.Backend.dto.ItemDto;
+import com.bba.Backend.dto.ItemRequest;
+import com.bba.Backend.models.Item;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Optional;
+
 public interface ItemService {
-    ResponseEntity<ItemDto> getItem(ItemDto itemDto);
+    ResponseEntity<?> getItem(ItemRequest itemRequest);
 
     ResponseEntity<String> saveItem(ItemDto itemDto);
 

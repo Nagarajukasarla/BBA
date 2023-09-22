@@ -40,7 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        logger.info(" Authorization Header: " + authHeader);
+        logger.info("Authorization Header: " + authHeader);
 
         jwt = authHeader.substring(7);
 
@@ -58,6 +58,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         new WebAuthenticationDetailsSource().buildDetails(request)
                 );
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+            }
+            else {
+                logger.info("Unauthorized !!");
             }
         }
         filterChain.doFilter(request, response);

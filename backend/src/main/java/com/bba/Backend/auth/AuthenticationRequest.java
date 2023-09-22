@@ -13,3 +13,4 @@ public class AuthenticationRequest {
     private String email;
     String password;
 }
+

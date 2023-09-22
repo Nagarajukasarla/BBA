@@ -1,6 +1,7 @@
 package com.bba.Backend.controllers;
 
 import com.bba.Backend.dto.CompanyDto;
+import com.bba.Backend.dto.ItemRequest;
 import com.bba.Backend.services.CompanyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
