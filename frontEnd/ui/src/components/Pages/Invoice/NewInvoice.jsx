@@ -29,14 +29,14 @@ import {
 export const NewInvoice = () => {
     // DOM Elements
     const productSearchDropdown = document.getElementById("productSearch");
-    const quantityField = document.getElementById("`quantityField`");
+    const quantityField = document.getElementById("quantityField");
     const manufacturingDateField = document.getElementById("manufacturingDateField");
     const expiryDateField = document.getElementById("expiryDateField");
     const sGstField = document.getElementById("sGstField");
     const cGstField = document.getElementById("cGstField");
     const iGstField = document.getElementById("iGstField");
     const discountField = document.getElementById("discountField");
-    const priceField = document.getElementById("priceField");
+    const rateField = document.getElementById("rateField");
 
     let itemObj = {
         id: "",
@@ -47,6 +47,7 @@ export const NewInvoice = () => {
         sGst: "",
         cGst: "",
         iGst: "",
+        rate: "",
         discount: "",
         price: "",
     };
@@ -63,7 +64,7 @@ export const NewInvoice = () => {
     const [cGst, setCGst] = useState("");
     const [iGst, setIGst] = useState("");
     const [discount, setDiscount] = useState("");
-    const [price, setPrice] = useState("");
+    const [rate, setRate] = useState("");
     const [paymentModeValue, setPaymentModeValue] = useState("");
 
     // Customer list
@@ -211,15 +212,21 @@ export const NewInvoice = () => {
         },
         {
             key: "10",
+            title: "Rate",
+            dataIndex: "rate",
+            width: "5%",
+        },
+        {
+            key: "11",
             title: "Discount",
             dataIndex: "discount",
             width: "7%",
         },
         {
-            key: "11",
+            key: "12",
             title: "Price",
             dataIndex: "price",
-            width: "10%",
+            width: "9%",
         },
     ];
 
@@ -285,13 +292,13 @@ export const NewInvoice = () => {
         console.log(`Discount: ${value.target.value}`);
     };
 
-    const onChangePriceValue = (value) => {
-        setPrice(value.target.value);
-        console.log(`Price: ${value.target.value}`);
+    const onChangeRateValue = (value) => {
+        setRate(value.target.value);
+        console.log(`Rate: ${value.target.value}`);
     };
 
     // OnKeyup event handlers
-    const onKeyupPriceField = (event) => {
+    const onKeyupRateField = (event) => {
         if (event.keyCode === 13) {
             onClickAddButton();
             activateDropdown();
@@ -303,8 +310,9 @@ export const NewInvoice = () => {
             itemObj.sGst = sGst;
             itemObj.cGst = cGst;
             itemObj.iGst = iGst;
+            itemObj.rate = rate;
             itemObj.discount = discount;
-            itemObj.price = price;
+            itemObj.price = (rate * quantity).toFixed(2);
             addToInvoiceTable(itemObj);
             setToEmpty();
         }
@@ -342,7 +350,7 @@ export const NewInvoice = () => {
         setCGst("");
         setIGst("");
         setDiscount("");
-        setPrice("");
+        setRate("");
     };
 
 
@@ -417,7 +425,7 @@ export const NewInvoice = () => {
                                     dropdownStyle={dropDownStyles}
                                     allowClear
                                     onFocus={() => {
-                                        console.log("CLiked");
+                                        console.log("Clicked");
                                     }}
                                 />
                             </Space>
@@ -600,7 +608,7 @@ export const NewInvoice = () => {
                                     onChange={onChangeDiscountValue}
                                     onKeyUp={(event) =>
                                         onPressedEnterDiscountField(event, {
-                                            priceField,
+                                            rateField,
                                         })
                                     }
                                 ></Input>
@@ -613,15 +621,15 @@ export const NewInvoice = () => {
                                 }}
                             >
                                 <Typography.Text className="primary-input-field-header-style">
-                                    Price
+                                    Rate
                                 </Typography.Text>
                                 <Input
                                     style={{ width: "90px" }}
-                                    value={price}
-                                    className="invoiceInputFields priceField"
-                                    id="priceField"
-                                    onChange={onChangePriceValue}
-                                    onKeyUp={onKeyupPriceField}
+                                    value={rate}
+                                    className="invoiceInputFields rateInputFields"
+                                    id="rateField"
+                                    onChange={onChangeRateValue}
+                                    onKeyUp={onKeyupRateField}
                                 />
                             </Space>
                             <Space

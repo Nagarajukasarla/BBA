@@ -38,7 +38,7 @@
 .appContentContainer {
     max-height: 85vh;
     overflow-y: scroll;
-    border: 1px solid red;
+    /* border: 1px solid red; */
 }
 
 .appFooter {

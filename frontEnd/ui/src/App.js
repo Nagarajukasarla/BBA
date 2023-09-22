@@ -16,8 +16,7 @@ import { Companies } from "./components/Pages/Companies/Companies";
 import { IconsWindow } from "./components/IconsWindow";
 import { AuthLoader } from "./components/loaders/AuthLoader";
 import { Server } from "./components/notifiers/Server";
-import { AddStock } from "./components/Pages/Stocks/AddStock";
-import { EditStock } from "./components/Pages/Stocks/EditStock";
+import { AddOrEditStock } from "./components/Pages/Stocks/AddOrEditStock";
 
 function App() {
     return (
@@ -32,8 +31,8 @@ function App() {
                 <Route path="customer" element={<Customers />} />
                 <Route path="new-customer" element={<NewCustomer />} />
                 <Route path="stocks" element={<Stocks />} >
-                    <Route path="add" element={<AddStock />} />
-                    <Route path="edit" element={<EditStock />} />
+                    <Route path="add" element={<AddOrEditStock />} />
+                    <Route path="edit" element={<AddOrEditStock />} />
                 </Route>
                 <Route path="subscriptions" element={<Subscriptions />} />
                 <Route path="about" element={<About />} />

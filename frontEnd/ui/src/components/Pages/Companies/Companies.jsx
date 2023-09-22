@@ -121,7 +121,7 @@ export const Companies = () => {
                                 style={{ width: "250px" }}
                                 value={company}
                                 onChange={onNameChanges}
-                                onKeyUp={(event) => { event.keyCode === 13 && handleOk() }}
+                                onKeyUp={(event) => { event.key === 'Enter' && handleOk() }}
                             ></Input>
                         </Space>
                     </Space>
