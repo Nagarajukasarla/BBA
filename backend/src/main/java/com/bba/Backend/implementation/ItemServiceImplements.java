@@ -10,11 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
-
-import javax.swing.text.html.Option;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +19,25 @@ public class ItemServiceImplements implements ItemService {
     private final ItemRepository itemRepository;
 
     private final ModelMapper modelMapper;
+
+    // Just to fetch item
+    public ItemDto fetchItem (ItemRequest request) {
+        var item = itemRepository.findByName(request.getName());
+        return item.map(value -> ItemDto.builder()
+                .id(value.getId())
+                .name(value.getName())
+                .company(value.getCompany())
+                .batchNumber(value.getBatchNumber())
+                .quantity((value.getQuantity()))
+                .manufacturingDate(value.getManufacturingDate())
+                .expiryDate(value.getExpiryDate())
+                .CGSTInPercent(value.getCGSTInPercent())
+                .SGSTInPercent(value.getSGSTInPercent())
+                .IGSTInPercent(value.getIGSTInPercent())
+                .rate(value.getRate())
+                .isFastMoving(value.getIsFastMoving())
+                .build()).orElse(null);
+    }
 
     @Override
     public ResponseEntity<?> getItem(ItemRequest request) {
@@ -49,21 +64,38 @@ public class ItemServiceImplements implements ItemService {
     }
 
     @Override
-    public ResponseEntity<String> saveItem(ItemDto itemDto) {
-        var item = Item.builder()
-                .name(itemDto.getName())
-                .company(itemDto.getCompany())
-                .quantity(itemDto.getQuantity())
-                .batchNumber(itemDto.getBatchNumber())
-                .manufacturingDate(itemDto.getManufacturingDate())
-                .expiryDate(itemDto.getExpiryDate())
-                .CGSTInPercent(itemDto.getCGSTInPercent())
-                .SGSTInPercent(itemDto.getSGSTInPercent())
-                .IGSTInPercent(itemDto.getIGSTInPercent())
-                .rate(itemDto.getRate())
-                .isFastMoving(itemDto.getIsFastMoving())
-                .build();
-
+    public ResponseEntity<String> saveOrUpdateItem (ItemDto itemDto) {
+        var itemOptional = itemRepository.findByName(itemDto.getName());
+        Item item;
+        if (itemOptional.isPresent()) {
+            item = itemOptional.get();
+            itemDto.setId(item.getId());
+            item.setBatchNumber(itemDto.getBatchNumber());
+            item.setCompany(itemDto.getCompany());
+            item.setQuantity(itemDto.getQuantity());
+            item.setManufacturingDate(itemDto.getManufacturingDate());
+            item.setExpiryDate(itemDto.getExpiryDate());
+            item.setCGSTInPercent(itemDto.getCGSTInPercent());
+            item.setSGSTInPercent(itemDto.getSGSTInPercent());
+            item.setIGSTInPercent(item.getIGSTInPercent());
+            item.setRate(itemDto.getRate());
+            item.setId(itemDto.getId());
+        }
+        else {
+            item = Item.builder()
+                    .name(itemDto.getName())
+                    .company(itemDto.getCompany())
+                    .quantity(itemDto.getQuantity())
+                    .batchNumber(itemDto.getBatchNumber())
+                    .manufacturingDate(itemDto.getManufacturingDate())
+                    .expiryDate(itemDto.getExpiryDate())
+                    .CGSTInPercent(itemDto.getCGSTInPercent())
+                    .SGSTInPercent(itemDto.getSGSTInPercent())
+                    .IGSTInPercent(itemDto.getIGSTInPercent())
+                    .rate(itemDto.getRate())
+                    .isFastMoving(itemDto.getIsFastMoving())
+                    .build();
+        }
         itemRepository.save(item);
         return ResponseEntity.ok(item.getName() + " is Successfully added !");
     }

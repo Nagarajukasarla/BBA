@@ -10,6 +10,6 @@ import java.util.Optional;
 public interface ItemService {
     ResponseEntity<?> getItem(ItemRequest itemRequest);
 
-    ResponseEntity<String> saveItem(ItemDto itemDto);
+    ResponseEntity<String> saveOrUpdateItem(ItemDto itemDto);
 
 }
