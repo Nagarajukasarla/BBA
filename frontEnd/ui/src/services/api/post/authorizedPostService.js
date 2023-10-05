@@ -1,5 +1,7 @@
+import { getStatus } from "../statusUtils/responseStatus";
 
-// saving new company
+
+/* Saving new company */
 export const createCompany = async (token, companyName) => {
     try {
         const response = await fetch("http://localhost:8080/api/v1/company/save", {
@@ -30,7 +32,7 @@ export const createCompany = async (token, companyName) => {
 
 
 
-// Saving new product
+/* Saving new product */
 export const saveProduct = async (product, token) => {
     try {
         const response = fetch("http://localhost:8080/api/v1/product/save", {
@@ -46,9 +48,9 @@ export const saveProduct = async (product, token) => {
                 batchNumber: product.batchNumber,
                 manufacturingDate: product.manufacturingDate,
                 expiryDate: product.expiryDate,
-                SGSTInPercent: product.sGst,
-                CGSTInPercent: product.cGst,
-                IGSTInPercent: product.iGst,
+                sGstInPercent: product.sGst,
+                cGstInPercent: product.cGst,
+                iGstInPercent: product.iGst,
                 rate: product.rate,
                 isFastMoving: false
             }),
@@ -66,5 +68,34 @@ export const saveProduct = async (product, token) => {
     catch (error) {
         console.error(`Error in saving prouct: ${error}`);
         return false;
+    }
+};
+
+/* Fetching product */
+
+export const getProduct = async (productName, token) => {
+    try {
+        const response = await fetch("http://localhost:8080/api/v1/product/get", {
+            method: "POST",
+            headers: {
+                'Content-Type' : 'application/json',
+                'Authorization' : `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+                name: productName,
+            }),
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log(data);
+            return data;
+        }
+        else {
+            throw new Error(getStatus(response.status));
+        }
+    }
+    catch (error) {
+        throw error;
     }
 };
