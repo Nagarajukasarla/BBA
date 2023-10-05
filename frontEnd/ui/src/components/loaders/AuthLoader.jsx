@@ -2,12 +2,12 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ClipLoader from "react-spinners/ClipLoader";
 import './style.css'
+import { getToken } from "../../services/load/loadBrowserContent";
 
 export const AuthLoader = () => {
     const navigate = useNavigate();
 
-    const token = localStorage.getItem("token");
-    console.log(token);
+    const token = getToken();
     const authenticate = () => {
         if (token) {
             fetch("http://localhost:8080/api/v1/demo-controller", {

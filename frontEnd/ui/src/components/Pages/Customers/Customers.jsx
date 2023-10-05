@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Col, Row, Typography, Space, Button, Table, Tooltip } from "antd";
 
 import { PlusCircleOutlined, EditOutlined } from "@ant-design/icons";
@@ -6,6 +6,10 @@ import "./css/customer.css";
 import { useNavigate } from "react-router-dom";
 
 export const Customers = () => {
+
+    useEffect(() => {
+        document.title = "Customers";
+    })
 
     const navigate = useNavigate(); 
     const customersColumns = [

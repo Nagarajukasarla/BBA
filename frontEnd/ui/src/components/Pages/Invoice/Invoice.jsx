@@ -1,13 +1,16 @@
 import { Col, Space, Row, Typography, Button, Table, Tooltip } from "antd";
 import { PlusCircleOutlined, EditOutlined } from "@ant-design/icons";
-import React from "react";
+import React, { useEffect } from "react";
 import "./css/invoiceStyle.css";
 import { useNavigate } from "react-router-dom";
 
 export const Invoice = () => {
+    useEffect(() => {
+        document.title = "Invoice";
+    });
 
     const navigate = useNavigate();
-    
+
     const data = [
         {
             key: "1",
@@ -42,7 +45,7 @@ export const Invoice = () => {
 
     const newInvoice = () => {
         navigate("/app/new-invoice");
-    }
+    };
 
     return (
         <div className="invoiceWrapper">
@@ -53,7 +56,12 @@ export const Invoice = () => {
                     </Row>
                     <Row style={{ padding: "0 20px" }}>
                         <Space direction="horizontal" size={"large"}>
-                            <Button onClick={newInvoice} type="primary" shape="round" size="large">
+                            <Button
+                                onClick={newInvoice}
+                                type="primary"
+                                shape="round"
+                                size="large"
+                            >
                                 New Invoice
                                 <PlusCircleOutlined />
                             </Button>
@@ -64,7 +72,11 @@ export const Invoice = () => {
                         </Space>
                     </Row>
                     <Row style={{ padding: "0 20px" }}>
-                        <Space direction="vertical" size={"large"} style={{textAlign: "start", marginTop: "20px"}}>
+                        <Space
+                            direction="vertical"
+                            size={"large"}
+                            style={{ textAlign: "start", marginTop: "20px" }}
+                        >
                             <p className="invoiceHeader">Recent Orders</p>
                             <Table
                                 columns={[

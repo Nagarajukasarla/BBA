@@ -11,6 +11,7 @@ export const Settings = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
+        document.title = "Settings";
         const checkAuthentication = async () => {
             if (!(await authenticate(getToken()))) {
                 console.log("Not authenticated");

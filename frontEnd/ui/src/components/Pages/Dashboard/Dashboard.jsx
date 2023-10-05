@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import { Col, Row, Space, Typography, Card, Statistic, Dropdown } from "antd";
 import {
@@ -29,6 +29,9 @@ export const Dashboard = () => {
     // };
 
 
+    useEffect(() => {
+        document.title = "Dashboard";
+    })
 
     const DashboardCard = ({ icon, title, value, margin }) => {
         return (

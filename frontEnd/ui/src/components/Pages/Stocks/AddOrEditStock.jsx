@@ -1,8 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Card, Col, Row, Space, Typography, Input, message } from "antd";
-// import { getProduct } from "../../../services/api/get/authorizedGetServices";
-import { saveProduct } from "../../../services/api/post/authorizedPostService";
+import {
+    Card,
+    Col,
+    Row,
+    Space,
+    Typography,
+    Input,
+    message,
+    Tooltip,
+} from "antd";
+import { CloseCircleOutlined } from "@ant-design/icons";
+import {
+    saveProduct,
+    getProduct,
+} from "../../../services/api/post/authorizedPostService";
 import { getToken } from "../../../services/load/loadBrowserContent";
 import "../../coreComponents/Styles/primaryStyle.css";
 import {
@@ -18,6 +30,11 @@ import {
 import { validate } from "../../../services/validation/validate";
 
 export const AddOrEditStock = () => {
+
+    useEffect(() => {
+        document.title = "Stocks";
+    })
+
     const location = useLocation();
     const navigate = useNavigate();
     const obj = location.state?.obj;
@@ -36,12 +53,22 @@ export const AddOrEditStock = () => {
     const iGstField = document.getElementById("iGstField");
     const rateField = document.getElementById("rateField");
 
-    const [productName, setProductName] = useState(obj != null ? obj.productName : "");
-    const [batchNumber, setBatchNumber] = useState(obj != null ? obj.batchNumber : "");
-    const [companyName, setCompanyName] = useState(obj != null ? obj.companyName : "");
+    const [productName, setProductName] = useState(
+        obj != null ? obj.productName : ""
+    );
+    const [batchNumber, setBatchNumber] = useState(
+        obj != null ? obj.batchNumber : ""
+    );
+    const [companyName, setCompanyName] = useState(
+        obj != null ? obj.companyName : ""
+    );
     const [quantity, setQuantity] = useState(obj != null ? obj.quantity : "");
-    const [manufacturingDate, setManufacturingDate] = useState(obj != null ? obj.manufacturingDate : "");
-    const [expiryDate, setExpiryDate] = useState(obj != null ? obj.expiryDate : "");
+    const [manufacturingDate, setManufacturingDate] = useState(
+        obj != null ? obj.manufacturingDate : ""
+    );
+    const [expiryDate, setExpiryDate] = useState(
+        obj != null ? obj.expiryDate : ""
+    );
     const [sGst, setSGST] = useState(obj != null ? obj.sGst : "");
     const [cGst, setCGST] = useState(obj != null ? obj.cGst : "");
     const [iGst, setIGST] = useState(obj != null ? obj.iGst : "");
@@ -60,8 +87,6 @@ export const AddOrEditStock = () => {
         rate,
     ];
 
-    const [product, setProduct] = useState(null);
-
     const [messageApi, contextHolder] = message.useMessage();
 
     const clearProduct = () => {
@@ -75,50 +100,6 @@ export const AddOrEditStock = () => {
         setIGST("");
         setRate("");
     };
-
-    const fetchItem = (productName, token) => {
-        fetch("http://localhost:8080/api/v1/product/get", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-                name: productName,
-            }),
-        })
-            .then((response) => {
-                if (response.ok) {
-                    return response.json();
-                }
-                else if (response.status === 404) {
-                    clearProduct();
-                    setProduct(null);
-                    throw new Error("404");
-                }
-                // Inavlid API
-                else if (response.status === 401) {
-                    throw new Error("401");
-                }
-            })
-            .then((data) => {
-                setProduct(data);
-            })
-            .catch((error) => {
-                console.log("Error occurred: ", error);
-                if (error.message.includes("Failed to fetch")) {
-                    navigate("/login");
-                }
-                else {
-                    console.log("Error occurred: ", error);
-                }
-            });
-    };
-
-    // const fetchProduct = async (name) => {
-    //     const response = await getProduct(name, getToken());
-    //     return response;
-    // };
 
     const submitProduct = async (
         productName,
@@ -156,21 +137,42 @@ export const AddOrEditStock = () => {
     };
 
     const onPressedEnterProductNameField = async (event) => {
-        // here productName should not be null or empty
-        if (event.key === "Enter") {
-            fetchItem(productName, getToken());
-            setTimeout(() => {
-                setBatchNumber(product != null ? product.batchNumber : batchNumber);
-                setCompanyName(product != null ? product.company : companyName);
-                setQuantity(product != null ? product.quantity : quantity);
-                setManufacturingDate(product != null ? product.manufacturingDate : manufacturingDate);
-                setExpiryDate(product != null ? product.expiryDate : expiryDate);
-                setSGST(product != null ? product.sgstinPercent : sGst);
-                setCGST(product != null ? product.cgstinPercent : cGst);
-                setIGST(product != null ? product.igstinPercent : iGst);
-                setRate(product != null ? product.rate : rate);
-            }, 500);
-            batchNumberField.focus();
+        // TODO : Check where productName should not be null or empty
+        if (event.target.value !== "") {
+            if (event.key === "Enter") {
+                try {
+                    const response = await getProduct(productName, getToken());
+                    console.log(response);
+                    if (response !== null) {
+                        setBatchNumber(response.batchNumber || "");
+                        setCompanyName(response.company || "");
+                        setQuantity(response.quantity || "");
+                        setManufacturingDate(response.manufacturingDate || "");
+                        setExpiryDate(response.expiryDate || "");
+                        setSGST(response.sGstInPercent || "");
+                        setCGST(response.cGstInPercent || "");
+                        setIGST(response.iGstInPercent || "");
+                        setRate(response.rate || "");
+                    } else {
+                        clearProduct();
+                    }
+                } catch (error) {
+                    if (error.message === "Not found") {
+                        clearProduct();
+                        console.log("Item your searching is not found");
+                    } else if (error.message === "Unauthorized") {
+                        alert("Unauthorized");
+                    } else if (error.message === "Forbidden") {
+                        navigate("/login");
+                    } else if (error.message === "Server is not started") {
+                        alert("Server is not started");
+                    } else {
+                        console.error(error);
+                    }
+                } finally {
+                    batchNumberField.focus();
+                }
+            }
         }
     };
 
@@ -202,6 +204,7 @@ export const AddOrEditStock = () => {
                 setRate("");
 
                 success();
+                navigate("/app/stocks");
                 // show success popup
                 // close the add stock block and show list of products
             } else {
@@ -263,13 +266,22 @@ export const AddOrEditStock = () => {
                 }}
             >
                 <Col>
-                    <Row>
+                    <Row justify={"space-between"}>
                         <Typography.Title
                             style={{ marginLeft: "10px" }}
                             level={4}
                         >
                             {obj != null ? "Edit Stock" : "Add Stock"}
                         </Typography.Title>
+                        <Tooltip title="Back">
+                            <CloseCircleOutlined
+                                style={{
+                                    marginRight: "20px",
+                                    fontSize: "150%",
+                                }}
+                                onClick={() => navigate("/app/stocks")}
+                            />
+                        </Tooltip>
                     </Row>
                     <Row>
                         <Space
