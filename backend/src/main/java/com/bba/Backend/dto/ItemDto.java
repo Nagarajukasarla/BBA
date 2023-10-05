@@ -24,11 +24,11 @@ public class ItemDto {
 
     public Integer rate;
 
-    public Integer SGSTInPercent;
+    public Integer sGstInPercent;
 
-    public Integer CGSTInPercent;
+    public Integer cGstInPercent;
 
-    public Integer IGSTInPercent;
+    public Integer iGstInPercent;
 
     public Date manufacturingDate;
 

@@ -1,11 +1,8 @@
 package com.bba.Backend.config.appConfig;
 
-import com.bba.Backend.dto.ItemDto;
-import com.bba.Backend.models.Item;
 import com.bba.Backend.repositories.PartnerRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.PropertyMap;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;

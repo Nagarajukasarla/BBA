@@ -35,13 +35,13 @@ public class Item {
     private Integer rate;
 
     @Column(name = "s_gst_in_percent", nullable = false)
-    private Integer SGSTInPercent;
+    private Integer sGstInPercent;
 
     @Column(name = "c_gst_in_percent", nullable = false)
-    private Integer CGSTInPercent;
+    private Integer cGstInPercent;
 
     @Column(name = "i_gst_in_percent", nullable = false)
-    private Integer IGSTInPercent;
+    private Integer iGstInPercent;
 
     @Column(name = "manufacturing_date", nullable = false)
     private Date manufacturingDate;
