@@ -1,15 +1,32 @@
 package com.bba.Backend.dto;
 
+import com.bba.Backend.models.Partner;
 import com.bba.Backend.models.util.Address;
 import lombok.*;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
 @ToString
 public class PartnerDto {
+
+    @Autowired
+    private ModelMapper modelMapper;
+
+    public PartnerDto (Partner partner, Address address) {
+        setId(partner.getId());
+        setFirstName(partner.getFirstName());
+        setLastName(partner.getLastName());
+        setEmail(partner.getEmail());
+        setPassword(partner.getPassword());
+        setAddressDto(modelMapper.map(address, AddressDto.class));
+        setMobile(partner.getMobile());
+        setGender(partner.getGender());
+    }
+
     private int id;
 
     private Boolean isOwner;
@@ -22,7 +39,7 @@ public class PartnerDto {
 
     private String password;
 
-    private Address address;
+    private AddressDto addressDto;
 
     private String mobile;
 

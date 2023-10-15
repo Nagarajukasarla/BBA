@@ -11,5 +11,5 @@ import java.util.Optional;
 @EnableJpaRepositories
 @Repository
 public interface PartnerRepository extends JpaRepository<Partner, Integer> {
-    Optional<Partner> findByEmail(String email);
+    Optional<Partner> findByEmail (String email);
 }

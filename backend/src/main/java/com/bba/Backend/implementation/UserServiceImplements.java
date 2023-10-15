@@ -2,79 +2,42 @@ package com.bba.Backend.implementation;
 
 import com.bba.Backend.dto.PartnerDto;
 import com.bba.Backend.models.Partner;
-import com.bba.Backend.models.util.Address;
-import com.bba.Backend.repositories.AddressRepository;
+import com.bba.Backend.models.util.Role;
 import com.bba.Backend.repositories.PartnerRepository;
 import com.bba.Backend.services.PartnerService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImplements implements PartnerService {
 
-    @Autowired
-    public PartnerRepository partnerRepository;
-    @Autowired
-    public AddressRepository addressRepository;
+    private final PartnerRepository partnerRepository;
+    private final ModelMapper modelMapper;
+    private final AddressServiceImplements addressService;
 
     @Override
     public ResponseEntity<PartnerDto> addPartner (PartnerDto partnerDto) {
-        Partner newUser = new Partner();
-        Address userAddress = partnerDto.getAddress();
+        var newPartner = Partner.builder()
+                .firstName(partnerDto.getFirstName())
+                .lastName(partnerDto.getLastName())
+                .email(partnerDto.getEmail())
+                .password(partnerDto.getPassword())
+                .gender(partnerDto.getGender())
+                .mobile(partnerDto.getMobile())
+                .role(Role.USER)
+                .build();
 
-        newUser.setOwner(false);
-        newUser.setFirstName(partnerDto.getFirstName());
-        newUser.setLastName(partnerDto.getLastName());
-        newUser.setEmail(partnerDto.getEmail());
-        newUser.setPassword(partnerDto.getPassword());
-        newUser.setMobile(partnerDto.getMobile());
-        newUser.setGender(partnerDto.getGender());
-
-        partnerRepository.save(newUser);
-        addressRepository.save(userAddress);
-
-        PartnerDto responsePartnerDto = new PartnerDto();
-        responsePartnerDto.setId(newUser.getId());
-        responsePartnerDto.setFirstName(newUser.getFirstName());
-        responsePartnerDto.setLastName(newUser.getLastName());
-        responsePartnerDto.setEmail(newUser.getEmail());
-        responsePartnerDto.setPassword("*********");
-        responsePartnerDto.setGender(newUser.getGender());
-        responsePartnerDto.setMobile(newUser.getMobile());
-//        responsePartnerDto.setDateOfBirth(newUser.getDateOfBirth());
-        return ResponseEntity.ok(responsePartnerDto);
+        addressService.saveAddress(partnerDto.getAddressDto());
+        return ResponseEntity.ok(modelMapper.map(newPartner, PartnerDto.class));
     }
 
-    public ResponseEntity<?> findPartner (String email, String password) {
-        Partner validPartner =  partnerRepository.findAll()
-                .stream()
-                .filter(obj -> obj.getEmail().equals(email))
-                .findFirst()
-                .orElse(null);
-
-        Address validAddress = addressRepository.findAll()
-                .stream()
-                .filter(address -> address.getEmail().equals(email))
-                .findFirst()
-                .orElse(null);
-
-        PartnerDto responsePartnerDto = new PartnerDto();
-        if (validPartner != null) {
-            responsePartnerDto.setId(validPartner.getId());
-            responsePartnerDto.setFirstName(validPartner.getFirstName());
-            responsePartnerDto.setLastName(validPartner.getLastName());
-            responsePartnerDto.setEmail(validPartner.getEmail());
-            responsePartnerDto.setPassword("*********");
-            responsePartnerDto.setGender(validPartner.getGender());
-            responsePartnerDto.setMobile(validPartner.getMobile());
-//            responsePartnerDto.setDateOfBirth(validPartner.getDateOfBirth());
-            responsePartnerDto.setAddress(validAddress);
-        }
-        String errorMessage = "User Not found";
-        return (responsePartnerDto.getId() != 0)
-                ? ResponseEntity.ok(responsePartnerDto)
-                : ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+    public ResponseEntity<?> findPartner(String email, String password) {
+        var partner = partnerRepository.findByEmail(email);
+        var partnerAddress = addressService.getAddressOfPartner(email);
+        assert partner.orElse(null) != null;
+        return ResponseEntity.ok(new PartnerDto(partner.orElse(null), partnerAddress));
     }
 }

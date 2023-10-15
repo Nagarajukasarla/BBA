@@ -9,9 +9,11 @@ import lombok.*;
 @ToString
 public class AddressDto {
 
-    private int id;
+    private Integer id;
 
     private String blockNumber;
+
+    private Integer customerNumber;
 
     private String street;
 
@@ -19,7 +21,5 @@ public class AddressDto {
 
     private String state;
 
-    private int zipcode;
-
-    private String email;
+    private String zipcode;
 }

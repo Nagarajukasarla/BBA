@@ -19,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class ApplicationConfig {
 
     private final PartnerRepository partnerRepository;
+
     @Bean
     public ModelMapper modelWrapper() {
         return new ModelMapper();

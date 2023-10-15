@@ -1,10 +1,7 @@
 package com.bba.Backend.dto;
-import com.bba.Backend.models.Invoice;
 import com.bba.Backend.models.util.Address;
+import com.bba.Backend.utils.DateTime;
 import lombok.*;
-
-import java.util.Date;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -17,15 +14,17 @@ public class CustomerDto {
 
     private String name;
 
+    private Integer customerNumber;
+
     private String email;
 
-    private Address address;
-
-    private List<Invoice> invoices;
+    private String phone;
 
     private long pendingAmount;
 
-    private Date dueDate;
+    private DateTime createdDate;
+
+    private AddressDto addressDto;
 
     private long totalPurchaseAmount;
 

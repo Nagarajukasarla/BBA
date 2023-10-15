@@ -1,5 +1,6 @@
 package com.bba.Backend.models;
 
+import com.bba.Backend.models.util.Address;
 import com.bba.Backend.models.util.Role;
 import jakarta.persistence.*;
 import lombok.*;
@@ -33,7 +34,7 @@ public class Partner implements UserDetails {
     @Column(name = "last_name", length = 256, nullable = false)
     private String lastName;
 
-    @Column(name = "email", length = 256,  nullable = false)
+    @Column(name = "email", length = 256, unique = true, nullable = false)
     private String email;
 
     @Column(name = "password", length = 256, nullable = false)
@@ -47,6 +48,10 @@ public class Partner implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     Role role;
+
+    @OneToOne(mappedBy = "partner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "email", referencedColumnName = "email")
+    private Address address;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
