@@ -1,12 +1,13 @@
 package com.bba.Backend.services;
 
 import com.bba.Backend.dto.CustomerDto;
-import org.springframework.http.ResponseEntity;
+import java.util.List;
+import java.util.Optional;
 
 public interface CustomerService {
-    ResponseEntity<?> saveCustomer (CustomerDto customerDto);
+    CustomerDto saveCustomer (CustomerDto customerDto);
 
-    ResponseEntity<?> getCustomer (Integer customerNumber);
+    Optional<CustomerDto> getCustomer (Integer customerNumber);
 
-    ResponseEntity<?> getAllCustomers ();
+    List<CustomerDto> getAllCustomers ();
 }

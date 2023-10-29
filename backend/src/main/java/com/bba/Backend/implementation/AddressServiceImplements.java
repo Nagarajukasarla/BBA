@@ -4,11 +4,14 @@ import com.bba.Backend.dto.AddressDto;
 import com.bba.Backend.models.util.Address;
 import com.bba.Backend.repositories.AddressRepository;
 import com.bba.Backend.services.AddressService;
+import com.bba.Backend.utils.Mapper;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -16,9 +19,23 @@ import java.util.Optional;
 public class AddressServiceImplements implements AddressService {
 
     private final AddressRepository addressRepository;
+    private final Mapper mapper;
 
     @Override
-    public ResponseEntity<?> saveAddress(AddressDto addressDto) {
+    public Address saveAddressOfPartner(@NonNull AddressDto addressDto) {
+        var address = Address.builder()
+                .blockNumber(addressDto.getBlockNumber())
+                .partnerEmail(addressDto.getPartnerEmail())
+                .street(addressDto.getStreet())
+                .city(addressDto.getCity())
+                .state(addressDto.getState())
+                .zipcode(addressDto.getZipcode())
+                .build();
+        return addressRepository.save(address);
+    }
+
+    @Override
+    public Address saveAddressOfCustomer(@NonNull AddressDto addressDto) {
         var address = Address.builder()
                 .blockNumber(addressDto.getBlockNumber())
                 .customerNumber(addressDto.getCustomerNumber())
@@ -27,16 +44,28 @@ public class AddressServiceImplements implements AddressService {
                 .state(addressDto.getState())
                 .zipcode(addressDto.getZipcode())
                 .build();
-        return ResponseEntity.ok(addressRepository.save(address));
+        return addressRepository.save(address);
     }
 
+
     @Override
-    public ResponseEntity<?> getAddressOfCustomer(Integer customerNumber) {
+    public Optional<AddressDto> getAddressOfCustomer(Integer customerNumber) {
         var address = addressRepository.findByCustomerNumber(customerNumber);
-        if (address.isPresent()) {
-            return ResponseEntity.ok(address);
+        return address.map(mapper::mapAddressToAddressDto);
+    }
+
+
+    @Override
+    public List<AddressDto> getAllCustomersAddress() {
+        var values = addressRepository.findAllWithNullPartnerEmail();
+        if (values.isEmpty()) {
+            return Collections.emptyList();
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Address Not Found");
+        Comparator<AddressDto> customerNumberComparator = Comparator.comparing(AddressDto::getCustomerNumber);
+        return values.stream()
+                .map(mapper::mapAddressToAddressDto)
+                .sorted(customerNumberComparator)
+                .toList();
     }
 
     @Override

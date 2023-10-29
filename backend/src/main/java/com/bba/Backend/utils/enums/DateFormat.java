@@ -1,4 +1,4 @@
-package com.bba.Backend.utils;
+package com.bba.Backend.utils.enums;
 
 import lombok.Getter;
 

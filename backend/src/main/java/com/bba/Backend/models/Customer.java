@@ -3,14 +3,13 @@ package com.bba.Backend.models;
 import com.bba.Backend.models.util.Address;
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.util.Date;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@ToString
 @Entity
 @Table(name = "_customer")
 public class Customer {
@@ -44,4 +43,18 @@ public class Customer {
     @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_number", referencedColumnName = "customerNumber")
     private Address address;
+
+    @Override
+    public String toString() {
+        return "Customer { " + "\n\t" +
+                "id= " + getId() + ",\n\t" +
+                "name= " + getName() + ",\n\t" +
+                "customerNumber= " + getCustomerNumber() + ",\n\t" +
+                "email= " + getEmail() + ",\n\t" +
+                "phone= " + getPhone() + ",\n\t" +
+                "pendingAmount= " + getPendingAmount() + ",\n\t" +
+                "createdDate= " + getCreatedDate() + ",\n\t" +
+                "totalPurchaseAmount= " + getTotalPurchaseAmount() + "\n" +
+                "}";
+    }
 }

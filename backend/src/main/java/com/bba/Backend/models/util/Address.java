@@ -6,11 +6,11 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString
 @Table(name = "_address")
 public class Address {
 
@@ -24,6 +24,9 @@ public class Address {
 
     @Column(name = "customer_number")
     private Integer customerNumber;
+
+    @Column(name = "partner_email")
+    private String partnerEmail;
 
     @Column(name = "street", nullable = false)
     private String street;
@@ -42,6 +45,20 @@ public class Address {
     private Customer customer;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "partner_email", referencedColumnName = "email", unique = true)
+    @JoinColumn(name = "partner_email", referencedColumnName = "email", unique = true,insertable = false, updatable = false)
     private Partner partner;
+
+    @Override
+    public String toString() {
+        return "Address { " + "\n\t" +
+                "id= " + getId() + ",\n\t" +
+                "blockNumber= " + getBlockNumber() + ",\n\t" +
+                "customerNumber= " + getCustomerNumber() + ",\n\t" +
+                "partnerEmail= " + getPartnerEmail() + ",\n\t" +
+                "street= " + getStreet() + ",\n\t" +
+                "city= " + getCity() + ",\n\t" +
+                "state= " + getState() + ",\n\t" +
+                "zipcode= " + getZipcode() + "\n" +
+                "}";
+    }
 }

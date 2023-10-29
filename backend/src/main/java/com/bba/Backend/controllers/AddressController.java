@@ -16,13 +16,13 @@ public class AddressController {
 
     private AddressService addressService;
 
-    @PostMapping(path = "/save")
-    public ResponseEntity<?> saveAddress (@RequestBody  AddressDto addressDto) {
-         return addressService.saveAddress(addressDto);
-    }
+//    @PostMapping(path = "/save")
+//    public ResponseEntity<?> saveAddress (@RequestBody  AddressDto addressDto) {
+//         return ResponseEntity.ok(addressService.saveAddress(addressDto));
+//    }
 
     @GetMapping(path = "/get")
     public ResponseEntity<?> getAddress (@RequestBody Integer customerNumber) {
-        return addressService.getAddressOfCustomer(customerNumber);
+        return ResponseEntity.ok(addressService.getAddressOfCustomer(customerNumber));
     }
 }

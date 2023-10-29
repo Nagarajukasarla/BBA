@@ -1,5 +1,7 @@
 package com.bba.Backend.config.appConfig;
 
+import com.bba.Backend.dto.AddressDto;
+import com.bba.Backend.models.util.Address;
 import com.bba.Backend.repositories.PartnerRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -22,7 +24,15 @@ public class ApplicationConfig {
 
     @Bean
     public ModelMapper modelWrapper() {
-        return new ModelMapper();
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.addConverter(mappingContext -> {
+            Address source = (Address) mappingContext.getSource();
+            AddressDto destination = (AddressDto) mappingContext.getDestination();
+            destination.setPartnerEmail(source.getPartnerEmail());
+            return destination;
+        });
+
+        return modelMapper;
     }
 
     @Bean

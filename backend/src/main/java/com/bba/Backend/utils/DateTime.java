@@ -1,22 +1,26 @@
 package com.bba.Backend.utils;
 
+import com.bba.Backend.utils.enums.DateFormat;
 import lombok.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
-@Data
+@Getter
+@Setter
 @Builder
 @RequiredArgsConstructor
 public class DateTime {
-    private int year;
-    private int month;
-    private int day;
-    private int hours;
-    private int minutes;
-    private int seconds;
+    private Integer year;
+    private Integer month;
+    private Integer day;
+    private Integer hours;
+    private Integer minutes;
+    private Integer seconds;
 
     public DateTime(String formattedDate) {
         String[] value = formattedDate.split("T");
@@ -45,8 +49,15 @@ public class DateTime {
         setSeconds(day);
     }
 
-    public Date formatDate () {
-        String formattedDate = getFormattedStringForDateGeneration();
+    public DateTime (Date date) {
+        //  Date Format: Sun Oct 29 23:09:35 IST 2023
+        String dateStr = date.toString();
+        String[] values = dateStr.split(" ");
+        setDate(values[5] + "-" + CustomizedCalender.getMonthValue(values[1]) + "-" + values[2]);
+        setTime(values[3]);
+    }
+
+    public static Date formatDate (String formattedDate) {
         Logger logger = Logger.getLogger(DateTime.class.getName());
         SimpleDateFormat formatter = new SimpleDateFormat(DateFormat.YEAR_MONTH_DAY_HH_MM_SS.getFormat());
         try {
@@ -109,15 +120,41 @@ public class DateTime {
         return (
                 year
                         + "-"
-                        + (month < 10 ? ("0" + month) : String.valueOf(month))
+                        + ((month < 10) ? ("0" + month) : String.valueOf(month))
                         + "-"
-                        + (day < 10 ? ("0" + day) : day)
+                        + ((day < 10) ? ("0" + day) : day)
                         + 'T'
-                        + hours
+                        + ((hours < 10) ? ("0" + hours) : hours)
                         + ":"
-                        + minutes
+                        + ((minutes < 10) ? ("0" + minutes) : minutes)
                         + ":"
-                        + seconds
+                        + ((seconds < 10) ? ("0" + seconds) : seconds)
         );
+    }
+
+    private void setDate(String date) {
+        String[] chunks = date.split("-");
+        setYear(Integer.parseInt(chunks[0]));
+        setMonth(Integer.parseInt(chunks[1]));
+        setDay(Integer.parseInt(chunks[2]));
+    }
+
+    private void setTime(String time) {
+        String[] chunks = time.split(":");
+        setHours(Integer.parseInt(chunks[0]));
+        setMinutes(Integer.parseInt(chunks[1]));
+        setSeconds(Integer.parseInt((chunks[2].split("\\.")[0])));
+    }
+
+    @Override
+    public String toString() {
+        return getYear().toString()
+                + getMonth()
+                + getDay()
+                + "T"
+                + ((getHours() < 10) ? "0" + getHours() : getHours())
+                + ":"
+                + ((getMinutes() < 10) ? "0" + getMinutes() : getMinutes())
+                + ((getSeconds() < 10) ? "0" + getSeconds() : getSeconds());
     }
 }

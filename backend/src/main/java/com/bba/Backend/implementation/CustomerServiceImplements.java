@@ -4,56 +4,72 @@ import com.bba.Backend.dto.AddressDto;
 import com.bba.Backend.dto.CustomerDto;
 import com.bba.Backend.models.Customer;
 import com.bba.Backend.repositories.CustomerRepository;
+import com.bba.Backend.services.AddressService;
 import com.bba.Backend.services.CustomerService;
-import com.bba.Backend.utils.DateFormat;
+import com.bba.Backend.utils.DateTime;
+import com.bba.Backend.utils.Mapper;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
 public class CustomerServiceImplements implements CustomerService {
 
     private final CustomerRepository customerRepository;
-    private final AddressServiceImplements addressService;
+    private final AddressService addressService;
     private final ModelMapper modelMapper;
+    private final Mapper mapper;
+    public static Logger logger = Logger.getLogger(CustomerService.class.getName());
+
 
     @Override
-    public ResponseEntity<?> saveCustomer(CustomerDto customerDto) {
+    public CustomerDto saveCustomer(@NonNull CustomerDto customerDto) {
         var customer = Customer.builder()
                 .name(customerDto.getName())
                 .customerNumber(customerDto.getCustomerNumber())
                 .email(customerDto.getEmail())
                 .phone(customerDto.getPhone())
-                .createdDate(customerDto.getCreatedDate().formatDate())
+                .createdDate(DateTime.formatDate(customerDto.getCreatedDate()))
                 .build();
 
-        var response  = customerRepository.save(customer);
-        addressService.saveAddress(customerDto.getAddressDto());
-        return ResponseEntity.ok(response);
-    }
-
-    @Override
-    public ResponseEntity<?> getCustomer(Integer customerNumber) {
-        var customer = customerRepository.findByCustomerNumber(customerNumber);
-        var customerAddress = addressService.getAddressOfCustomer(customerNumber);
-        var customerDto = modelMapper.map(customer, CustomerDto.class);
-        customerDto.setAddressDto(modelMapper.map(customerAddress, AddressDto.class));
-        return ResponseEntity.ok(customerDto);
-    }
-
-    @Override
-    public ResponseEntity<?> getAllCustomers() {
-        var customers = customerRepository.findAll();
-        if (customers.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No Customers exists");
-        }
-        return ResponseEntity.ok(
-                customers.stream().map(customer -> modelMapper.map(customer, CustomerDto.class))
+        return (mapper.mapCustomerToCustomerDto(
+                customerRepository.save(customer),
+                mapper.mapAddressToAddressDto(addressService.saveAddressOfCustomer(customerDto.getAddressDto()))
+            )
         );
+    }
+
+    @Override
+    public Optional<CustomerDto> getCustomer(@NonNull Integer customerNumber) {
+        var customer = customerRepository.findByCustomerNumber(customerNumber);
+        if (customer.isEmpty()) {
+            logger.info("Customer doesn't exist with " + customerNumber);
+            return Optional.empty();
+        }
+        var addressDto = addressService.getAddressOfCustomer(customerNumber);
+        if (addressDto.isEmpty()) {
+            logger.info("Address Not Found for customer: " + customer.get().getName());
+            return Optional.empty();
+        }
+        return Optional.of(mapper.mapCustomerToCustomerDto(customer.get(), addressDto.get()));
+    }
+
+    @Override
+    public List<CustomerDto> getAllCustomers() {
+        Sort.Order sortByCustomerNumber = Sort.Order.asc("customerNumber");
+        var customers = customerRepository.findAll(Sort.by(sortByCustomerNumber));
+        var customersAddress = addressService.getAllCustomersAddress();
+        return IntStream.range(0, customers.size())
+                .mapToObj(i -> mapper.mapCustomerToCustomerDto(customers.get(i), customersAddress.get(i)))
+                .collect(Collectors.toList());
     }
 }

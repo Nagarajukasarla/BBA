@@ -30,7 +30,7 @@ public class UserServiceImplements implements PartnerService {
                 .role(Role.USER)
                 .build();
 
-        addressService.saveAddress(partnerDto.getAddressDto());
+        addressService.saveAddressOfPartner(partnerDto.getAddressDto());
         return ResponseEntity.ok(modelMapper.map(newPartner, PartnerDto.class));
     }
 
