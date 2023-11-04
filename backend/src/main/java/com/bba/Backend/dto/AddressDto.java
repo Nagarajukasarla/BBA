@@ -9,33 +9,33 @@ import lombok.*;
 @Builder
 public class AddressDto {
 
-    private Integer id;
+    public Integer id;
 
-    private String blockNumber;
+    public String blockNumber;
 
-    private Integer customerNumber;
+    public Integer customerNumber;
 
-    private String partnerEmail;
+    public String partnerEmail;
 
-    private String street;
+    public String street;
 
-    private String city;
+    public String city;
 
-    private String state;
+    public String state;
 
-    private String zipcode;
+    public String zipcode;
 
     @Override
     public String toString() {
         return "Address { " + "\n\t" +
-                "id= " + getId() + ",\n\t" +
-                "blockNumber= " + getBlockNumber() + ",\n\t" +
-                "customerNumber= " + getCustomerNumber() + ",\n\t" +
-                "partnerEmail= " + getPartnerEmail() + ",\n\t" +
-                "street= " + getStreet() + ",\n\t" +
-                "city= " + getCity() + ",\n\t" +
-                "state= " + getState() + ",\n\t" +
-                "zipcode= " + getZipcode() + "\n" +
+                "id= " + id + ",\n\t" +
+                "blockNumber= " + blockNumber + ",\n\t" +
+                "customerNumber= " + customerNumber + ",\n\t" +
+                "partnerEmail= " + partnerEmail + ",\n\t" +
+                "street= " + street + ",\n\t" +
+                "city= " + city + ",\n\t" +
+                "state= " + state + ",\n\t" +
+                "zipcode= " + zipcode + "\n" +
                 "}";
     }
 }

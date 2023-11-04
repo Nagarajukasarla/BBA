@@ -1,8 +1,7 @@
-
-// Validating user
-
 import { getStatus } from "../statusUtils/responseStatus";
 
+
+// Validating user
 export const authenticate = async (token) => {
     try {
         const response = await fetch("http://localhost:8080/api/v1/demo-controller", {
@@ -57,6 +56,31 @@ export const getAllProducts = async (token) => {
             headers: {
                 'Content-Type' : 'application/json',
                 'Authorization' : `Bearer ${token}`,
+            },
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log(data);
+            return data;
+        }
+        else {
+            throw new Error(getStatus(response.status));
+        }
+    }
+    catch (error) {
+        throw error;
+    }
+};
+
+
+export const getAllCustomers  = async (token) => {
+    try {
+        const response = await fetch('http://localhost:8080/api/v1/customer/get-all', {
+            method: "GET",
+            headers: {
+                "Content-Type" : "application/json",
+                "Authorization" : `Bearer ${token}`
             },
         });
 

@@ -7,7 +7,7 @@ import {
     getAllProducts,
 } from "../../../services/api/get/authorizedGetServices";
 import { getToken } from "../../../services/load/loadBrowserContent";
-import { getYearMonthFormat, setFormattedDate } from "../../../services/utils/dateFormater";
+import { getYearMonthFormat } from "../../../services/utils/dateFormater";
 
 export const Stocks = () => {
     const [loading, setLoading] = useState(false);
@@ -20,9 +20,8 @@ export const Stocks = () => {
             console.log("Not authenticated");
             navigate("/login");
             return false;
-        } else {
-            return true;
         }
+        return true;
     };
     
     const fetchProducts = async () => {
@@ -61,7 +60,6 @@ export const Stocks = () => {
             setLoading(true);
             fetchProducts().then(() => setLoading(false));
             getYearMonthFormat(products.at(0).manufacturingDate);
-            setFormattedDate("06/2023");
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);

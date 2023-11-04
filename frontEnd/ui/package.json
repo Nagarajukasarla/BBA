@@ -9,7 +9,7 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "ansi-html": "^0.0.9",
-    "antd": "^5.8.4",
+    "antd": "^5.10.3",
     "browserslist": "^4.16.4",
     "glob-parent": "^6.0.2",
     "postcss": "^8.4.28",

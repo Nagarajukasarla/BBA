@@ -6,8 +6,6 @@ import lombok.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Logger;
 
 @Getter
@@ -53,8 +51,14 @@ public class DateTime {
         //  Date Format: Sun Oct 29 23:09:35 IST 2023
         String dateStr = date.toString();
         String[] values = dateStr.split(" ");
-        setDate(values[5] + "-" + CustomizedCalender.getMonthValue(values[1]) + "-" + values[2]);
-        setTime(values[3]);
+        if (values.length > 2) {
+            setDate(values[5] + "-" + CustomizedCalender.getMonthValue(values[1]) + "-" + values[2]);
+            setTime(values[3]);
+        }
+        else {
+            setDate(values[0]);
+            setTime(values[1]);
+        }
     }
 
     public static Date formatDate (String formattedDate) {
