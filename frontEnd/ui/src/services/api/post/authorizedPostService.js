@@ -25,11 +25,10 @@ export const createCompany = async (token, companyName) => {
         }
     }
     catch (error) {
-        console.error(error);
+        console.error(`Error while saving new company ${error}`);
         return false;
     }
 };
-
 
 
 /* Saving new product */
@@ -52,6 +51,7 @@ export const saveProduct = async (product, token) => {
                 cGstInPercent: product.cGst,
                 iGstInPercent: product.iGst,
                 rate: product.rate,
+                mrp: product.mrp,
                 isFastMoving: false
             }),
         });
@@ -96,6 +96,40 @@ export const getProduct = async (productName, token) => {
         }
     }
     catch (error) {
-        throw error;
+        console.error(`Error while fetching product: ${error}`);
+        return error;
+    }
+};
+
+// Saving new Customer
+export const saveCustomer = async (customer, token) => {
+    try {
+        const response = await fetch("http://localhost:8080/api/v1/customer/save", {
+            method: "POST",
+            headers: {
+                'Content-Type' : 'application/json',
+                'Authorization' : `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+                name: customer.name,
+                email: customer.email,
+                phone: customer.phone,
+                createdDate: customer.createdDate,
+                addressDto: customer.address
+            })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log(data);
+            return true;
+        }
+        else {
+            throw new Error(getStatus(response.status));
+        }
+    }
+    catch(error) {
+        console.error(`Error while saving new customer: ${error}`);
+        return error;
     }
 };

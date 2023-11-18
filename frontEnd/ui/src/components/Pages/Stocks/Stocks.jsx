@@ -31,6 +31,7 @@ export const Stocks = () => {
                 const mappedProducts = response.map((item) => ({
                     key: item.id,
                     product: item.name,
+                    batchNumber: item.batchNumber,
                     company: item.company,
                     quantity: item.quantity,
                     manufacturingDate: getYearMonthFormat(item.manufacturingDate),
@@ -39,6 +40,7 @@ export const Stocks = () => {
                     cGst: item.cGstInPercent,
                     iGst: item.iGstInPercent,
                     rate: item.rate,
+                    mrp: item.mrp
                 }));
 
                 setProducts(mappedProducts);
@@ -66,7 +68,6 @@ export const Stocks = () => {
     
     const refreshProducts = () => {
         fetchProducts();
-
         console.log("Refreshed products: " + JSON.stringify(products, null, 2));
     };
 
@@ -76,13 +77,19 @@ export const Stocks = () => {
             key: "productColumn",
             title: "Product",
             dataIndex: "product",
-            width: "8%",
+            width: "7%",
+        },
+        {
+            key: "batchNumberColumn",
+            title: "Batch",
+            dataIndex: "batchNumber",
+            width: "5%"
         },
         {
             key: "companyColumn",
             title: "Company",
             dataIndex: "company",
-            width: "5%",
+            width: "7%",
         },
         {
             key: "quantityColumn",
@@ -126,6 +133,12 @@ export const Stocks = () => {
             dataIndex: "rate",
             width: "4%",
         },
+        {
+            key: "mrpColumn",
+            title: "Mrp",
+            dataIndex: "mrp",
+            width: "4%"
+        }
     ];
 
     return (

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Col, Typography, Row, Space, Card, Input } from "antd";
+import { Col, Typography, Row, Space, Card, Input, message } from "antd";
 import {
     onPressedEnterNameField,
     onPressedEnterEmailField,
@@ -12,6 +12,10 @@ import {
 
 import "./css/newCustomer.css";
 import "../../coreComponents/Styles/primaryStyle.css";
+import { saveCustomer } from "../../../services/api/post/authorizedPostService";
+import { getToken } from "../../../services/load/loadBrowserContent";
+import { useNavigate } from "react-router-dom";
+import { generateFormattedDateString } from "../../../services/utils/dateFormater";
 
 export const NewCustomer = () => {
     const emailField = document.getElementById("emailField");
@@ -31,53 +35,87 @@ export const NewCustomer = () => {
     const [state, setState] = useState("");
     const [zipcode, setZipcode] = useState("");
 
-    const onChangeNameValue = (event) => {
-        setName(event.target.value);
+    const [messageApi, contextHolder] = message.useMessage();
+    const navigate = useNavigate();
+    
+    const result = (type) => {
+        messageApi.open({
+            type: `${type}`,
+            content: (type === "success") ? 'Saved successfully' : "Failed to save",
+        });
     };
 
-    const onChangeEmailValue = (event) => {
-        setEmail(event.target.value);
+    const getAddress = () => {
+        return {
+            blockNumber: blockNumber,
+            street: street,
+            city: city,
+            state: state,
+            zipcode: zipcode
+        };
     };
 
-    const onChangePhoneValue = (event) => {
-        setPhone(event.target.value);
-    };
-
-    const onChangeBlockNumberValue = (event) => {
-        setBlockNumber(event.target.value);
-    };
-
-    const onChangeStreetValue = (event) => {
-        setStreet(event.target.value);
-    };
-
-    const onChangeCityValue = (event) => {
-        setCity(event.target.value);
-    };
-
-    const onChangeStateValue = (event) => {
-        setState(event.target.value);
-    };
-
-    const onChangeZipcodeValue = (event) => {
-        setZipcode(event.target.value);
-    };
-
+    const getCustomer = () => {
+        return {
+            name: name,
+            email: email,
+            phone: phone,
+            createdDate: generateFormattedDateString(),
+            address: getAddress()
+        };
+    }; 
+    
     const onPressedEnterZipcodeField = (event) => {
         if (event.keyCode === 13) {
+            saveNewCustomer()
+                .then(() => {
+                    setName("");
+                    setEmail("");
+                    setPhone("");
+                    setBlockNumber("");
+                    setStreet("");
+                    setCity("");
+                    setState("");
+                    setZipcode("");
+                    result("success");
+                    navigate('/app/customers');
+                })
+                .catch((error) => {
+                    console.log("Saving failed: " + error);
+                    result("failed");
+                });
         }
     };
 
-    // Utils
-    const saveNewCustomer = () => {
-        // Create a json api in separete api's file
-        // pass the values
-        // save the object
-        // Show the popoup
+    const saveNewCustomer = async () => {
+        const response = await saveCustomer(getCustomer(), getToken());
+        return response ? true : false;
     };
+
+
+    const onClickSaveButton = () => {
+        saveNewCustomer()
+            .then(() => {
+                setName("");
+                setEmail("");
+                setPhone("");
+                setBlockNumber("");
+                setStreet("");
+                setCity("");
+                setState("");
+                setZipcode("");
+                result("success");
+                navigate('/app/customers');
+            })
+            .catch((error) => {
+                console.log("Saving falied: " + error);
+                result("failed")
+            });
+     };
 
     return (
         <div className="NewCustomerWarpper">
+            {contextHolder}
             <Col span={24} style={{ width: "84vw" }}>
                 <Row>
                     <Typography.Title
@@ -108,7 +146,9 @@ export const NewCustomer = () => {
                             <Input
                                 style={{ width: "300px" }}
                                 value={name}
-                                onChange={onChangeNameValue}
+                                onChange={(event) =>{
+                                    setName(event.target.value);
+                                }}
                                 className="customerInputFields"
                                 onKeyUp={(event) =>
                                     onPressedEnterNameField(event, {
@@ -132,7 +172,9 @@ export const NewCustomer = () => {
                                 value={email}
                                 className="customerInputFields"
                                 id="emailField"
-                                onChange={onChangeEmailValue}
+                                onChange={(event) => {
+                                    setEmail(event.target.value);
+                                }}
                                 onKeyUp={(event) =>
                                     onPressedEnterEmailField(event, {
                                         phoneField,
@@ -155,7 +197,9 @@ export const NewCustomer = () => {
                                 value={phone}
                                 className="customerInputFields"
                                 id="phoneField"
-                                onChange={onChangePhoneValue}
+                                onChange={(event) => {
+                                    setPhone(event.target.value);
+                                }}
                                 onKeyUp={(event) =>
                                     onPressedEnterPhoneField(event, {
                                         blockNumberField,
@@ -180,7 +224,9 @@ export const NewCustomer = () => {
                                 value={blockNumber}
                                 className="customerInputFields"
                                 id="blockNumberField"
-                                onChange={onChangeBlockNumberValue}
+                                onChange={(event) => {
+                                    setBlockNumber(event.target.value);
+                                }}
                                 onKeyUp={(event) =>
                                     onPressedEnterBlockNumberField(event, {
                                         streetField,
@@ -203,7 +249,9 @@ export const NewCustomer = () => {
                                 value={street}
                                 className="customerInputFields"
                                 id="streetField"
-                                onChange={onChangeStreetValue}
+                                onChange={(event) => {
+                                    setStreet(event.target.value);
+                                }}
                                 onKeyUp={(event) =>
                                     onPressedEnterStreetField(event, {
                                         cityField,
@@ -226,7 +274,9 @@ export const NewCustomer = () => {
                                 value={city}
                                 className="customerInputFields"
                                 id="cityField"
-                                onChange={onChangeCityValue}
+                                onChange={(event) => {
+                                    setCity(event.target.value);
+                                }}
                                 onKeyUp={(event) =>
                                     onPressedEnterCityField(event, {
                                         stateField,
@@ -249,7 +299,9 @@ export const NewCustomer = () => {
                                 value={state}
                                 className="customerInputFields"
                                 id="stateField"
-                                onChange={onChangeStateValue}
+                                onChange={(event) => {
+                                    setState(event.target.value);
+                                }}
                                 onKeyUp={(event) =>
                                     onPressedEnterStateField(event, {
                                         zipcodeField,
@@ -272,7 +324,9 @@ export const NewCustomer = () => {
                                 value={zipcode}
                                 className="customerInputFields"
                                 id="zipcodeField"
-                                onChange={onChangeZipcodeValue}
+                                onChange={(event) => {
+                                    setZipcode(event.target.value);
+                                }}
                                 onKeyUp={(event) =>
                                     onPressedEnterZipcodeField(event)
                                 }
@@ -281,7 +335,10 @@ export const NewCustomer = () => {
                     </Row>
                     <Row style={{ marginTop: "40px" }} justify="center">
                         <Space direction="horizontal">
-                            <button className="primary-save-button-style">
+                            <button 
+                                className="primary-save-button-style"
+                                onClick={onClickSaveButton}
+                            >
                                 Save
                             </button>
                         </Space>

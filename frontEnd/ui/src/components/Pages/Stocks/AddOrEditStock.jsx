@@ -26,14 +26,20 @@ import {
     onPressedEnterSGSTField,
     onPressedEnterCGSTField,
     onPressedEnterIGSTField,
+    onPressedEnterRateField,
+    onPressedEnterPackingTypeField,
+    onPressedEnterProductNameField,
 } from "./events/KeyboardEvents";
 import { validate } from "../../../services/validation/validate";
+import {
+    getYearMonthFormat,
+    setFormattedDate,
+} from "../../../services/utils/dateFormater";
 
 export const AddOrEditStock = () => {
-
     useEffect(() => {
         document.title = "Stocks";
-    })
+    });
 
     const location = useLocation();
     const navigate = useNavigate();
@@ -52,6 +58,8 @@ export const AddOrEditStock = () => {
     const cGstField = document.getElementById("cGstField");
     const iGstField = document.getElementById("iGstField");
     const rateField = document.getElementById("rateField");
+    const mrpField = document.getElementById("mrpField");
+    const packingTypeField = document.getElementById("packingTypeField");
 
     const [productName, setProductName] = useState(
         obj != null ? obj.productName : ""
@@ -61,6 +69,9 @@ export const AddOrEditStock = () => {
     );
     const [companyName, setCompanyName] = useState(
         obj != null ? obj.companyName : ""
+    );
+    const [packingType, setPackingType] = useState(
+        obj != null ? obj.packingType : ""
     );
     const [quantity, setQuantity] = useState(obj != null ? obj.quantity : "");
     const [manufacturingDate, setManufacturingDate] = useState(
@@ -73,11 +84,13 @@ export const AddOrEditStock = () => {
     const [cGst, setCGST] = useState(obj != null ? obj.cGst : "");
     const [iGst, setIGST] = useState(obj != null ? obj.iGst : "");
     const [rate, setRate] = useState(obj != null ? obj.rate : "");
+    const [mrp, setMrp] = useState(obj != null ? obj.rate : "");
 
     const fields = [
         productName,
         batchNumber,
         companyName,
+        packingType,
         quantity,
         manufacturingDate,
         expiryDate,
@@ -85,6 +98,7 @@ export const AddOrEditStock = () => {
         cGst,
         iGst,
         rate,
+        mrp,
     ];
 
     const [messageApi, contextHolder] = message.useMessage();
@@ -92,6 +106,7 @@ export const AddOrEditStock = () => {
     const clearProduct = () => {
         setBatchNumber("");
         setCompanyName("");
+        setPackingType("");
         setQuantity("");
         setManufacturingDate("");
         setExpiryDate("");
@@ -99,155 +114,121 @@ export const AddOrEditStock = () => {
         setCGST("");
         setIGST("");
         setRate("");
+        setMrp("");
     };
 
     const submitProduct = async (
         productName,
         batchNumber,
         companyName,
+        packingType,
         quantity,
         manufacturingDate,
         expiryDate,
         sGst,
         cGst,
         iGst,
-        rate
+        rate,
+        mrp
     ) => {
         const product = {
             name: productName,
             batchNumber: batchNumber,
             companyName: companyName,
+            packingType: packingType,
             quantity: quantity,
-            manufacturingDate: manufacturingDate,
-            expiryDate: expiryDate,
+            manufacturingDate: setFormattedDate(manufacturingDate),
+            expiryDate: setFormattedDate(expiryDate),
             sGst: sGst,
             cGst: cGst,
             iGst: iGst,
             rate: rate,
+            mrp: mrp,
         };
         const response = await saveProduct(product, getToken());
         return response ? true : false;
     };
 
-    const success = () => {
+    const result = (type) => {
         messageApi.open({
-            type: "success",
-            content: "Saved successfully",
+            type: `${type}`,
+            content:
+                type === "success" ? "Saved successfully" : "Failed to Save",
         });
-    };
-
-    const onPressedEnterProductNameField = async (event) => {
-        // TODO : Check where productName should not be null or empty
-        if (event.target.value !== "") {
-            if (event.key === "Enter") {
-                try {
-                    const response = await getProduct(productName, getToken());
-                    console.log(response);
-                    if (response !== null) {
-                        setBatchNumber(response.batchNumber || "");
-                        setCompanyName(response.company || "");
-                        setQuantity(response.quantity || "");
-                        setManufacturingDate(response.manufacturingDate || "");
-                        setExpiryDate(response.expiryDate || "");
-                        setSGST(response.sGstInPercent || "");
-                        setCGST(response.cGstInPercent || "");
-                        setIGST(response.iGstInPercent || "");
-                        setRate(response.rate || "");
-                    } else {
-                        clearProduct();
-                    }
-                } catch (error) {
-                    if (error.message === "Not found") {
-                        clearProduct();
-                        console.log("Item your searching is not found");
-                    } else if (error.message === "Unauthorized") {
-                        alert("Unauthorized");
-                    } else if (error.message === "Forbidden") {
-                        navigate("/login");
-                    } else if (error.message === "Server is not started") {
-                        alert("Server is not started");
-                    } else {
-                        console.error(error);
-                    }
-                } finally {
-                    batchNumberField.focus();
-                }
-            }
-        }
     };
 
     const onClickSaveButton = () => {
         if (validate(fields)) {
-            if (
-                submitProduct(
-                    productName,
-                    batchNumber,
-                    companyName,
-                    quantity,
-                    manufacturingDate,
-                    expiryDate,
-                    sGst,
-                    cGst,
-                    iGst,
-                    rate
-                )
-            ) {
-                setProductName("");
-                setBatchNumber("");
-                setCompanyName("");
-                setQuantity("");
-                setManufacturingDate("");
-                setExpiryDate("");
-                setSGST("");
-                setCGST("");
-                setIGST("");
-                setRate("");
-
-                success();
-                navigate("/app/stocks");
-                // show success popup
-                // close the add stock block and show list of products
-            } else {
-                // show error popup
-                // close the add stock block and show list of products
-            }
+            submitProduct(
+                productName,
+                batchNumber,
+                companyName,
+                packingType,
+                quantity,
+                manufacturingDate,
+                expiryDate,
+                sGst,
+                cGst,
+                iGst,
+                rate,
+                mrp
+            )
+                .then(() => {
+                    setProductName("");
+                    setBatchNumber("");
+                    setCompanyName("");
+                    setPackingType();
+                    setQuantity("");
+                    setManufacturingDate("");
+                    setExpiryDate("");
+                    setSGST("");
+                    setCGST("");
+                    setIGST("");
+                    setRate("");
+                    setMrp("");
+                    result("success");
+                    navigate("/app/stocks");
+                })
+                .catch(() => result("error"));
         }
     };
 
     const onClickSaveAndNew = () => {
         if (validate(fields)) {
-            if (
-                submitProduct(
-                    productName,
-                    batchNumber,
-                    companyName,
-                    quantity,
-                    manufacturingDate,
-                    expiryDate,
-                    sGst,
-                    cGst,
-                    iGst,
-                    rate
-                )
-            ) {
-                setProductName("");
-                setBatchNumber("");
-                setCompanyName("");
-                setQuantity("");
-                setManufacturingDate("");
-                setExpiryDate("");
-                setSGST("");
-                setCGST("");
-                setIGST("");
-                setRate("");
-                success();
-            } else {
-                // show error popup
-            }
+            submitProduct(
+                productName,
+                batchNumber,
+                companyName,
+                packingType,
+                quantity,
+                manufacturingDate,
+                expiryDate,
+                sGst,
+                cGst,
+                iGst,
+                rate,
+                mrp
+            )
+                .then(() => {
+                    setProductName("");
+                    setBatchNumber("");
+                    setCompanyName("");
+                    setPackingType("");
+                    setQuantity("");
+                    setManufacturingDate("");
+                    setExpiryDate("");
+                    setSGST("");
+                    setCGST("");
+                    setIGST("");
+                    setRate("");
+                    setMrp("");
+                    result("success");
+                })
+                .catch(() => result("error"));
         }
     };
 
-    const onPressedEnterRateField = (event) => {
+    const onPressedEnterMrpField = (event) => {
         if (event.key === "Enter") {
             onClickSaveAndNew();
             productNameField.focus();
@@ -295,14 +276,19 @@ export const AddOrEditStock = () => {
                                 Name
                             </Typography.Text>
                             <Input
-                                style={{ width: "220px" }}
+                                style={{
+                                    width: "200px",
+                                    padding: "4px 3px 4px 6px",
+                                }}
                                 value={productName}
                                 id="productNameField"
                                 onChange={(event) =>
                                     setProductName(event.target.value)
                                 }
                                 onKeyUp={(event) => {
-                                    onPressedEnterProductNameField(event);
+                                    onPressedEnterProductNameField(event, {
+                                        batchNumberField,
+                                    });
                                 }}
                             ></Input>
                         </Space>
@@ -317,7 +303,10 @@ export const AddOrEditStock = () => {
                                 Batch
                             </Typography.Text>
                             <Input
-                                style={{ width: "80px" }}
+                                style={{
+                                    width: "60px",
+                                    padding: "4px 3px 4px 6px",
+                                }}
                                 value={batchNumber}
                                 id="batchNumberField"
                                 onChange={(event) =>
@@ -341,7 +330,10 @@ export const AddOrEditStock = () => {
                                 Company
                             </Typography.Text>
                             <Input
-                                style={{ width: "140px" }}
+                                style={{
+                                    width: "130px",
+                                    padding: "4px 3px 4px 6px",
+                                }}
                                 value={companyName}
                                 id="companyField"
                                 onChange={(event) =>
@@ -349,6 +341,33 @@ export const AddOrEditStock = () => {
                                 }
                                 onKeyUp={(event) => {
                                     onPressedEnterCompanyField(event, {
+                                        packingTypeField,
+                                    });
+                                }}
+                            ></Input>
+                        </Space>
+                        <Space
+                            direction="vertical"
+                            style={{
+                                textAlign: "start",
+                                marginLeft: "20px",
+                            }}
+                        >
+                            <Typography.Text className="primary-input-field-header-style">
+                                Pack
+                            </Typography.Text>
+                            <Input
+                                style={{
+                                    width: "50px",
+                                    padding: "4px 3px 4px 6px",
+                                }}
+                                value={packingType}
+                                id="packingTypeField"
+                                onChange={(event) =>
+                                    setPackingType(event.target.value)
+                                }
+                                onKeyUp={(event) => {
+                                    onPressedEnterPackingTypeField(event, {
                                         quantityField,
                                     });
                                 }}
@@ -365,7 +384,7 @@ export const AddOrEditStock = () => {
                                 Quantity
                             </Typography.Text>
                             <Input
-                                style={{ width: "60px" }}
+                                style={{ width: "55px", padding: "4px" }}
                                 value={quantity}
                                 id="quantityField"
                                 onChange={(event) =>
@@ -389,7 +408,10 @@ export const AddOrEditStock = () => {
                                 Mf Date
                             </Typography.Text>
                             <Input
-                                style={{ width: "60px" }}
+                                style={{
+                                    width: "50px",
+                                    padding: "4px 3px 4px 5px",
+                                }}
                                 value={manufacturingDate}
                                 id="manufacturingDateField"
                                 onChange={(event) =>
@@ -414,7 +436,10 @@ export const AddOrEditStock = () => {
                                 Exp Date
                             </Typography.Text>
                             <Input
-                                style={{ width: "60px" }}
+                                style={{
+                                    width: "50px",
+                                    padding: "4px 3px 4px 5px",
+                                }}
                                 value={expiryDate}
                                 id="expiryDateField"
                                 onChange={(event) =>
@@ -428,7 +453,7 @@ export const AddOrEditStock = () => {
                             ></Input>
                         </Space>
                         <Space
-                            direction="vertical"
+                            direction="vertical" 
                             style={{
                                 textAlign: "start",
                                 marginLeft: "20px",
@@ -438,7 +463,7 @@ export const AddOrEditStock = () => {
                                 SGST
                             </Typography.Text>
                             <Input
-                                style={{ width: "60px" }}
+                                style={{ width: "30px", padding: "4px" }}
                                 value={sGst}
                                 id="sGstField"
                                 onChange={(event) =>
@@ -462,7 +487,7 @@ export const AddOrEditStock = () => {
                                 CGST
                             </Typography.Text>
                             <Input
-                                style={{ width: "60px" }}
+                                style={{ width: "30px", padding: "4px" }}
                                 value={cGst}
                                 id="cGstField"
                                 onChange={(event) =>
@@ -486,7 +511,7 @@ export const AddOrEditStock = () => {
                                 IGST
                             </Typography.Text>
                             <Input
-                                style={{ width: "60px" }}
+                                style={{ width: "30px", padding: "4px" }}
                                 value={iGst}
                                 id="iGstField"
                                 onChange={(event) =>
@@ -510,14 +535,36 @@ export const AddOrEditStock = () => {
                                 Rate
                             </Typography.Text>
                             <Input
-                                style={{ width: "70px" }}
+                                style={{ width: "60px", padding: "4px" }}
                                 value={rate}
                                 id="rateField"
                                 onChange={(event) =>
                                     setRate(event.target.value)
                                 }
                                 onKeyUp={(event) => {
-                                    onPressedEnterRateField(event);
+                                    onPressedEnterRateField(event, {
+                                        mrpField,
+                                    });
+                                }}
+                            ></Input>
+                        </Space>
+                        <Space
+                            direction="vertical"
+                            style={{
+                                textAlign: "start",
+                                marginLeft: "20px",
+                            }}
+                        >
+                            <Typography.Text className="primary-input-field-header-style">
+                                Mrp
+                            </Typography.Text>
+                            <Input
+                                style={{ width: "60px", padding: "4px" }}
+                                value={mrp}
+                                id="mrpField"
+                                onChange={(event) => setMrp(event.target.value)}
+                                onKeyUp={(event) => {
+                                    onPressedEnterMrpField(event);
                                 }}
                             ></Input>
                         </Space>

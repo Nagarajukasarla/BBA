@@ -36,7 +36,7 @@ export const SideBar = () => {
                     {
                         label: "Customers",
                         icon: <UserOutlined />,
-                        key: "/app/customer",
+                        key: "/app/customers",
                     },
                     {
                         label: "Stocks",
