@@ -2,7 +2,11 @@ package com.bba.Backend.models;
 
 import com.bba.Backend.models.util.Address;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Builder;
 import java.util.Date;
 
 @Getter
@@ -22,7 +26,7 @@ public class Customer {
     @Column(name = "name", length = 256, nullable = false)
     private String name;
 
-    @Column(name = "customer_number", unique = true, nullable = false)
+    @Column (name = "customer_number", unique = true, nullable = false)
     private Integer customerNumber;
 
     @Column(name = "email", length = 256)

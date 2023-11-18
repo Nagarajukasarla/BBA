@@ -1,6 +1,5 @@
 package com.bba.Backend.implementation;
 
-import com.bba.Backend.dto.AddressDto;
 import com.bba.Backend.dto.CustomerDto;
 import com.bba.Backend.models.Customer;
 import com.bba.Backend.repositories.CustomerRepository;
@@ -10,7 +9,6 @@ import com.bba.Backend.utils.DateTime;
 import com.bba.Backend.utils.Mapper;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -26,21 +24,22 @@ public class CustomerServiceImplements implements CustomerService {
 
     private final CustomerRepository customerRepository;
     private final AddressService addressService;
-    private final ModelMapper modelMapper;
     private final Mapper mapper;
     public static Logger logger = Logger.getLogger(CustomerService.class.getName());
 
 
     @Override
     public CustomerDto saveCustomer(@NonNull CustomerDto customerDto) {
+        var customerNumber = customerRepository.getNextCustomerNumber();
         var customer = Customer.builder()
                 .name(customerDto.getName())
-                .customerNumber(customerDto.getCustomerNumber())
                 .email(customerDto.getEmail())
                 .phone(customerDto.getPhone())
+                .customerNumber(customerNumber)
                 .createdDate(DateTime.formatDate(customerDto.getCreatedDate()))
                 .build();
 
+        customerDto.addressDto.setCustomerNumber(customerNumber);
         return (mapper.mapCustomerToCustomerDto(
                 customerRepository.save(customer),
                 mapper.mapAddressToAddressDto(addressService.saveAddressOfCustomer(customerDto.getAddressDto()))

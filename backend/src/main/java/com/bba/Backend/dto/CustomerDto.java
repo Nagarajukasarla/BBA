@@ -10,23 +10,23 @@ import org.springframework.lang.NonNull;
 @Builder
 public class CustomerDto {
 
-    private int id;
+    public int id;
 
-    private String name;
+    public String name;
 
-    private Integer customerNumber;
+    public Integer customerNumber;
 
-    private String email;
+    public String email;
 
-    private String phone;
+    public String phone;
 
-    private long pendingAmount;
+    public long pendingAmount;
 
-    private DateTime createdDate;
+    public DateTime createdDate;
 
-    private AddressDto addressDto;
+    public AddressDto addressDto;
 
-    private long totalPurchaseAmount;
+    public long totalPurchaseAmount;
 
     public void setCreatedDate(@NonNull String formattedDate) {
         this.createdDate = new DateTime(formattedDate);
@@ -39,15 +39,15 @@ public class CustomerDto {
     @Override
     public String toString() {
         return "CustomerDto { " + "\n\t" +
-                "id= " + getId() + ",\n\t" +
-                "name= " + getName() + ",\n\t" +
-                "customerNumber= " + getCustomerNumber() + ",\n\t" +
-                "email= " + getEmail() + ",\n\t" +
-                "phone= " + getPhone() + ",\n\t" +
-                "pendingAmount= " + getPendingAmount() + ",\n\t" +
-                "createdDate= " + getCreatedDate() + ",\n\t" +
+                "id= " + id + ",\n\t" +
+                "name= " + name + ",\n\t" +
+                "customerNumber= " + customerNumber + ",\n\t" +
+                "email= " + email + ",\n\t" +
+                "phone= " + phone + ",\n\t" +
+                "pendingAmount= " + pendingAmount + ",\n\t" +
+                "createdDate= " + createdDate + ",\n\t" +
                 "address ={ " + "addressDto.toString()" + "\n" + "}," + "\n" +
-                "totalPurchaseAmount= " + getTotalPurchaseAmount() + "\n" +
+                "totalPurchaseAmount= " + totalPurchaseAmount + "\n" +
                 "}";
     }
 }

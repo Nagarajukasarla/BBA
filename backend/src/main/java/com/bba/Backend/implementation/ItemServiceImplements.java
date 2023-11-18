@@ -5,15 +5,18 @@ import com.bba.Backend.dto.ItemRequest;
 import com.bba.Backend.models.Item;
 import com.bba.Backend.repositories.ItemRepository;
 import com.bba.Backend.services.ItemService;
+import com.bba.Backend.utils.DateTime;
+import com.bba.Backend.utils.comparators.ItemComparator;
+import com.bba.Backend.utils.mappers.DtoMapper;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +24,7 @@ public class ItemServiceImplements implements ItemService {
 
     private final ItemRepository itemRepository;
 
-    private final ModelMapper modelMapper;
+    private final DtoMapper mapper;
 
     private static final Logger logger = Logger.getLogger(ItemServiceImplements.class.getName());
 
@@ -32,37 +35,39 @@ public class ItemServiceImplements implements ItemService {
                 .id(value.getId())
                 .name(value.getName())
                 .company(value.getCompany())
+                .packingType(value.getPackingType())
                 .batchNumber(value.getBatchNumber())
                 .quantity((value.getQuantity()))
-                .manufacturingDate(value.getManufacturingDate())
-                .expiryDate(value.getExpiryDate())
+                .manufacturingDate(new DateTime(value.getManufacturingDate()))
+                .expiryDate(new DateTime(value.getExpiryDate()))
                 .cGstInPercent(value.getCGstInPercent())
                 .sGstInPercent(value.getSGstInPercent())
                 .iGstInPercent(value.getIGstInPercent())
                 .rate(value.getRate())
+                .mrp(value.getMrp())
                 .isFastMoving(value.getIsFastMoving())
                 .build()).orElse(null);
     }
 
     @Override
-    public ResponseEntity<?> getItem(@NonNull ItemRequest request) {
+    public ResponseEntity<?> getItem (@NonNull ItemRequest request) {
         var item = itemRepository.findByName(request.getName());
-
         logger.info(item.toString());
-
         if (item.isPresent()) {
             var itemDto = ItemDto.builder()
                     .id(item.get().getId())
                     .name(item.get().getName())
                     .company(item.get().getCompany())
+                    .packingType(item.get().getPackingType())
                     .batchNumber(item.get().getBatchNumber())
                     .quantity((item.get().getQuantity()))
-                    .manufacturingDate(item.get().getManufacturingDate())
-                    .expiryDate(item.get().getExpiryDate())
+                    .manufacturingDate(new DateTime(item.get().getManufacturingDate()))
+                    .expiryDate(new DateTime(item.get().getExpiryDate()))
                     .cGstInPercent(item.get().getCGstInPercent())
                     .sGstInPercent(item.get().getSGstInPercent())
                     .iGstInPercent(item.get().getIGstInPercent())
                     .rate(item.get().getRate())
+                    .mrp(item.get().getMrp())
                     .isFastMoving(item.get().getIsFastMoving())
                     .build();
             logger.info(itemDto.toString());
@@ -71,49 +76,57 @@ public class ItemServiceImplements implements ItemService {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Item not found");
     }
 
+    /**
+     * This method saves items. If the item is already present, it compares all fields.
+     * If they match, the quantity is incremented; otherwise, it's saved as a new item.
+     *
+     * @param itemDto should not be null
+     * @return ResponseEntity representing the status of operation
+     */
+
     @Override
-    public ResponseEntity<String> saveOrUpdateItem (@NonNull ItemDto itemDto) {
-        var itemOptional = itemRepository.findByName(itemDto.getName());
-        Item item;
-        if (itemOptional.isPresent()) {
-            item = itemOptional.get();
-            itemDto.setId(item.getId());
-            item.setBatchNumber(itemDto.getBatchNumber());
-            item.setCompany(itemDto.getCompany());
-            item.setQuantity(itemDto.getQuantity());
-            item.setManufacturingDate(itemDto.getManufacturingDate());
-            item.setExpiryDate(itemDto.getExpiryDate());
-            item.setCGstInPercent(itemDto.getCGstInPercent());
-            item.setSGstInPercent(itemDto.getSGstInPercent());
-            item.setIGstInPercent(itemDto.getIGstInPercent());
-            item.setRate(itemDto.getRate());
-            item.setId(itemDto.getId());
+    public ResponseEntity<String> saveItem (@NonNull ItemDto itemDto) {
+        var item = itemRepository.findItemByCompanyAndBatchNumber(itemDto.company, itemDto.batchNumber);
+        if (item.isPresent()) {
+            Boolean status = ItemComparator.compareAllFieldsExcept(item.get(), itemDto, "quantity");
+            if (status) {
+                item.get().setQuantity(item.get().getQuantity() + itemDto.getQuantity());
+                itemRepository.save(item.get());
+            }
+            else {
+                save(itemDto);
+            }
+            return ResponseEntity.ok("\"" + item.get().getName() + "\" is successfully saved");
         }
-        else {
-            item = Item.builder()
-                    .name(itemDto.getName())
-                    .company(itemDto.getCompany())
-                    .quantity(itemDto.getQuantity())
-                    .batchNumber(itemDto.getBatchNumber())
-                    .manufacturingDate(itemDto.getManufacturingDate())
-                    .expiryDate(itemDto.getExpiryDate())
-                    .cGstInPercent(itemDto.getCGstInPercent())
-                    .sGstInPercent(itemDto.getSGstInPercent())
-                    .iGstInPercent(itemDto.getIGstInPercent())
-                    .rate(itemDto.getRate())
-                    .isFastMoving(itemDto.getIsFastMoving())
-                    .build();
-        }
-        itemRepository.save(item);
-        return ResponseEntity.ok(item.getName() + " is Successfully added !");
+        save(itemDto);
+        return ResponseEntity.ok("\"" + itemDto.getName() + "\" is successfully saved");
     }
 
     @Override
-    public ResponseEntity<?> getItems() {
-        List<?> items = itemRepository.findAll();
-        if (!items.isEmpty()) {
-            return ResponseEntity.ok(items.stream().map(item -> modelMapper.map(item, ItemDto.class)));
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No items");
+    public List<ItemDto> getItems() {
+        return itemRepository.findAll()
+                .stream()
+                .map(mapper::mapItemToItemDto)
+                .collect(Collectors.toList());
+    }
+
+    private void save (@NonNull ItemDto itemDto) {
+        var item = Item.builder()
+                .name(itemDto.getName())
+                .company(itemDto.getCompany())
+                .packingType(itemDto.getPackingType())
+                .quantity(itemDto.getQuantity())
+                .batchNumber(itemDto.getBatchNumber())
+                .manufacturingDate(DateTime.formatDate(itemDto.getManufacturingDate()))
+                .expiryDate(DateTime.formatDate(itemDto.getExpiryDate()))
+                .cGstInPercent(itemDto.getCGstInPercent())
+                .sGstInPercent(itemDto.getSGstInPercent())
+                .iGstInPercent(itemDto.getIGstInPercent())
+                .rate(itemDto.getRate())
+                .mrp(itemDto.getMrp())
+                .isFastMoving(itemDto.getIsFastMoving())
+                .build();
+        var obj = itemRepository.save(item);
+        logger.info("\"" + obj.getName() + "\" is saved successfully");
     }
 }

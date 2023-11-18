@@ -2,6 +2,7 @@ package com.bba.Backend.utils;
 
 import com.bba.Backend.utils.enums.DateFormat;
 import lombok.*;
+import org.springframework.lang.NonNull;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,7 +21,14 @@ public class DateTime {
     private Integer minutes;
     private Integer seconds;
 
-    public DateTime(String formattedDate) {
+    /**
+     * This constructor creates DateTime by taking formattedDate.
+     * Expected format : 2023-10-15T05:30:00
+     * @param formattedDate should be NotNull
+     *
+     */
+
+    public DateTime(@NonNull String formattedDate) {
         String[] value = formattedDate.split("T");
         String date = value[0];
         String time = value[1];
@@ -32,7 +40,17 @@ public class DateTime {
         setSeconds(Integer.parseInt(time.split(":")[2]));
     }
 
-    public DateTime(int year, int month, int day, int hours, int minutes, int seconds) {
+    /**
+     * This constructor creates DateTime all Integer values of Date
+     * @param year should be an Integer
+     * @param month should be an Integer
+     * @param day should be an Integer
+     * @param hours should be an Integer
+     * @param minutes should be an Integer
+     * @param seconds should be an Integer
+     */
+
+    public DateTime(Integer year, Integer month, Integer day, Integer hours, Integer minutes, Integer seconds) {
         setYear(year);
         setMonth(month);
         setDay(day);
@@ -41,11 +59,25 @@ public class DateTime {
         setSeconds(seconds);
     }
 
-    public DateTime(int year, int month, int day) {
+    /**
+     * This constructor creates DateTime all Integer values of Date
+     * @param year should be an Integer
+     * @param month should be an Integer
+     * @param day should be an Integer
+     */
+    public DateTime(Integer year, Integer month, Integer day) {
         setYear(year);
         setMonth(month);
         setSeconds(day);
     }
+
+    /**
+     * This constructor create DateTime by taking Date, it works for two different date formats, Ex:
+     * Format 1 -> Sun Oct 29 23:09:35 IST 2023
+     * Format 2 -> 2023-10-15 05:30:00
+     * @param date should be NotNull
+     *
+     */
 
     public DateTime (Date date) {
         //  Date Format: Sun Oct 29 23:09:35 IST 2023
@@ -57,10 +89,15 @@ public class DateTime {
         }
         else {
             setDate(values[0]);
-            setTime(values[1]);
+            setTime("00:00:00");
         }
     }
 
+    /**
+     * This method creates Date using formatted String. Example: 2023-10-15T05:30:00
+     * @param formattedDate should be a valid-formatted Date string
+     * @return Date
+     */
     public static Date formatDate (String formattedDate) {
         Logger logger = Logger.getLogger(DateTime.class.getName());
         SimpleDateFormat formatter = new SimpleDateFormat(DateFormat.YEAR_MONTH_DAY_HH_MM_SS.getFormat());
@@ -116,12 +153,17 @@ public class DateTime {
         return ((day < 10) ? ("0" + day) : day) + "-" + ((month < 10) ? ("0" + month) : month) + "-" + (year % 100);
     }
 
+    /**
+     * This method creates a formatted date string. Format
+     * @return formatted
+     */
+
     public String getFormattedStringForDateGeneration() {
         /*
             Format : yyyy-MM-ddTHH:mm:ss
             Example : 2023-10-15T16:38:10
         */
-        return (
+        return  (
                 year
                         + "-"
                         + ((month < 10) ? ("0" + month) : String.valueOf(month))
@@ -153,12 +195,15 @@ public class DateTime {
     @Override
     public String toString() {
         return getYear().toString()
+                + "-"
                 + getMonth()
+                + "-"
                 + getDay()
                 + "T"
                 + ((getHours() < 10) ? "0" + getHours() : getHours())
                 + ":"
                 + ((getMinutes() < 10) ? "0" + getMinutes() : getMinutes())
+                + ":"
                 + ((getSeconds() < 10) ? "0" + getSeconds() : getSeconds());
     }
 }

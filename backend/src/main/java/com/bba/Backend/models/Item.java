@@ -25,6 +25,9 @@ public class Item {
     @Column(name = "company", length = 256, nullable = false)
     private String company;
 
+    @Column(name = "packing_type")
+    private Integer packingType;
+
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
@@ -32,7 +35,7 @@ public class Item {
     private String batchNumber;
 
     @Column(name = "rate", nullable = false)
-    private Integer rate;
+    private Double rate;
 
     @Column(name = "s_gst_in_percent", nullable = false)
     private Integer sGstInPercent;
@@ -51,5 +54,8 @@ public class Item {
 
     @Column(name = "is_fast_moving", nullable = false)
     private Boolean isFastMoving;
+
+    @Column(name = "mrp", nullable = false)
+    private Double mrp;
 
 }

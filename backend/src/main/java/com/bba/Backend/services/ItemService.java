@@ -5,12 +5,13 @@ import com.bba.Backend.dto.ItemRequest;
 import com.bba.Backend.models.Item;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ItemService {
     ResponseEntity<?> getItem(ItemRequest itemRequest);
 
-    ResponseEntity<String> saveOrUpdateItem(ItemDto itemDto);
+    ResponseEntity<String> saveItem(ItemDto itemDto);
 
-    ResponseEntity<?> getItems();
+    List<ItemDto> getItems();
 }
