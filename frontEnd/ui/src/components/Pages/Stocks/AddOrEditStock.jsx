@@ -17,24 +17,25 @@ import {
 } from "../../../services/api/post/authorizedPostService";
 import { getToken } from "../../../services/load/loadBrowserContent";
 import "../../coreComponents/Styles/primaryStyle.css";
-import {
-    onPressedEnterCompanyField,
-    onPressedEnterBatchNumberField,
-    onPressedEnterQuantityField,
-    onPressedEnterManufacturingDateField,
-    onPressedEnterExpiryDateField,
-    onPressedEnterSGSTField,
-    onPressedEnterCGSTField,
-    onPressedEnterIGSTField,
-    onPressedEnterRateField,
-    onPressedEnterPackingTypeField,
-    onPressedEnterProductNameField,
-} from "./events/KeyboardEvents";
+
 import { validate } from "../../../services/validation/validate";
 import {
     getYearMonthFormat,
     setFormattedDate,
 } from "../../../services/utils/dateFormater";
+import {
+    onPressedBatchNumberHandler,
+    onPressedCGSTHandler,
+    onPressedCompanyHandler,
+    onPressedExpiryDateHandler,
+    onPressedIGSTHandler,
+    onPressedManufacturingDateHandler,
+    onPressedPackingTypeHandler,
+    onPressedProductNameHandler,
+    onPressedQuantityHandler,
+    onPressedRateHandler,
+    onPressedSGSTHandler,
+} from "./events/KeyboardEvents";
 
 export const AddOrEditStock = () => {
     useEffect(() => {
@@ -104,9 +105,10 @@ export const AddOrEditStock = () => {
     const [messageApi, contextHolder] = message.useMessage();
 
     const clearProduct = () => {
+        setProductName("");
         setBatchNumber("");
         setCompanyName("");
-        setPackingType("");
+        setPackingType();
         setQuantity("");
         setManufacturingDate("");
         setExpiryDate("");
@@ -174,18 +176,7 @@ export const AddOrEditStock = () => {
                 mrp
             )
                 .then(() => {
-                    setProductName("");
-                    setBatchNumber("");
-                    setCompanyName("");
-                    setPackingType();
-                    setQuantity("");
-                    setManufacturingDate("");
-                    setExpiryDate("");
-                    setSGST("");
-                    setCGST("");
-                    setIGST("");
-                    setRate("");
-                    setMrp("");
+                    clearProduct();
                     result("success");
                     navigate("/app/stocks");
                 })
@@ -286,7 +277,7 @@ export const AddOrEditStock = () => {
                                     setProductName(event.target.value)
                                 }
                                 onKeyUp={(event) => {
-                                    onPressedEnterProductNameField(event, {
+                                    onPressedProductNameHandler(event, {
                                         batchNumberField,
                                     });
                                 }}
@@ -313,7 +304,7 @@ export const AddOrEditStock = () => {
                                     setBatchNumber(event.target.value)
                                 }
                                 onKeyUp={(event) => {
-                                    onPressedEnterBatchNumberField(event, {
+                                    onPressedBatchNumberHandler(event, {
                                         companyField,
                                     });
                                 }}
@@ -340,7 +331,7 @@ export const AddOrEditStock = () => {
                                     setCompanyName(event.target.value)
                                 }
                                 onKeyUp={(event) => {
-                                    onPressedEnterCompanyField(event, {
+                                    onPressedCompanyHandler(event, {
                                         packingTypeField,
                                     });
                                 }}
@@ -367,7 +358,7 @@ export const AddOrEditStock = () => {
                                     setPackingType(event.target.value)
                                 }
                                 onKeyUp={(event) => {
-                                    onPressedEnterPackingTypeField(event, {
+                                    onPressedPackingTypeHandler(event, {
                                         quantityField,
                                     });
                                 }}
@@ -391,7 +382,7 @@ export const AddOrEditStock = () => {
                                     setQuantity(event.target.value)
                                 }
                                 onKeyUp={(event) => {
-                                    onPressedEnterQuantityField(event, {
+                                    onPressedQuantityHandler(event, {
                                         manufacturingDateField,
                                     });
                                 }}
@@ -418,10 +409,9 @@ export const AddOrEditStock = () => {
                                     setManufacturingDate(event.target.value)
                                 }
                                 onKeyUp={(event) => {
-                                    onPressedEnterManufacturingDateField(
-                                        event,
-                                        { expiryDateField }
-                                    );
+                                    onPressedManufacturingDateHandler(event, {
+                                        expiryDateField,
+                                    });
                                 }}
                             ></Input>
                         </Space>
@@ -446,14 +436,14 @@ export const AddOrEditStock = () => {
                                     setExpiryDate(event.target.value)
                                 }
                                 onKeyUp={(event) => {
-                                    onPressedEnterExpiryDateField(event, {
+                                    onPressedExpiryDateHandler(event, {
                                         sGstField,
                                     });
                                 }}
                             ></Input>
                         </Space>
                         <Space
-                            direction="vertical" 
+                            direction="vertical"
                             style={{
                                 textAlign: "start",
                                 marginLeft: "20px",
@@ -470,7 +460,7 @@ export const AddOrEditStock = () => {
                                     setSGST(event.target.value)
                                 }
                                 onKeyUp={(event) => {
-                                    onPressedEnterSGSTField(event, {
+                                    onPressedSGSTHandler(event, {
                                         cGstField,
                                     });
                                 }}
@@ -494,7 +484,7 @@ export const AddOrEditStock = () => {
                                     setCGST(event.target.value)
                                 }
                                 onKeyUp={(event) => {
-                                    onPressedEnterCGSTField(event, {
+                                    onPressedCGSTHandler(event, {
                                         iGstField,
                                     });
                                 }}
@@ -518,7 +508,7 @@ export const AddOrEditStock = () => {
                                     setIGST(event.target.value)
                                 }
                                 onKeyUp={(event) => {
-                                    onPressedEnterIGSTField(event, {
+                                    onPressedIGSTHandler(event, {
                                         rateField,
                                     });
                                 }}
@@ -542,7 +532,7 @@ export const AddOrEditStock = () => {
                                     setRate(event.target.value)
                                 }
                                 onKeyUp={(event) => {
-                                    onPressedEnterRateField(event, {
+                                    onPressedRateHandler(event, {
                                         mrpField,
                                     });
                                 }}

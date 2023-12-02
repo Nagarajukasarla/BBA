@@ -5,14 +5,11 @@
  * 
  **/
 export const getYearMonthFormat = (date) => {
-    console.log(date);
-    if (date === undefined) {
+    if (date === undefined || date === null) {
         return;
     }
     let year = (date.split("T")[0].split("-")[0]).substring(2, 4);
     let month = (date.split("T")[0].split("-")[1]);
-    console.log("Month: " + month);
-    console.log("Year: " + year);
     return month + "/" + year;
 };
 

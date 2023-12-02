@@ -42,10 +42,7 @@ export const Stocks = () => {
                     rate: item.rate,
                     mrp: item.mrp
                 }));
-
                 setProducts(mappedProducts);
-                // console.log("Mapped products:  " + JSON.stringify(mappedProducts, null, 2));
-                // console.log("Updated products:  " + JSON.stringify(myProducts, null, 2));
             } else {
                 throw new Error("Data not found");
             }

@@ -1,65 +1,65 @@
 
-export const onPressedEnterProductNameField = (event , { batchNumberField }) => {
+export const onPressedProductNameHandler = (event , { batchNumberField }) => {
     if (event.key === 'Enter') {
         batchNumberField.focus();
     }
 };
 
-export const onPressedEnterBatchNumberField = (event, { companyField }) => {
+export const onPressedBatchNumberHandler = (event, { companyField }) => {
     if (event.key === 'Enter') {
         companyField.focus();
     }
 };
 
-export const onPressedEnterCompanyField = (event, { packingTypeField }) => {
+export const onPressedCompanyHandler = (event, { packingTypeField }) => {
     if (event.key === 'Enter') {
         packingTypeField.focus();
     }
 };
 
-export const onPressedEnterPackingTypeField = (event, { quantityField }) => {
+export const onPressedPackingTypeHandler = (event, { quantityField }) => {
     if (event.key === 'Enter') {
         quantityField.focus();
     }
 };
 
-export const onPressedEnterQuantityField = (event, { manufacturingDateField }) => {
+export const onPressedQuantityHandler = (event, { manufacturingDateField }) => {
     if (event.key === 'Enter') {
         manufacturingDateField.focus();
     }
 };
 
-export const onPressedEnterManufacturingDateField = (event, { expiryDateField }) => {
+export const onPressedManufacturingDateHandler = (event, { expiryDateField }) => {
     if (event.key === 'Enter') {
         expiryDateField.focus();
     }
 };
 
-export const onPressedEnterExpiryDateField = (event, { sGstField }) => {
+export const onPressedExpiryDateHandler = (event, { sGstField }) => {
     if (event.key === 'Enter') {
         sGstField.focus();
     }
 };
 
-export const onPressedEnterSGSTField = (event, { cGstField }) => {
+export const onPressedSGSTHandler = (event, { cGstField }) => {
     if (event.key === 'Enter') {
         cGstField.focus();
     }
 };
 
-export const onPressedEnterCGSTField = (event, { iGstField }) => {
+export const onPressedCGSTHandler = (event, { iGstField }) => {
     if (event.key === 'Enter') {
         iGstField.focus();
     }
 };
 
-export const onPressedEnterIGSTField = (event, { rateField }) => {
+export const onPressedIGSTHandler = (event, { rateField }) => {
     if (event.key === 'Enter') {
         rateField.focus();
     }
 };
 
-export const onPressedEnterRateField = (event, { mrpField }) => {
+export const onPressedRateHandler = (event, { mrpField }) => {
     if (event.key === "Enter") {
         mrpField.focus();
     }

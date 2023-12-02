@@ -39,7 +39,6 @@ export const Customers = () => {
     };
 
     const mapCustomerDetails = (name, addressDto) => {
-        // it is not properly mapping values bug 
         let address = `${addressDto.blockNumber}, \n ${addressDto.street}, \n${addressDto.city}, \n ${addressDto.state}`;
         return [name, address];
     };
@@ -73,7 +72,6 @@ export const Customers = () => {
 
     useEffect(() => {
         document.title = "Customers";
-
         if (checkAuthentication(getToken())) {
             setLoading(true);
             fetchCustomers().then(() => setLoading(false));

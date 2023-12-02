@@ -1,46 +1,58 @@
-export const onPressedEnterOnCompanyField = (event, { quantityField }) => {
+export const onPressedCompanyHandler = (event, { quantityField }) => {
     if (event.keyCode === 13) {
         quantityField.focus();
     }
-}
+};
 
-export const onPressedEnterQuantityField = (event, { manufacturingDateField }) => {
+export const onPressedQuantityHandler = (event, { packingTypeField }) => {
+    if (event.keyCode === 13) {
+        packingTypeField.focus();
+    }
+};
+
+export const onPressedPackingTypeHandler = (event, { manufacturingDateField }) => {
     if (event.keyCode === 13) {
         manufacturingDateField.focus();
     }
-}
+};
 
-export const onPressedEnterManufacturingDateField = (event, { expiryDateField }) => {
+export const onPressedManufacturingDateHandler = (event, { expiryDateField }) => {
     if (event.keyCode === 13) {
         expiryDateField.focus();
     }
-}
+};
 
-export const onPressedEnterExpiryDateField = (event, { sGstField }) => {
+export const onPressedExpiryDateHandler = (event, { sGstField }) => {
     if (event.keyCode === 13) {
         sGstField.focus();
     }
-}
+};
 
-export const onPressedEnterSGSTField = (event, { cGstField }) => {
+export const onPressedSGSTHandler = (event, { cGstField }) => {
     if (event.keyCode === 13) {
         cGstField.focus();
     }
-}
+};
 
-export const onPressedEnterCGSTField = (event, { iGstField }) => {
+export const onPressedCGSTHandler = (event, { iGstField }) => {
     if (event.keyCode === 13) {
         iGstField.focus();
     }
-}
+};
 
-export const onPressedEnterIGSTField = (event, { discountField }) => {
+export const onPressedIGSTHandler = (event, { discountField }) => {
     if (event.keyCode === 13) {
         discountField.focus();
     }
-}
+};
 
-export const onPressedEnterDiscountField = (event, { rateField }) => {
+export const onPressedDiscountHandler = (event, { mrpField }) => {
+    if (event.keyCode === 13) {
+        mrpField.focus();
+    }
+};
+
+export const onPressedMrpHandler = (event, { rateField }) => {
     if (event.keyCode === 13) {
         rateField.focus();
     }

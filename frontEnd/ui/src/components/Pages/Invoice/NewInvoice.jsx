@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Col,
     Row,
@@ -10,53 +10,68 @@ import {
     Input,
     Button,
     Table,
+    ConfigProvider,
 } from "antd";
 
 import "./css/newInvoice.css";
 import "../../coreComponents/Styles/primaryStyle.css";
-
 import {
-    onPressedEnterOnCompanyField,
-    onPressedEnterQuantityField,
-    onPressedEnterManufacturingDateField,
-    onPressedEnterExpiryDateField,
-    onPressedEnterSGSTField,
-    onPressedEnterCGSTField,
-    onPressedEnterIGSTField,
-    onPressedEnterDiscountField,
+    onPressedCGSTHandler,
+    onPressedCompanyHandler,
+    onPressedDiscountHandler,
+    onPressedExpiryDateHandler,
+    onPressedIGSTHandler,
+    onPressedManufacturingDateHandler,
+    onPressedMrpHandler,
+    onPressedPackingTypeHandler,
+    onPressedQuantityHandler,
+    onPressedSGSTHandler,
 } from "./events/KeyboardEvents";
+import {
+    authenticate,
+    getAllCustomers,
+    getAllProducts,
+} from "../../../services/api/get/authorizedGetServices";
+import { getToken } from "../../../services/load/loadBrowserContent";
+import { useNavigate } from "react-router-dom";
+import { getYearMonthFormat } from "../../../services/utils/dateFormater";
 
 export const NewInvoice = () => {
-    // DOM Elements
     const productSearchDropdown = document.getElementById("productSearch");
     const quantityField = document.getElementById("quantityField");
-    const manufacturingDateField = document.getElementById("manufacturingDateField");
+    const packingTypeField = document.getElementById("packingTypeField");
+    const manufacturingDateField = document.getElementById(
+        "manufacturingDateField"
+    );
     const expiryDateField = document.getElementById("expiryDateField");
     const sGstField = document.getElementById("sGstField");
     const cGstField = document.getElementById("cGstField");
     const iGstField = document.getElementById("iGstField");
     const discountField = document.getElementById("discountField");
     const rateField = document.getElementById("rateField");
+    const mrpField = document.getElementById("mrpField");
 
     let itemObj = {
         id: "",
         product: "",
         quantity: "",
+        packingType: "",
         manufacturingDate: "",
         expiryDate: "",
         sGst: "",
         cGst: "",
         iGst: "",
         rate: "",
+        mrp: "",
         discount: "",
         price: "",
     };
 
-    // State variables
     const [invoiceData, setInvoiceData] = useState([]);
-    const [customer, setCustomer] = useState("");
-    const [product, setProduct] = useState("");
+    const [customer, setCustomer] = useState(null);
+    const [product, setProduct] = useState(null);
     const [company, setCompany] = useState("");
+    const [packingType, setPackingType] = useState("");
     const [quantity, setQuantity] = useState("");
     const [manufacturingDate, setManufacturingDate] = useState("");
     const [expiryDate, setExpiryDate] = useState("");
@@ -65,77 +80,114 @@ export const NewInvoice = () => {
     const [iGst, setIGst] = useState("");
     const [discount, setDiscount] = useState("");
     const [rate, setRate] = useState("");
+    const [mrp, setMrp] = useState("");
     const [paymentModeValue, setPaymentModeValue] = useState("");
+    const [customers, setCustomers] = useState([]);
+    const [products, setProducts] = useState([]);
 
-    // Customer list
-    const myList = [
-        {
-            value: "sri-venkateshwara-agencies",
-            label: "Sri Venkateshwara Agencies",
-        },
-        {
-            value: "dwaraka-medical-pharma",
-            label: "Dwaraka Medical Pharma",
-        },
-        {
-            value: "rudra-phrama-agencies",
-            label: "Rudra Phrama Agencies",
-        },
-        {
-            value: "markandeya-agencies",
-            label: "Markandeya Agencies",
-        },
-        {
-            value: "surya-pharma",
-            label: "Surya Pharma",
-        },
-        {
-            value: "sruthi-medical-phrama",
-            label: "Sruthi Medical Phrama",
-        },
-        {
-            value: "varuna-agencies",
-            label: "Varuna Agencies",
-        },
-        {
-            value: "sri-nitya-pharma",
-            label: "Sri Nitya Pharma",
-        },
-        {
-            value: "shiva-medical-pharma",
-            label: "Shiva medical Pharma",
-        },
-        {
-            value: "vidya-agencies",
-            label: "Vidya Agencies",
-        },
-        {
-            value: "vignana-medical-pharma",
-            label: "Vignana Medical Pharma",
-        },
-        {
-            value: "vignana-pharma",
-            label: "Vignana Pharma",
-        },
-        {
-            value: "vishu-pharma",
-            label: "Vishu Pharma",
-        },
-        {
-            value: "chandra-pharma",
-            label: "Chandra Pharma",
-        },
-        {
-            value: "dwapara-phrama",
-            label: "Dwapara Phrama",
-        },
-        {
-            value: "sakthi-agencies",
-            label: "Sakthi Agencies",
-        },
-    ];
+    const navigate = useNavigate();
 
-    // Payment modes
+    const checkAuthentication = async (token) => {
+        if (!(await authenticate(token))) {
+            console.log("Unauthenticated!");
+            navigate("/login");
+            return false;
+        }
+        return true;
+    };
+
+    const fetchCustomers = async () => {
+        try {
+            const fectchedCustomers = await getAllCustomers(getToken());
+            if (fectchedCustomers && fectchedCustomers.length > 0) {
+                return fectchedCustomers;
+            } else {
+                console.log("Data not found!");
+                return [];
+            }
+        } catch (error) {
+            console.log("Error occurred: " + error);
+            return [];
+        }
+    };
+
+    const fetchProducts = async () => {
+        try {
+            const fetchedProducts = await getAllProducts(getToken());
+            if (fetchedProducts && fetchedProducts.length > 0) {
+                return fetchedProducts;
+            } else {
+                return [];
+            }
+        } catch (error) {
+            console.log("Error occurred: " + error);
+            return [];
+        }
+    };
+
+    useEffect(() => {
+        if (checkAuthentication(getToken())) {
+            fetchCustomers().then((data) => {
+                setCustomers(data);
+            });
+            fetchProducts().then((data) => {
+                setProducts(data);
+            });
+        }
+        //eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
+        setDiscount(customer?.discount);
+    }, [customer]);
+
+    useEffect(() => {
+        setCompany(product?.company);
+        setQuantity(product?.quantity);
+        setPackingType(product?.packingType);
+        setManufacturingDate(getYearMonthFormat(product?.manufacturingDate));
+        setExpiryDate(getYearMonthFormat(product?.expiryDate));
+        setSGst(product?.sGstInPercent);
+        setCGst(product?.cGstInPercent);
+        setIGst(product?.iGstInPercent);
+        setRate(product?.rate);
+        setMrp(product?.mrp);
+    }, [product]);
+
+    const customerNameHelper = (customer) => {
+        if (!customer) {
+            return "";
+        }
+        return `${customer?.customerNumber ?? ""} - ${customer?.name ?? ""}, ${
+            customer?.addressDto?.city ?? ""
+        }`;
+    };
+
+    const productNameHelper = (product) => {
+        if (!product) {
+            return "";
+        }
+        return ` ${product?.name ?? ""} - ${getYearMonthFormat(
+            product?.expiryDate ?? ""
+        )}`;
+    };
+
+    const getCustomerAsOptions = (customers) => {
+        return customers.map((item) => ({
+            value: item.customerNumber,
+            label: customerNameHelper(item),
+            customValue: item,
+        }));
+    };
+
+    const getProductsAsOptions = (products) => {
+        return products.map((product) => ({
+            value: product.id,
+            label: productNameHelper(product),
+            customValue: product,
+        }));
+    };
+
     const paymentModes = [
         {
             value: "cash",
@@ -154,25 +206,24 @@ export const NewInvoice = () => {
         },
     ];
 
-    // Invoice columns headings
     const invoiceColumns = [
         {
             key: "1",
             title: "S.No",
             dataIndex: "key",
-            width: "5%",
+            width: "6%",
         },
         {
             key: "2",
             title: "Product",
             dataIndex: "product",
-            width: "23%",
+            width: "13%",
         },
         {
             key: "3",
             title: "Company",
             dataIndex: "company",
-            width: "10%",
+            width: "8%",
         },
         {
             key: "4",
@@ -182,122 +233,71 @@ export const NewInvoice = () => {
         },
         {
             key: "5",
+            title: "Pack",
+            dataIndex: "packingType",
+            width: "6%"
+        },
+        {
+            key: "6",
             title: "Mf Date",
             dataIndex: "manufacturingDate",
             width: "7%",
         },
         {
-            key: "6",
+            key: "7",
             title: "Exp Date",
             dataIndex: "expiryDate",
             width: "7%",
         },
         {
-            key: "7",
+            key: "8",
             title: "SGST",
             dataIndex: "sGst",
             width: "5%",
         },
         {
-            key: "8",
+            key: "9",
             title: "CGST",
             dataIndex: "cGst",
             width: "5%",
         },
         {
-            key: "9",
+            key: "10",
             title: "IGST",
             dataIndex: "iGst",
             width: "5%",
         },
         {
-            key: "10",
+            key: "11",
             title: "Rate",
             dataIndex: "rate",
             width: "5%",
         },
         {
-            key: "11",
+            key: "12",
+            title: "Mrp", 
+            dataIndex: "mrp",
+            width: "6%"
+        },
+        {
+            key: "13",
             title: "Discount",
             dataIndex: "discount",
             width: "7%",
         },
         {
-            key: "12",
+            key: "14",
             title: "Price",
             dataIndex: "price",
-            width: "9%",
+            width: "8%",
         },
     ];
 
-    // Styles
     const dropDownStyles = {
         padding: "0",
         textAlign: "start",
     };
 
-    // OnValueChange event handlers
-    const onSelectPaymentMode = ({ target: { value } }) => {
-        console.log("radio4 checked", value);
-        setPaymentModeValue(value);
-    };
-
-    const onCustomerSelection = (value) => {
-        setCustomer(value);
-        console.log(`Customer: ${value}`);
-    };
-
-    const onChangeProductValue = (value) => {
-        setProduct(value);
-        console.log(`Product Selected: ${value}`);
-    };
-
-    const onChangeCompanyValue = (value) => {
-        setCompany(value.target.value);
-        console.log(`Company Selected: ${value.target.value}`);
-    };
-
-    const onChangeQuantityValue = (value) => {
-        setQuantity(value.target.value);
-        console.log(`Quantity: ${value.target.value}`);
-    };
-
-    const onChangeManufacturingDateValue = (value) => {
-        setManufacturingDate(value.target.value);
-        console.log(`Manufacturing Date: ${value.target.value}`);
-    };
-
-    const onChangeExpiryDateValue = (value) => {
-        setExpiryDate(value.target.value);
-        console.log(`Expiry Date: ${value.target.value}`);
-    };
-
-    const onChangeSGSTValue = (value) => {
-        setSGst(value.target.value);
-        console.log(`SGST: ${value.target.value}`);
-    };
-
-    const onChangeCGSTValue = (value) => {
-        setCGst(value.target.value);
-        console.log(`CGST: ${value.target.value}`);
-    };
-
-    const onChangeIGSTValue = (value) => {
-        setIGst(value.target.value);
-        console.log(`IGST: ${value.target.value}`);
-    };
-
-    const onChangeDiscountValue = (value) => {
-        setDiscount(value.target.value);
-        console.log(`Discount: ${value.target.value}`);
-    };
-
-    const onChangeRateValue = (value) => {
-        setRate(value.target.value);
-        console.log(`Rate: ${value.target.value}`);
-    };
-
-    // OnKeyup event handlers
     const onKeyupRateField = (event) => {
         if (event.keyCode === 13) {
             onClickAddButton();
@@ -305,12 +305,14 @@ export const NewInvoice = () => {
             itemObj.product = product;
             itemObj.company = company;
             itemObj.quantity = quantity;
+            itemObj.packingType = packingType;
             itemObj.manufacturingDate = manufacturingDate;
             itemObj.expiryDate = expiryDate;
             itemObj.sGst = sGst;
             itemObj.cGst = cGst;
             itemObj.iGst = iGst;
             itemObj.rate = rate;
+            itemObj.mrp = mrp;
             itemObj.discount = discount;
             itemObj.price = (rate * quantity).toFixed(2);
             addToInvoiceTable(itemObj);
@@ -318,13 +320,11 @@ export const NewInvoice = () => {
         }
     };
 
-    // OnClickButton event handlers
     const onClickAddButton = () => {
         console.log("Enter pressed !!!");
         productSearchDropdown.focus();
     };
 
-    // Util Methods
     const activateDropdown = () => {
         productSearchDropdown.focus();
     };
@@ -344,6 +344,7 @@ export const NewInvoice = () => {
         setProduct("");
         setCompany("");
         setQuantity("");
+        setPackingType("");
         setManufacturingDate("");
         setExpiryDate("");
         setSGst("");
@@ -351,13 +352,12 @@ export const NewInvoice = () => {
         setIGst("");
         setDiscount("");
         setRate("");
+        setMrp("");
     };
-
 
     return (
         <>
-            <div
-                className="newInvoiceWrapper">
+            <div className="newInvoiceWrapper">
                 <Col span={24}>
                     <Row>
                         <Typography.Title
@@ -376,16 +376,55 @@ export const NewInvoice = () => {
                                 <Typography.Text className="primary-input-field-header-style">
                                     Customer
                                 </Typography.Text>
-                                <Select
-                                    className="customerSelectionDropdown"
-                                    showSearch
-                                    value={customer}
-                                    onChange={onCustomerSelection}
-                                    placeholder="Select Customer"
-                                    options={myList}
-                                    dropdownStyle={dropDownStyles}
-                                    allowClear
-                                />
+                                { (
+                                    <ConfigProvider
+                                        theme={{
+                                            token: {
+                                                Select: {
+                                                    optionActiveBg:
+                                                        "rgba(0, 0, 0, 0.15)",
+                                                },
+                                            },
+                                        }}
+                                    >
+                                        <Select
+                                            style={{
+                                                width: 380,
+                                            }}                              
+                                            className="customerSelectionDropdown"
+                                            value={customerNameHelper(customer)}
+                                            onChange={(
+                                                value,
+                                                selectedCustomer
+                                            ) => {
+                                                if (
+                                                    selectedCustomer &&
+                                                    selectedCustomer.customValue
+                                                ) {
+                                                    setCustomer(
+                                                        selectedCustomer.customValue
+                                                    );
+                                                    
+                                                }
+                                            }}
+                                            onClear={() => setCustomer(null)}
+                                            placeholder="Select Customer"
+                                            options={getCustomerAsOptions(
+                                                customers
+                                            )}
+                                            filterOption={(input, option) =>
+                                                option.label
+                                                    .toLowerCase()
+                                                    .indexOf(
+                                                        input.toLowerCase()
+                                                    ) > 0
+                                            }
+                                            dropdownStyle={dropDownStyles}
+                                            showSearch
+                                            allowClear
+                                        />
+                                    </ConfigProvider>
+                                )}
                             </Space>
                             <Space
                                 direction="vertical"
@@ -399,7 +438,9 @@ export const NewInvoice = () => {
                                 </Typography.Text>
                                 <Radio.Group
                                     options={paymentModes}
-                                    onChange={onSelectPaymentMode}
+                                    onChange={(event) =>
+                                        setPaymentModeValue(event.target.value)
+                                    }
                                     value={paymentModeValue}
                                     optionType="button"
                                     buttonStyle="solid"
@@ -414,20 +455,52 @@ export const NewInvoice = () => {
                                 <Typography.Text className="primary-input-field-header-style">
                                     Product
                                 </Typography.Text>
-                                <Select
-                                    className="customerSelectionDropdown"
-                                    id="productSearch"
-                                    showSearch
-                                    value={product}
-                                    onChange={onChangeProductValue}
-                                    placeholder="Select Product"
-                                    options={myList}
-                                    dropdownStyle={dropDownStyles}
-                                    allowClear
-                                    onFocus={() => {
-                                        console.log("Clicked");
-                                    }}
-                                />
+                                { (
+                                    <ConfigProvider
+                                        theme={{
+                                            token: {
+                                                Select: {
+                                                    optionActiveBg:
+                                                        "rgba(0, 0, 0, 0.15)",
+                                                },
+                                            },
+                                        }}
+                                    >
+                                        <Select
+                                            className="customerSelectionDropdown"
+                                            id="productSearch"
+                                            value={productNameHelper(product)}
+                                            onChange={(
+                                                value,
+                                                selectedProduct
+                                            ) => {
+                                                if (
+                                                    selectedProduct &&
+                                                    selectedProduct.customValue
+                                                ) {
+                                                    setProduct(
+                                                        selectedProduct.customValue
+                                                    );
+                                                }
+                                            }}
+                                            onClear={() => setProduct(null)}
+                                            options={getProductsAsOptions(
+                                                products
+                                            )}
+                                            filterOption={(input, option) =>
+                                                option.label
+                                                    .toLowerCase()
+                                                    .indexOf(
+                                                        input.toLowerCase()
+                                                    ) > 0
+                                            }
+                                            placeholder="Select Product"
+                                            dropdownStyle={dropDownStyles}
+                                            showSearch
+                                            allowClear
+                                        />
+                                    </ConfigProvider>
+                                )}
                             </Space>
                             <Space
                                 direction="vertical"
@@ -440,12 +513,17 @@ export const NewInvoice = () => {
                                     Company
                                 </Typography.Text>
                                 <Input
-                                    style={{ width: "110px" }}
+                                    style={{ 
+                                        width: "110px",
+                                        padding: "4px"
+                                    }}
                                     value={company}
-                                    onChange={onChangeCompanyValue}
+                                    onChange={(event) =>
+                                        setCompany(event.target.value)
+                                    }
                                     className="invoiceInputFields"
                                     onKeyUp={(event) =>
-                                        onPressedEnterOnCompanyField(event, {
+                                        onPressedCompanyHandler(event, {
                                             quantityField,
                                         })
                                     }
@@ -462,13 +540,40 @@ export const NewInvoice = () => {
                                     Quantity
                                 </Typography.Text>
                                 <Input
-                                    style={{ width: "110px" }}
+                                    style={{ width: "50px", padding: "4px" }}
                                     value={quantity}
                                     className="invoiceInputFields"
                                     id="quantityField"
-                                    onChange={onChangeQuantityValue}
+                                    onChange={(event) =>
+                                        setQuantity(event.target.value)
+                                    }
                                     onKeyUp={(event) =>
-                                        onPressedEnterQuantityField(event, {
+                                        onPressedQuantityHandler(event, {
+                                            packingTypeField,
+                                        })
+                                    }
+                                />
+                            </Space>
+                            <Space
+                                direction="vertical"
+                                style={{
+                                    textAlign: "start",
+                                    marginLeft: "20px",
+                                }}
+                            >
+                                <Typography.Text className="primary-input-field-header-style">
+                                    Pack
+                                </Typography.Text>
+                                <Input
+                                    style={{ width: "50px", padding: "4px" }}
+                                    value={packingType}
+                                    className="invoiceInputFields"
+                                    id="packingTypeField"
+                                    onChange={(event) =>
+                                        setPackingType(event.target.value)
+                                    }
+                                    onKeyUp={(event) =>
+                                        onPressedPackingTypeHandler(event, {
                                             manufacturingDateField,
                                         })
                                     }
@@ -485,13 +590,15 @@ export const NewInvoice = () => {
                                     Mf Date
                                 </Typography.Text>
                                 <Input
-                                    style={{ width: "60px" }}
+                                    style={{ width: "50px", padding: "4px" }}
                                     value={manufacturingDate}
                                     className="invoiceInputFields"
                                     id="manufacturingDateField"
-                                    onChange={onChangeManufacturingDateValue}
+                                    onChange={(event) =>
+                                        setManufacturingDate(event.target.value)
+                                    }
                                     onKeyUp={(event) =>
-                                        onPressedEnterManufacturingDateField(
+                                        onPressedManufacturingDateHandler(
                                             event,
                                             { expiryDateField }
                                         )
@@ -509,13 +616,15 @@ export const NewInvoice = () => {
                                     Exp Date
                                 </Typography.Text>
                                 <Input
-                                    style={{ width: "60px" }}
+                                    style={{ width: "50px", padding: "4px" }}
                                     value={expiryDate}
                                     className="invoiceInputFields"
                                     id="expiryDateField"
-                                    onChange={onChangeExpiryDateValue}
+                                    onChange={(event) =>
+                                        setExpiryDate(event.target.value)
+                                    }
                                     onKeyUp={(event) =>
-                                        onPressedEnterExpiryDateField(event, {
+                                        onPressedExpiryDateHandler(event, {
                                             sGstField,
                                         })
                                     }
@@ -532,13 +641,15 @@ export const NewInvoice = () => {
                                     SGST
                                 </Typography.Text>
                                 <Input
-                                    style={{ width: "60px" }}
+                                    style={{ width: "50px", padding: "4px" }}
                                     value={sGst}
                                     className="invoiceInputFields"
                                     id="sGstField"
-                                    onChange={onChangeSGSTValue}
+                                    onChange={(event) =>
+                                        setSGst(event.target.value)
+                                    }
                                     onKeyUp={(event) =>
-                                        onPressedEnterSGSTField(event, {
+                                        onPressedSGSTHandler(event, {
                                             cGstField,
                                         })
                                     }
@@ -555,13 +666,15 @@ export const NewInvoice = () => {
                                     CGST
                                 </Typography.Text>
                                 <Input
-                                    style={{ width: "60px" }}
+                                    style={{ width: "50px", padding: "4px" }}
                                     value={cGst}
                                     className="invoiceInputFields"
                                     id="cGstField"
-                                    onChange={onChangeCGSTValue}
+                                    onChange={(event) =>
+                                        setCGst(event.target.value)
+                                    }
                                     onKeyUp={(event) =>
-                                        onPressedEnterCGSTField(event, {
+                                        onPressedCGSTHandler(event, {
                                             iGstField,
                                         })
                                     }
@@ -578,13 +691,15 @@ export const NewInvoice = () => {
                                     IGST
                                 </Typography.Text>
                                 <Input
-                                    style={{ width: "60px" }}
+                                    style={{ width: "50px", padding: "4px" }}
                                     value={iGst}
                                     className="invoiceInputFields"
                                     id="iGstField"
-                                    onChange={onChangeIGSTValue}
+                                    onChange={(event) =>
+                                        setIGst(event.target.value)
+                                    }
                                     onKeyUp={(event) =>
-                                        onPressedEnterIGSTField(event, {
+                                        onPressedIGSTHandler(event, {
                                             discountField,
                                         })
                                     }
@@ -601,14 +716,16 @@ export const NewInvoice = () => {
                                     Discount
                                 </Typography.Text>
                                 <Input
-                                    style={{ width: "60px" }}
+                                    style={{ width: "50px", padding: "4px" }}
                                     value={discount}
                                     className="invoiceInputFields"
                                     id="discountField"
-                                    onChange={onChangeDiscountValue}
+                                    onChange={(event) =>
+                                        setDiscount(event.target.value)
+                                    }
                                     onKeyUp={(event) =>
-                                        onPressedEnterDiscountField(event, {
-                                            rateField,
+                                        onPressedDiscountHandler(event, {
+                                            mrpField,
                                         })
                                     }
                                 ></Input>
@@ -621,14 +738,37 @@ export const NewInvoice = () => {
                                 }}
                             >
                                 <Typography.Text className="primary-input-field-header-style">
+                                    Mrp
+                                </Typography.Text>
+                                <Input
+                                   style={{ width: "50px", padding: "4px" }}
+                                    value={mrp}
+                                    className="invoiceInputFields"
+                                    id="mrpField"
+                                    onChange={(event) =>
+                                        setMrp(event.target.value)
+                                    }
+                                    onKeyUp={(event) => onPressedMrpHandler(event, { rateField })}
+                                />
+                            </Space>
+                            <Space
+                                direction="vertical"
+                                style={{
+                                    textAlign: "start",
+                                    marginLeft: "20px",
+                                }}
+                            >
+                                <Typography.Text className="primary-input-field-header-style">
                                     Rate
                                 </Typography.Text>
                                 <Input
-                                    style={{ width: "90px" }}
+                                   style={{ width: "50px", padding: "4px" }}
                                     value={rate}
                                     className="invoiceInputFields rateInputFields"
                                     id="rateField"
-                                    onChange={onChangeRateValue}
+                                    onChange={(event) =>
+                                        setRate(event.target.value)
+                                    }
                                     onKeyUp={onKeyupRateField}
                                 />
                             </Space>
@@ -658,13 +798,20 @@ export const NewInvoice = () => {
                                 }}
                             ></Table>
                         </Row>
-                        <Row style={{ marginTop: "20px", paddingRight: "20px" }}
+                        <Row
+                            style={{ marginTop: "20px", paddingRight: "20px" }}
                             justify="end"
                         >
                             <Space direction="horizontal">
-                                <button className="invoiceEmailButton confirmButtons">Email</button>
-                                <button className="primary-save-button-style" >Save</button>
-                                <button className="invoicePrintButton confirmButtons" >Save & Print</button>
+                                <button className="invoiceEmailButton confirmButtons">
+                                    Email
+                                </button>
+                                <button className="primary-save-button-style">
+                                    Save
+                                </button>
+                                <button className="invoicePrintButton confirmButtons">
+                                    Save & Print
+                                </button>
                             </Space>
                         </Row>
                     </Card>

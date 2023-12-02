@@ -40,7 +40,6 @@ export const getAllProducts = async (token) => {
 
         if (response.ok) {
             const data = await response.json();
-            console.log(data);
             return data;
         }
         else {
@@ -65,7 +64,6 @@ export const getAllCustomers  = async (token) => {
 
         if (response.ok) {
             const data = await response.json();
-            console.log(data);
             return data;
         }
         else {
