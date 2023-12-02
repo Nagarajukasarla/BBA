@@ -31,6 +31,7 @@ public class Mapper implements DtoMapper {
                 .pendingAmount(customer.getPendingAmount())
                 .createdDate(new DateTime(customer.getCreatedDate()))
                 .totalPurchaseAmount(customer.getTotalPurchaseAmount())
+                .discount(customer.getDiscount())
                 .addressDto(addressDto)
                 .build();
     }

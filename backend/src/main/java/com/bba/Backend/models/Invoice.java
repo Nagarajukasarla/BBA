@@ -19,6 +19,9 @@ public class Invoice {
     @Column(name = "generation_date", nullable = false)
     private Date generationDate;
 
+    @Column(name = "payment_mode", nullable = false)
+    private String paymentMode;
+
 //    private List<Item> items;
 //    private Customer customer;
 

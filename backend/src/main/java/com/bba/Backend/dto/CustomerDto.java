@@ -28,6 +28,8 @@ public class CustomerDto {
 
     public long totalPurchaseAmount;
 
+    public Double discount;
+
     public void setCreatedDate(@NonNull String formattedDate) {
         this.createdDate = new DateTime(formattedDate);
     }
@@ -46,8 +48,9 @@ public class CustomerDto {
                 "phone= " + phone + ",\n\t" +
                 "pendingAmount= " + pendingAmount + ",\n\t" +
                 "createdDate= " + createdDate + ",\n\t" +
-                "address ={ " + "addressDto.toString()" + "\n" + "}," + "\n" +
-                "totalPurchaseAmount= " + totalPurchaseAmount + "\n" +
+                "totalPurchaseAmount= " + totalPurchaseAmount + "\n\t" +
+                "discount= " + discount + "\n" +
+                "address ={ " + addressDto.toString() + "\n" + "}," + "\n" +
                 "}";
     }
 }

@@ -44,6 +44,9 @@ public class Customer {
     @Column(name = "total_purchase_amount")
     private long totalPurchaseAmount;
 
+    @Column(name = "discount")
+    private Double discount;
+
     @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_number", referencedColumnName = "customerNumber")
     private Address address;
@@ -58,7 +61,8 @@ public class Customer {
                 "phone= " + getPhone() + ",\n\t" +
                 "pendingAmount= " + getPendingAmount() + ",\n\t" +
                 "createdDate= " + getCreatedDate() + ",\n\t" +
-                "totalPurchaseAmount= " + getTotalPurchaseAmount() + "\n" +
+                "totalPurchaseAmount= " + getTotalPurchaseAmount() + "\n\t" +
+                "discount= " + getDiscount() + "\n" +
                 "}";
     }
 }

@@ -22,7 +22,6 @@ public class ItemComparator {
         equalityStatusMap.put("cGstInPercent", Objects.equals(item.getCGstInPercent(), itemDto.getCGstInPercent()));
         equalityStatusMap.put("sGstInPercent", Objects.equals(item.getSGstInPercent(), itemDto.getSGstInPercent()));
         equalityStatusMap.put("iGstInPercent", Objects.equals(item.getIGstInPercent(), itemDto.getIGstInPercent()));
-        String date = new DateTime(item.getManufacturingDate()).getFormattedStringForDateGeneration();
         equalityStatusMap.put("manufacturingDate", Objects.equals(new DateTime(item.getManufacturingDate()).getFormattedStringForDateGeneration(), itemDto.getManufacturingDate()));
         equalityStatusMap.put("expiryDate", Objects.equals(new DateTime(item.getExpiryDate()).getFormattedStringForDateGeneration(), itemDto.getExpiryDate()));
         equalityStatusMap.put("isFastMoving", Objects.equals(item.getIsFastMoving(), itemDto.getIsFastMoving()));
