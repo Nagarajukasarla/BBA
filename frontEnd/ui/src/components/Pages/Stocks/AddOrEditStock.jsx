@@ -12,15 +12,13 @@ import {
 } from "antd";
 import { CloseCircleOutlined } from "@ant-design/icons";
 import {
-    saveProduct,
-    getProduct,
+    saveProduct
 } from "../../../services/api/post/authorizedPostService";
 import { getToken } from "../../../services/load/loadBrowserContent";
 import "../../coreComponents/Styles/primaryStyle.css";
 
 import { validate } from "../../../services/validation/validate";
 import {
-    getYearMonthFormat,
     setFormattedDate,
 } from "../../../services/utils/dateFormater";
 import {

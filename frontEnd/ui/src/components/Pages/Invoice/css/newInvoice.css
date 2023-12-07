@@ -25,33 +25,47 @@
 .invoiceEmailButton {
     letter-spacing: .3px;
     font-size: 14px;
-    border: 2px solid rgb(30, 34, 46);
-    padding: 5px 10px;
+    border: 2px solid rgb(22, 56, 82);
+    padding: 6px 11px;
     border-radius: 6px;
     color: white;
-    background-color: rgb(30, 34, 46);
+    transition: transform .15s ease-in-out;
+    background-color: rgb(22, 56, 82);
     cursor: pointer;
 }
 
+.invoiceEmailButton:hover {
+    background-color: rgb(33, 75, 107);
+    border: 2px solid rgb(33, 75, 107);
+}
+
 .invoiceEmailButton:active {
-    border: 2px solid rgb(16, 18, 25);
-    background-color: rgb(16, 18, 25);
+    border: 2px solid rgb(22, 56, 82);
+    background-color: rgb(22, 56, 82);
+    transform: scale(0.90);
 }
 
 .invoicePrintButton {
     letter-spacing: .3px;
     font-size: 14px;
     border: 2px solid rgb(14, 103, 129);
-    padding: 5px 10px;
+    padding: 6px 11px;
     border-radius: 6px;
     color: white;
     background-color: rgb(14, 103, 129);
     cursor: pointer;
+    transition: transform .15s ease-in-out;
+}
+
+.invoicePrintButton:hover {
+    background-color: rgb(22, 118, 147);
+    border: 2px solid rgb(22, 118, 147);
 }
 
 .invoicePrintButton:active {
-    border: 2px solid rgb(4, 77, 100);
-    background-color: rgb(4, 77, 100);
+    border: 2px solid rgb(14, 103, 129);
+    background-color: rgb(14, 103, 129);
+    transform: scale(0.90);
 }
 
 /* --------- Button Styles ---------- */

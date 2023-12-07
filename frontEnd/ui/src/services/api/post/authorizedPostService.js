@@ -44,6 +44,7 @@ export const saveProduct = async (product, token) => {
                 name: product.name,
                 company: product.companyName,
                 quantity: product.quantity,
+                packingType: product.packingType,
                 batchNumber: product.batchNumber,
                 manufacturingDate: product.manufacturingDate,
                 expiryDate: product.expiryDate,

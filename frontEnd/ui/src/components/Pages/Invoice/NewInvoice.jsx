@@ -35,6 +35,7 @@ import {
 import { getToken } from "../../../services/load/loadBrowserContent";
 import { useNavigate } from "react-router-dom";
 import { getYearMonthFormat } from "../../../services/utils/dateFormater";
+import { getInvoiceRequestObj } from "./utils";
 
 export const NewInvoice = () => {
     const productSearchDropdown = document.getElementById("productSearch");
@@ -52,8 +53,9 @@ export const NewInvoice = () => {
     const mrpField = document.getElementById("mrpField");
 
     let itemObj = {
-        id: "",
+        serialNumber: "",
         product: "",
+        company: "",
         quantity: "",
         packingType: "",
         manufacturingDate: "",
@@ -65,6 +67,7 @@ export const NewInvoice = () => {
         mrp: "",
         discount: "",
         price: "",
+        batchNumber: "",
     };
 
     const [invoiceData, setInvoiceData] = useState([]);
@@ -84,7 +87,7 @@ export const NewInvoice = () => {
     const [paymentModeValue, setPaymentModeValue] = useState("");
     const [customers, setCustomers] = useState([]);
     const [products, setProducts] = useState([]);
-
+    const [serialNumber, setSerialNumber] = useState(0);
     const navigate = useNavigate();
 
     const checkAuthentication = async (token) => {
@@ -126,14 +129,16 @@ export const NewInvoice = () => {
     };
 
     useEffect(() => {
-        if (checkAuthentication(getToken())) {
-            fetchCustomers().then((data) => {
-                setCustomers(data);
-            });
-            fetchProducts().then((data) => {
-                setProducts(data);
-            });
-        }
+        // if (checkAuthentication(getToken())) {
+        //     fetchCustomers().then((data) => {
+        //         setCustomers(data);
+        //     });
+        //     fetchProducts().then((data) => {
+        //         setProducts(data);
+        //     });
+        getInvoiceDataFromLocalStorage();
+        // }
+
         //eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -153,6 +158,10 @@ export const NewInvoice = () => {
         setRate(product?.rate);
         setMrp(product?.mrp);
     }, [product]);
+
+    useEffect(() => {
+        setInvoiceDataToLocalStorage(invoiceData);
+    }, [invoiceData]);
 
     const customerNameHelper = (customer) => {
         if (!customer) {
@@ -188,6 +197,25 @@ export const NewInvoice = () => {
         }));
     };
 
+    const onPressedSaveButtonHandler = () => {
+        console.log(invoiceData.length);
+        if (invoiceData.length > 0) {
+            // Write request api
+            let obj = getInvoiceRequestObj(
+                customer?.customerNumber ?? "EMPTY",
+                paymentModeValue,
+                discount,
+                invoiceData
+            );
+            console.log(obj);
+            // Send invoice object request to server
+        }
+    };
+
+    const onPressedSaveAndPrintHandler = () => {
+        onPressedSaveButtonHandler();
+    }
+
     const paymentModes = [
         {
             value: "cash",
@@ -210,7 +238,7 @@ export const NewInvoice = () => {
         {
             key: "1",
             title: "S.No",
-            dataIndex: "key",
+            dataIndex: "serialNumber",
             width: "6%",
         },
         {
@@ -235,7 +263,7 @@ export const NewInvoice = () => {
             key: "5",
             title: "Pack",
             dataIndex: "packingType",
-            width: "6%"
+            width: "6%",
         },
         {
             key: "6",
@@ -275,9 +303,9 @@ export const NewInvoice = () => {
         },
         {
             key: "12",
-            title: "Mrp", 
+            title: "Mrp",
             dataIndex: "mrp",
-            width: "6%"
+            width: "6%",
         },
         {
             key: "13",
@@ -298,11 +326,47 @@ export const NewInvoice = () => {
         textAlign: "start",
     };
 
+    /**
+     * Sets the invoice data to local storage.
+     *
+     * @param {object} obj - The invoice data object.
+     */
+
+    const setInvoiceDataToLocalStorage = () => {
+        if (invoiceData.length > 0 && customer && paymentModeValue) {
+            let invoiceObject = {
+                customer: customer,
+                paymentModeValue: paymentModeValue,
+                items: invoiceData,
+            };
+
+            let invoiceObjectInJson = JSON.stringify(invoiceObject);
+            localStorage.setItem("invoice", invoiceObjectInJson);
+        }
+    };
+
+    const getInvoiceDataFromLocalStorage = () => {
+        let invoiceInJSON = localStorage.getItem("invoice");
+        if (!(invoiceInJSON === "null" || invoiceInJSON === null)) {
+            let retrivedInvoice = JSON.parse(invoiceInJSON);
+            setCustomer(retrivedInvoice.customer);
+            setPaymentModeValue(retrivedInvoice.paymentModeValue);
+            setInvoiceData(retrivedInvoice.items);
+            setSerialNumber(
+                retrivedInvoice.items[retrivedInvoice.items.length - 1]
+                    .serialNumber
+            );
+        }
+    };
+
     const onKeyupRateField = (event) => {
+        /* 
+            --Validate all fields--
+        */
         if (event.keyCode === 13) {
             onClickAddButton();
-            activateDropdown();
-            itemObj.product = product;
+            itemObj.serialNumber = serialNumber + 1;
+            itemObj.product = product?.name ?? "Not available currently";
             itemObj.company = company;
             itemObj.quantity = quantity;
             itemObj.packingType = packingType;
@@ -315,7 +379,9 @@ export const NewInvoice = () => {
             itemObj.mrp = mrp;
             itemObj.discount = discount;
             itemObj.price = (rate * quantity).toFixed(2);
+            itemObj.batchNumber = product?.batchNumber ?? "";
             addToInvoiceTable(itemObj);
+            setSerialNumber(serialNumber + 1);
             setToEmpty();
         }
     };
@@ -325,17 +391,8 @@ export const NewInvoice = () => {
         productSearchDropdown.focus();
     };
 
-    const activateDropdown = () => {
-        productSearchDropdown.focus();
-    };
-
     const addToInvoiceTable = (itemObj) => {
-        if (
-            itemObj !== null &&
-            itemObj !== undefined &&
-            itemObj.product !== undefined &&
-            itemObj.product !== ""
-        ) {
+        if (itemObj !== null && itemObj !== undefined) {
             setInvoiceData([...invoiceData, itemObj]);
         }
     };
@@ -376,7 +433,7 @@ export const NewInvoice = () => {
                                 <Typography.Text className="primary-input-field-header-style">
                                     Customer
                                 </Typography.Text>
-                                { (
+                                {
                                     <ConfigProvider
                                         theme={{
                                             token: {
@@ -390,7 +447,7 @@ export const NewInvoice = () => {
                                         <Select
                                             style={{
                                                 width: 380,
-                                            }}                              
+                                            }}
                                             className="customerSelectionDropdown"
                                             value={customerNameHelper(customer)}
                                             onChange={(
@@ -404,7 +461,6 @@ export const NewInvoice = () => {
                                                     setCustomer(
                                                         selectedCustomer.customValue
                                                     );
-                                                    
                                                 }
                                             }}
                                             onClear={() => setCustomer(null)}
@@ -424,7 +480,7 @@ export const NewInvoice = () => {
                                             allowClear
                                         />
                                     </ConfigProvider>
-                                )}
+                                }
                             </Space>
                             <Space
                                 direction="vertical"
@@ -437,11 +493,11 @@ export const NewInvoice = () => {
                                     Payment Mode
                                 </Typography.Text>
                                 <Radio.Group
-                                    options={paymentModes}
-                                    onChange={(event) =>
-                                        setPaymentModeValue(event.target.value)
-                                    }
                                     value={paymentModeValue}
+                                    onChange={(event) => {
+                                        setPaymentModeValue(event.target.value);
+                                    }}
+                                    options={paymentModes}
                                     optionType="button"
                                     buttonStyle="solid"
                                 />
@@ -455,7 +511,7 @@ export const NewInvoice = () => {
                                 <Typography.Text className="primary-input-field-header-style">
                                     Product
                                 </Typography.Text>
-                                { (
+                                {
                                     <ConfigProvider
                                         theme={{
                                             token: {
@@ -500,7 +556,7 @@ export const NewInvoice = () => {
                                             allowClear
                                         />
                                     </ConfigProvider>
-                                )}
+                                }
                             </Space>
                             <Space
                                 direction="vertical"
@@ -513,9 +569,9 @@ export const NewInvoice = () => {
                                     Company
                                 </Typography.Text>
                                 <Input
-                                    style={{ 
+                                    style={{
                                         width: "110px",
-                                        padding: "4px"
+                                        padding: "4px",
                                     }}
                                     value={company}
                                     onChange={(event) =>
@@ -741,14 +797,18 @@ export const NewInvoice = () => {
                                     Mrp
                                 </Typography.Text>
                                 <Input
-                                   style={{ width: "50px", padding: "4px" }}
+                                    style={{ width: "50px", padding: "4px" }}
                                     value={mrp}
                                     className="invoiceInputFields"
                                     id="mrpField"
                                     onChange={(event) =>
                                         setMrp(event.target.value)
                                     }
-                                    onKeyUp={(event) => onPressedMrpHandler(event, { rateField })}
+                                    onKeyUp={(event) =>
+                                        onPressedMrpHandler(event, {
+                                            rateField,
+                                        })
+                                    }
                                 />
                             </Space>
                             <Space
@@ -762,7 +822,7 @@ export const NewInvoice = () => {
                                     Rate
                                 </Typography.Text>
                                 <Input
-                                   style={{ width: "50px", padding: "4px" }}
+                                    style={{ width: "50px", padding: "4px" }}
                                     value={rate}
                                     className="invoiceInputFields rateInputFields"
                                     id="rateField"
@@ -799,18 +859,24 @@ export const NewInvoice = () => {
                             ></Table>
                         </Row>
                         <Row
-                            style={{ marginTop: "20px", paddingRight: "20px" }}
+                            style={{ marginTop: "20px", paddingRight: "60px" }}
                             justify="end"
                         >
                             <Space direction="horizontal">
-                                <button className="invoiceEmailButton confirmButtons">
-                                    Email
+                                <button className="invoicePrintButton confirmButtons"
+                                    style={{marginRight: "8px"}}
+                                    onClick={onPressedSaveAndPrintHandler()}    
+                                >
+                                    Save & Print
                                 </button>
-                                <button className="primary-save-button-style">
+                                <button className="primary-save-button-style"
+                                    style={{marginRight: "8px"}}
+                                    onClick={onPressedSaveButtonHandler()}
+                                >
                                     Save
                                 </button>
-                                <button className="invoicePrintButton confirmButtons">
-                                    Save & Print
+                                <button className="invoiceEmailButton confirmButtons">
+                                    Email
                                 </button>
                             </Space>
                         </Row>
