@@ -1,8 +1,8 @@
 package com.bba.Backend.models;
 
 import jakarta.persistence.*;
-
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "_invoice")
@@ -13,16 +13,21 @@ public class Invoice {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "_invoice_id_seq")
     private Integer id;
 
-    @Column(name = "number", nullable = false)
+    @Column(name = "number", nullable = false, unique = true)
     private String number;
-
     @Column(name = "generation_date", nullable = false)
     private Date generationDate;
 
     @Column(name = "payment_mode", nullable = false)
     private String paymentMode;
 
-//    private List<Item> items;
-//    private Customer customer;
+    @Column(name = "amount", nullable = false)
+    private Double amount;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "customer_number", referencedColumnName = "customer_number", unique = true, insertable = false, updatable = false)
+    private Customer customer;
+
+    @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<InvoiceItem> invoiceItems;
 }

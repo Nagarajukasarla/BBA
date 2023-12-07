@@ -1,6 +1,5 @@
 package com.bba.Backend.models;
 
-import com.bba.Backend.models.util.Address;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -46,10 +45,6 @@ public class Customer {
 
     @Column(name = "discount")
     private Double discount;
-
-    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_number", referencedColumnName = "customerNumber")
-    private Address address;
 
     @Override
     public String toString() {

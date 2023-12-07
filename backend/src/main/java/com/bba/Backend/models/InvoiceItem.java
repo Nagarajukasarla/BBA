@@ -19,9 +19,6 @@ public class InvoiceItem {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "_invoice_item_id_seq")
     private Integer id;
 
-    @Column(name = "invoice_number", nullable = false)
-    private String invoiceNumber;
-
     @Column(name = "customer_number", nullable = false)
     private String customerNumber;
 
@@ -42,5 +39,9 @@ public class InvoiceItem {
 
     @Column(name = "price", nullable = false)
     private Integer price;
+
+    @ManyToOne
+    @JoinColumn(name = "invoice_number", nullable = false, referencedColumnName = "number")
+    private Invoice invoice;
 
 }
