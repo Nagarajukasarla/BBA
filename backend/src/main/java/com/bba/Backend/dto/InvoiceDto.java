@@ -1,7 +1,7 @@
 package com.bba.Backend.dto;
 
 import com.bba.Backend.models.Customer;
-import com.bba.Backend.models.Item;
+import com.bba.Backend.models.InvoiceItem;
 
 import java.util.Date;
 import java.util.List;
@@ -14,7 +14,7 @@ public class InvoiceDto {
 
     private Date generationDate;
 
-    private List<Item> items;
+    private List<InvoiceItem> invoiceItems;
 
     private Customer customer;
 }

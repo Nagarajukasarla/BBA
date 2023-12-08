@@ -35,10 +35,10 @@ public class InvoiceItem {
     private Integer quantity;
 
     @Column(name = "discount", nullable = false)
-    private Integer discount;
+    private Double discount;
 
     @Column(name = "price", nullable = false)
-    private Integer price;
+    private Double price;
 
     @ManyToOne
     @JoinColumn(name = "invoice_number", nullable = false, referencedColumnName = "number")
