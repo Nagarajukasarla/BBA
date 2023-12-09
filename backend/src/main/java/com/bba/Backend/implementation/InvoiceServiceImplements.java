@@ -21,6 +21,7 @@ public class InvoiceServiceImplements implements InvoiceService {
                 .number(newInvoiceNumber)
                 .paymentMode(invoiceRequest.paymentMode)
                 .amount(invoiceRequest.amount)
-                .
+                .generationDate(DateTime.formatDate(invoiceRequest.getGenerationDate()))
+                .build();
     }
 }
