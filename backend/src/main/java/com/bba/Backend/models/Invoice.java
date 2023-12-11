@@ -27,7 +27,6 @@ public class Invoice {
     @Column(name = "customer_number")
     private Integer customerNumber;
 
-
     @Column(name = "generation_date", nullable = false)
     private Date generationDate;
 

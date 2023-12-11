@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class InvoiceController {
 
-    public final InvoiceService invoiceService;
+    private final InvoiceService invoiceService;
 
     @PostMapping(path = "/save")
     public ResponseEntity<?> saveInvoice (@RequestBody InvoiceRequest invoiceRequest) {

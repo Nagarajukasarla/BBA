@@ -2,8 +2,13 @@ package com.bba.Backend.dto;
 
 import com.bba.Backend.models.Customer;
 import com.bba.Backend.models.InvoiceItem;
+import com.bba.Backend.utils.DateTime;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.lang.NonNull;
 
-import java.util.Date;
 import java.util.List;
 
 @Data
@@ -27,6 +32,6 @@ public class InvoiceDto {
     }
     
     public String getGenerationDate () {
-        return this.getGenerationDate.getFormattedStringForDateGeneration();
+        return this.generationDate.getFormattedStringForDateGeneration();
     }
 }

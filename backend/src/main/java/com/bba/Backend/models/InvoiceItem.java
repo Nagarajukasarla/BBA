@@ -1,15 +1,13 @@
 package com.bba.Backend.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Entity
 @Table(name = "_invoice_item")
 public class InvoiceItem {
@@ -19,14 +17,17 @@ public class InvoiceItem {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "_invoice_item_id_seq")
     private Integer id;
 
-    @Column(name = "customer_number", nullable = false)
-    private String customerNumber;
-
     @Column(name = "item_name", nullable = false)
     private String itemName;
 
+    @Column(name = "invoice_number", nullable = false)
+    private String invoiceNumber;
+
     @Column(name = "item_batch_number", nullable = false)
     private String itemBatchNumber;
+
+    @Column(name = "company", nullable = false)
+    private String company;
 
     @Column(name = "rate", nullable = false)
     private Double rate;
@@ -41,7 +42,7 @@ public class InvoiceItem {
     private Double price;
 
     @ManyToOne
-    @JoinColumn(name = "invoice_number", nullable = false, referencedColumnName = "number")
+    @JoinColumn(name = "invoice_number", referencedColumnName = "number", insertable = false, updatable = false)
     private Invoice invoice;
 
 }

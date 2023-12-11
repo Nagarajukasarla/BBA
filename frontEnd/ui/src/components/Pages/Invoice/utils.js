@@ -20,7 +20,8 @@ const generateItems = (invoiceData) => {
             batchNumber: item.batchNumber,
             quantity: item.quantity,
             discount: item.discount,  // Need to be discussed whether to add discount for each item or depened on customer
-            rate: item.rate
+            rate: item.rate,
+            price: item.price
         };
     });
 };

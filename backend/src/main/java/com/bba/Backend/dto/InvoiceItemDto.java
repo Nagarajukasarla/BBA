@@ -13,11 +13,13 @@ public class InvoiceItemDto {
 
     public Integer id;
 
-    public String name;
+    public String itemName;
 
-    public Integer customerNumber;
+    public String company;
 
-    public Integer itemBatchNumber;
+    public String invoiceNumber;
+
+    public String itemBatchNumber;
 
     public Double rate;
 

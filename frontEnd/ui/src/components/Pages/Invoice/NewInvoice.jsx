@@ -202,7 +202,7 @@ export const NewInvoice = () => {
         if (invoiceData.length > 0) {
             // Write request api
             let obj = getInvoiceRequestObj(
-                customer?.customerNumber ?? "EMPTY",
+                customer?.customerNumber??"",
                 paymentModeValue,
                 discount,
                 invoiceData
