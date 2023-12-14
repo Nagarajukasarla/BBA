@@ -34,7 +34,7 @@ import {
 } from "../../../services/api/get/authorizedGetServices";
 import { getToken } from "../../../services/load/loadBrowserContent";
 import { useNavigate } from "react-router-dom";
-import { getYearMonthFormat } from "../../../services/utils/dateFormater";
+import { generateFormattedDateString, getYearMonthFormat } from "../../../services/utils/dateFormater";
 import { getInvoiceRequestObj } from "./utils";
 
 export const NewInvoice = () => {
@@ -204,8 +204,8 @@ export const NewInvoice = () => {
             let obj = getInvoiceRequestObj(
                 customer?.customerNumber??"",
                 paymentModeValue,
-                discount,
-                invoiceData
+                invoiceData,
+                generateFormattedDateString()
             );
             console.log(obj);
             // Send invoice object request to server

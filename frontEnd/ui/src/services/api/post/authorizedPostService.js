@@ -134,3 +134,22 @@ export const saveCustomer = async (customer, token) => {
         return error;
     }
 };
+
+/**
+ * Saves a new invoice.
+ *
+ * @return {Promise<void>} Returns a promise that resolves when the new invoice is saved.
+ */
+export const saveNewInvoice = async (invoice, token) => {
+    try {
+        const response = await fetch("http://localhost:8080/api/v1/invoice/save", {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                invoice
+            })
+        });
+    }
+}
