@@ -6,7 +6,6 @@ import com.bba.Backend.requestModels.InvoiceRequest;
 import com.bba.Backend.services.InvoiceService;
 import com.bba.Backend.utils.DateTime;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
@@ -35,7 +34,7 @@ public class InvoiceServiceImplements implements InvoiceService {
         var result = invoiceRepository.save(invoice);
         invoiceItemImplements.saveInvoiceItem(result.getNumber(), invoiceRequest.items);
         logger.info(result.getNumber() + " - is successfully saved");
-        return ResponseEntity.status(HttpStatus.CREATED).body(result.getNumber() + " - Successfully saved");
+        return ResponseEntity.ok(result.getNumber() + " - Successfully saved");
     }
 
 }

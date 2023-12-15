@@ -17,9 +17,9 @@ const generateItems = (invoiceData) => {
     return invoiceData.map((item) => {
         return {
             id: item.serialNumber,
-            productName: item.product,
-            batchNumber: item.batchNumber,
-            companyName: item.company,
+            itemName: item.product,
+            itemBatchNumber: item.batchNumber,
+            company: item.company,
             rate: item.rate,
             quantity: item.quantity,
             discount: item.discount,  // Need to be discussed whether to add discount for each item or depened on customer

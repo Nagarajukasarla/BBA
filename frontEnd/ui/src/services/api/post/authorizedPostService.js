@@ -67,8 +67,7 @@ export const saveProduct = async (product, token) => {
         }
     }
     catch (error) {
-        console.error(`Error in saving prouct: ${error}`);
-        return false;
+        throw new Error(`Error in saving prouct: ${error}`);
     }
 };
 
@@ -97,8 +96,7 @@ export const getProduct = async (productName, token) => {
         }
     }
     catch (error) {
-        console.error(`Error while fetching product: ${error}`);
-        return error;
+        throw new Error(`Error while fetching product: ${error}`);
     }
 };
 
@@ -140,16 +138,33 @@ export const saveCustomer = async (customer, token) => {
  *
  * @return {Promise<void>} Returns a promise that resolves when the new invoice is saved.
  */
-export const saveNewInvoice = async (invoice, token) => {
+export const createInvoice = async (invoice, token) => {
     try {
         const response = await fetch("http://localhost:8080/api/v1/invoice/save", {
+            method: "POST",
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify({
-                invoice
+                customerNumber: invoice.customerNumber,
+                paymentMode: invoice.paymentMode,
+                generationDate: invoice.currentDateTime,
+                items: invoice.items,
+                amount: invoice.amount
             })
         });
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log(data);
+            return true;
+        }
+        else {
+            return new Error(getStatus(response.status));
+        }
     }
-}
+    catch (error) {
+        throw new Error(`Error in saving new invoice ${error}`);
+    }
+};

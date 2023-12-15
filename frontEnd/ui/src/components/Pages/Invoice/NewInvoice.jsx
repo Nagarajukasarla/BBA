@@ -11,6 +11,7 @@ import {
     Button,
     Table,
     ConfigProvider,
+    message,
 } from "antd";
 
 import "./css/newInvoice.css";
@@ -34,8 +35,12 @@ import {
 } from "../../../services/api/get/authorizedGetServices";
 import { getToken } from "../../../services/load/loadBrowserContent";
 import { useNavigate } from "react-router-dom";
-import { generateFormattedDateString, getYearMonthFormat } from "../../../services/utils/dateFormater";
+import {
+    generateFormattedDateString,
+    getYearMonthFormat,
+} from "../../../services/utils/dateFormater";
 import { getInvoiceRequestObj } from "./utils";
+import { createInvoice, saveNewInvoice } from "../../../services/api/post/authorizedPostService";
 
 export const NewInvoice = () => {
     const productSearchDropdown = document.getElementById("productSearch");
@@ -89,6 +94,7 @@ export const NewInvoice = () => {
     const [products, setProducts] = useState([]);
     const [serialNumber, setSerialNumber] = useState(0);
     const navigate = useNavigate();
+    const [messageApi, contextHolder] = message.useMessage();
 
     const checkAuthentication = async (token) => {
         if (!(await authenticate(token))) {
@@ -129,15 +135,15 @@ export const NewInvoice = () => {
     };
 
     useEffect(() => {
-        // if (checkAuthentication(getToken())) {
-        //     fetchCustomers().then((data) => {
-        //         setCustomers(data);
-        //     });
-        //     fetchProducts().then((data) => {
-        //         setProducts(data);
-        //     });
-        getInvoiceDataFromLocalStorage();
-        // }
+        if (checkAuthentication(getToken())) {
+            fetchCustomers().then((data) => {
+                setCustomers(data);
+            });
+            fetchProducts().then((data) => {
+                setProducts(data);
+            });
+            getInvoiceDataFromLocalStorage();
+        }
 
         //eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -161,6 +167,7 @@ export const NewInvoice = () => {
 
     useEffect(() => {
         setInvoiceDataToLocalStorage(invoiceData);
+        //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [invoiceData]);
 
     const customerNameHelper = (customer) => {
@@ -197,24 +204,48 @@ export const NewInvoice = () => {
         }));
     };
 
-    const onPressedSaveButtonHandler = () => {
+    const resetInvoice = () => {
+        setCustomer(null);
+        setInvoiceData([]);
+        setSerialNumber(0);
+        setPaymentModeValue("");
+        localStorage.removeItem("invoice");
+    };
+
+    const result = (type) => {
+        messageApi.open({
+            type: `${type}`,
+            content:
+                type === "success" ? "Saved successfully" : "Failed to Save",
+        });
+    };
+
+    const onPressedSaveButtonHandler =  () => {
         console.log(invoiceData.length);
         if (invoiceData.length > 0) {
             // Write request api
             let obj = getInvoiceRequestObj(
-                customer?.customerNumber??"",
+                customer?.customerNumber ?? "",
                 paymentModeValue,
                 invoiceData,
                 generateFormattedDateString()
             );
             console.log(obj);
-            // Send invoice object request to server
+            createInvoice(obj, getToken()).then((response) => {
+                if (response) {
+                    resetInvoice();
+                    result("success");
+                }
+                else {
+                    result("error");
+                }
+            });
         }
     };
 
     const onPressedSaveAndPrintHandler = () => {
         onPressedSaveButtonHandler();
-    }
+    };
 
     const paymentModes = [
         {
@@ -365,29 +396,28 @@ export const NewInvoice = () => {
         */
         if (event.keyCode === 13) {
             onClickAddButton();
-            itemObj.serialNumber = serialNumber + 1;
-            itemObj.product = product?.name ?? "Not available currently";
-            itemObj.company = company;
-            itemObj.quantity = quantity;
-            itemObj.packingType = packingType;
-            itemObj.manufacturingDate = manufacturingDate;
-            itemObj.expiryDate = expiryDate;
-            itemObj.sGst = sGst;
-            itemObj.cGst = cGst;
-            itemObj.iGst = iGst;
-            itemObj.rate = rate;
-            itemObj.mrp = mrp;
-            itemObj.discount = discount;
-            itemObj.price = (rate * quantity).toFixed(2);
-            itemObj.batchNumber = product?.batchNumber ?? "";
-            addToInvoiceTable(itemObj);
-            setSerialNumber(serialNumber + 1);
-            setToEmpty();
         }
     };
 
     const onClickAddButton = () => {
-        console.log("Enter pressed !!!");
+        itemObj.serialNumber = serialNumber + 1;
+        itemObj.product = product?.name ?? "Not available currently";
+        itemObj.company = company;
+        itemObj.quantity = quantity;
+        itemObj.packingType = packingType;
+        itemObj.manufacturingDate = manufacturingDate;
+        itemObj.expiryDate = expiryDate;
+        itemObj.sGst = sGst;
+        itemObj.cGst = cGst;
+        itemObj.iGst = iGst;
+        itemObj.rate = rate;
+        itemObj.mrp = mrp;
+        itemObj.discount = discount;
+        itemObj.price = (rate * quantity).toFixed(2);
+        itemObj.batchNumber = product?.batchNumber ?? "";
+        addToInvoiceTable(itemObj);
+        setSerialNumber(serialNumber + 1);
+        resetProduct();
         productSearchDropdown.focus();
     };
 
@@ -397,8 +427,8 @@ export const NewInvoice = () => {
         }
     };
 
-    const setToEmpty = () => {
-        setProduct("");
+    const resetProduct = () => {
+        setProduct(null);
         setCompany("");
         setQuantity("");
         setPackingType("");
@@ -414,6 +444,7 @@ export const NewInvoice = () => {
 
     return (
         <>
+            {contextHolder}
             <div className="newInvoiceWrapper">
                 <Col span={24}>
                     <Row>
@@ -863,14 +894,16 @@ export const NewInvoice = () => {
                             justify="end"
                         >
                             <Space direction="horizontal">
-                                <button className="invoicePrintButton confirmButtons"
-                                    style={{marginRight: "8px"}}
-                                    onClick={onPressedSaveAndPrintHandler()}    
+                                <button
+                                    className="invoicePrintButton confirmButtons"
+                                    style={{ marginRight: "8px" }}
+                                    onClick={onPressedSaveAndPrintHandler()}
                                 >
                                     Save & Print
                                 </button>
-                                <button className="primary-save-button-style"
-                                    style={{marginRight: "8px"}}
+                                <button
+                                    className="primary-save-button-style"
+                                    style={{ marginRight: "8px" }}
                                     onClick={onPressedSaveButtonHandler()}
                                 >
                                     Save

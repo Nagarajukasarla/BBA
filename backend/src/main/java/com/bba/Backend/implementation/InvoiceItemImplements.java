@@ -21,10 +21,16 @@ public class InvoiceItemImplements implements InvoiceItemService {
 
     @Override
     public void saveInvoiceItem(String invoiceNumber, @NonNull List<InvoiceItemDto> itemDto) {
-        itemDto.forEach(item -> saveItem(invoiceNumber, item));
+        itemDto.forEach(item -> {
+            try {
+                saveItem(invoiceNumber, item);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
-    private void saveItem(String invoiceNumber, @NonNull InvoiceItemDto invoiceItemDto) {
+    private void saveItem(String invoiceNumber, @NonNull InvoiceItemDto invoiceItemDto) throws Exception {
         var invoiceItem = InvoiceItem.builder()
                 .itemName(invoiceItemDto.itemName)
                 .company(invoiceItemDto.company)
@@ -43,5 +49,6 @@ public class InvoiceItemImplements implements InvoiceItemService {
             item.ifPresent(value -> value.setQuantity(value.getQuantity() - invoiceItemDto.quantity));
             itemRepository.save(item.get());
         }
+        throw new Exception();
     }
 }
