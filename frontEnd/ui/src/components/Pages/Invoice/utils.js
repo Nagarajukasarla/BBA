@@ -32,7 +32,7 @@ const calculateAmount = (invoiceData) => {
     // Need to calculate properly futhur correction is required for gsts and discount
     let amount = 0;
     invoiceData.forEach((item) => {
-        amount += item.price;
+        amount += parseInt(item.price);
     });
     return amount;
 }

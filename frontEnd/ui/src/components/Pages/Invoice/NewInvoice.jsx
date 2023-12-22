@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
     Col,
     Row,
@@ -40,7 +40,7 @@ import {
     getYearMonthFormat,
 } from "../../../services/utils/dateFormater";
 import { getInvoiceRequestObj } from "./utils";
-import { createInvoice, saveNewInvoice } from "../../../services/api/post/authorizedPostService";
+import { createInvoice } from "../../../services/api/post/authorizedPostService";
 
 export const NewInvoice = () => {
     const productSearchDropdown = document.getElementById("productSearch");
@@ -56,6 +56,8 @@ export const NewInvoice = () => {
     const discountField = document.getElementById("discountField");
     const rateField = document.getElementById("rateField");
     const mrpField = document.getElementById("mrpField");
+    const quantityRef = useRef(null);
+    const discountRef = useRef(null);
 
     let itemObj = {
         serialNumber: "",
@@ -142,7 +144,7 @@ export const NewInvoice = () => {
             fetchProducts().then((data) => {
                 setProducts(data);
             });
-            getInvoiceDataFromLocalStorage();
+            retriveInvoiceDataFromLocalStorage();
         }
 
         //eslint-disable-next-line react-hooks/exhaustive-deps
@@ -151,6 +153,11 @@ export const NewInvoice = () => {
     useEffect(() => {
         setDiscount(customer?.discount);
     }, [customer]);
+
+    useEffect(() => {
+        setInvoiceDataToLocalStorage();
+        //eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [invoiceData]);
 
     useEffect(() => {
         setCompany(product?.company);
@@ -164,11 +171,6 @@ export const NewInvoice = () => {
         setRate(product?.rate);
         setMrp(product?.mrp);
     }, [product]);
-
-    useEffect(() => {
-        setInvoiceDataToLocalStorage(invoiceData);
-        //eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [invoiceData]);
 
     const customerNameHelper = (customer) => {
         if (!customer) {
@@ -221,7 +223,7 @@ export const NewInvoice = () => {
     };
 
     const onPressedSaveButtonHandler =  () => {
-        console.log(invoiceData.length);
+        console.log(invoiceData ? invoiceData.length : 0);
         if (invoiceData.length > 0) {
             // Write request api
             let obj = getInvoiceRequestObj(
@@ -360,33 +362,38 @@ export const NewInvoice = () => {
     /**
      * Sets the invoice data to local storage.
      *
-     * @param {object} obj - The invoice data object.
      */
 
     const setInvoiceDataToLocalStorage = () => {
-        if (invoiceData.length > 0 && customer && paymentModeValue) {
+        if (invoiceData && invoiceData.length > 0 && customer && paymentModeValue) {
             let invoiceObject = {
                 customer: customer,
                 paymentModeValue: paymentModeValue,
                 items: invoiceData,
             };
 
+            console.log(invoiceObject);
+
             let invoiceObjectInJson = JSON.stringify(invoiceObject);
+            console.log(invoiceObjectInJson);
+
             localStorage.setItem("invoice", invoiceObjectInJson);
         }
     };
 
-    const getInvoiceDataFromLocalStorage = () => {
+    const retriveInvoiceDataFromLocalStorage = () => {
         let invoiceInJSON = localStorage.getItem("invoice");
         if (!(invoiceInJSON === "null" || invoiceInJSON === null)) {
             let retrivedInvoice = JSON.parse(invoiceInJSON);
             setCustomer(retrivedInvoice.customer);
             setPaymentModeValue(retrivedInvoice.paymentModeValue);
-            setInvoiceData(retrivedInvoice.items);
-            setSerialNumber(
-                retrivedInvoice.items[retrivedInvoice.items.length - 1]
-                    .serialNumber
-            );
+            if (retrivedInvoice && retrivedInvoice.items.length > 0) {
+                setInvoiceData(retrivedInvoice.items);
+                setSerialNumber(
+                    retrivedInvoice.items[retrivedInvoice.items.length - 1]
+                        .serialNumber
+                );
+            }
         }
     };
 
@@ -401,7 +408,7 @@ export const NewInvoice = () => {
 
     const onClickAddButton = () => {
         itemObj.serialNumber = serialNumber + 1;
-        itemObj.product = product?.name ?? "Not available currently";
+        itemObj.product = product?.name;
         itemObj.company = company;
         itemObj.quantity = quantity;
         itemObj.packingType = packingType;
@@ -422,8 +429,9 @@ export const NewInvoice = () => {
     };
 
     const addToInvoiceTable = (itemObj) => {
-        if (itemObj !== null && itemObj !== undefined) {
+        if (itemObj !== null && itemObj !== undefined && itemObj.product !== undefined) {
             setInvoiceData([...invoiceData, itemObj]);
+            setInvoiceDataToLocalStorage();
         }
     };
 
@@ -434,10 +442,10 @@ export const NewInvoice = () => {
         setPackingType("");
         setManufacturingDate("");
         setExpiryDate("");
+        setDiscount(customer?.discount??"");
         setSGst("");
         setCGst("");
         setIGst("");
-        setDiscount("");
         setRate("");
         setMrp("");
     };
@@ -568,6 +576,9 @@ export const NewInvoice = () => {
                                                     setProduct(
                                                         selectedProduct.customValue
                                                     );
+                                                    setTimeout(() =>{
+                                                        quantityRef.current.select();
+                                                    }, 100);
                                                 }
                                             }}
                                             onClear={() => setProduct(null)}
@@ -631,14 +642,13 @@ export const NewInvoice = () => {
                                     value={quantity}
                                     className="invoiceInputFields"
                                     id="quantityField"
-                                    onChange={(event) =>
-                                        setQuantity(event.target.value)
-                                    }
+                                    onChange={(event) => setQuantity(event.target.value)}
                                     onKeyUp={(event) =>
                                         onPressedQuantityHandler(event, {
-                                            packingTypeField,
+                                            discountRef,
                                         })
                                     }
+                                    ref={quantityRef}
                                 />
                             </Space>
                             <Space
@@ -815,6 +825,7 @@ export const NewInvoice = () => {
                                             mrpField,
                                         })
                                     }
+                                    ref={discountRef}
                                 ></Input>
                             </Space>
                             <Space
@@ -897,14 +908,14 @@ export const NewInvoice = () => {
                                 <button
                                     className="invoicePrintButton confirmButtons"
                                     style={{ marginRight: "8px" }}
-                                    onClick={onPressedSaveAndPrintHandler()}
+                                    onClick={onPressedSaveAndPrintHandler}
                                 >
                                     Save & Print
                                 </button>
                                 <button
                                     className="primary-save-button-style"
                                     style={{ marginRight: "8px" }}
-                                    onClick={onPressedSaveButtonHandler()}
+                                    onClick={onPressedSaveButtonHandler}
                                 >
                                     Save
                                 </button>

@@ -4,9 +4,9 @@ export const onPressedCompanyHandler = (event, { quantityField }) => {
     }
 };
 
-export const onPressedQuantityHandler = (event, { packingTypeField }) => {
+export const onPressedQuantityHandler = (event, { discountRef }) => {
     if (event.keyCode === 13) {
-        packingTypeField.focus();
+        discountRef.current.select();
     }
 };
 
