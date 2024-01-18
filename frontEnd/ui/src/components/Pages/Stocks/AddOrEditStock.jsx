@@ -19,7 +19,7 @@ import "../../coreComponents/Styles/primaryStyle.css";
 
 import { validate } from "../../../services/validation/validate";
 import {
-    setFormattedDate,
+    getFormattedDate,
 } from "../../../services/utils/dateFormater";
 import {
     onPressedBatchNumberHandler,
@@ -137,8 +137,8 @@ export const AddOrEditStock = () => {
             companyName: companyName,
             packingType: packingType,
             quantity: quantity,
-            manufacturingDate: setFormattedDate(manufacturingDate),
-            expiryDate: setFormattedDate(expiryDate),
+            manufacturingDate: getFormattedDate(manufacturingDate),
+            expiryDate: getFormattedDate(expiryDate),
             sGst: sGst,
             cGst: cGst,
             iGst: iGst,

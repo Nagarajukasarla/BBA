@@ -17,6 +17,6 @@ public class InvoiceController {
 
     @PostMapping(path = "/save")
     public ResponseEntity<?> saveInvoice (@RequestBody InvoiceRequest invoiceRequest) {
-        return ResponseEntity.ok(invoiceService.saveInvoice(invoiceRequest));
+        return invoiceService.saveInvoice(invoiceRequest);
     }
 }

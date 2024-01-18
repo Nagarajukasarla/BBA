@@ -35,5 +35,4 @@ const calculateAmount = (invoiceData) => {
         amount += parseInt(item.price);
     });
     return amount;
-}
-
+};

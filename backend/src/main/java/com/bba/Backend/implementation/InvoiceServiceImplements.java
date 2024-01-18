@@ -34,7 +34,7 @@ public class InvoiceServiceImplements implements InvoiceService {
         var result = invoiceRepository.save(invoice);
         invoiceItemImplements.saveInvoiceItems(result.getNumber(), invoiceRequest.items);
         logger.info(result.getNumber() + " - is successfully saved");
-        return ResponseEntity.ok(result.getNumber() + " - Successfully saved");
+        return ResponseEntity.ok(result.getNumber());
     }
 
 }

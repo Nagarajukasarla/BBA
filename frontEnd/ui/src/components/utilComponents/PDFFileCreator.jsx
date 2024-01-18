@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
     Page,
     Document,
@@ -9,21 +9,25 @@ import {
     Line,
 } from "@react-pdf/renderer";
 import { Font } from "@react-pdf/renderer";
-import InterExtraLight from "../assets/fonts/Inter-ExtraLight.ttf";
-import InterLight from "../assets/fonts/Inter-Light.ttf";
-import InterBlack from "../assets/fonts/Inter-Black.ttf";
-import InterRegular from "../assets/fonts/Inter-Regular.ttf";
-import InterMedium from "../assets/fonts/Inter-Medium.ttf";
-import InterSemiBold from "../assets/fonts/Inter-SemiBold.ttf";
-import InterBold from "../assets/fonts/Inter-Bold.ttf";
-import LexendExaBlack from "../assets/fonts/LexendExa-Black.ttf";
-import LexendExaBold from "../assets/fonts/LexendExa-Bold.ttf";
-import LexendExaExtraBold from "../assets/fonts/LexendExa-ExtraBold.ttf";
-import LexendExaExtraLight from "../assets/fonts/LexendExa-ExtraLight.ttf";
-import LexendExaLight from "../assets/fonts/LexendExa-Light.ttf";
-import LexendExaMedium from "../assets/fonts/LexendExa-Medium.ttf";
-import LexendExaRegular from "../assets/fonts/LexendExa-Regular.ttf";
-import LexendExaSemiBold from "../assets/fonts/LexendExa-SemiBold.ttf";
+import InterExtraLight from "../../utils/fonts/Inter-ExtraLight.ttf";
+import InterLight from "../../utils/fonts/Inter-Light.ttf";
+import InterBlack from "../../utils/fonts/Inter-Black.ttf";
+import InterRegular from "../../utils/fonts/Inter-Regular.ttf";
+import InterMedium from "../../utils/fonts/Inter-Medium.ttf";
+import InterSemiBold from "../../utils/fonts/Inter-SemiBold.ttf";
+import InterBold from "../../utils/fonts/Inter-Bold.ttf";
+import LexendExaBlack from "../../utils/fonts/LexendExa-Black.ttf";
+import LexendExaBold from "../../utils/fonts/LexendExa-Bold.ttf";
+import LexendExaExtraBold from "../../utils/fonts/LexendExa-ExtraBold.ttf";
+import LexendExaExtraLight from "../../utils/fonts/LexendExa-ExtraLight.ttf";
+import LexendExaLight from "../../utils/fonts/LexendExa-Light.ttf";
+import LexendExaMedium from "../../utils/fonts/LexendExa-Medium.ttf";
+import LexendExaRegular from "../../utils/fonts/LexendExa-Regular.ttf";
+import LexendExaSemiBold from "../../utils/fonts/LexendExa-SemiBold.ttf";
+import {
+    generateFormattedDateString,
+    getDayMonthYearFormat,
+} from "../../services/utils/dateFormater";
 
 Font.register({
     family: "InterBlack",
@@ -286,19 +290,19 @@ const styles = StyleSheet.create({
         textAlign: "left",
         width: 30,
     },
-    tableDataGST: {        
+    tableDataGST: {
         fontFamily: "InterLight",
         fontSize: 8,
         textAlign: "center",
         width: 26,
     },
-    tableDataRate: {        
+    tableDataRate: {
         fontFamily: "InterLight",
         fontSize: 8,
         textAlign: "left",
         width: 44,
     },
-    tableDataMRP: {        
+    tableDataMRP: {
         fontFamily: "InterLight",
         fontSize: 8,
         textAlign: "left",
@@ -310,7 +314,7 @@ const styles = StyleSheet.create({
         textAlign: "center",
         width: 22,
     },
-    tableDataAmount: {        
+    tableDataAmount: {
         fontFamily: "InterLight",
         fontSize: 8,
         textAlign: "left",
@@ -318,15 +322,28 @@ const styles = StyleSheet.create({
     pageNumber: {
         position: "absolute",
         fontSize: 12,
-        bottom: 30,
-        left: 0,
+        bottom: 20,
+        left: -20,
         right: 0,
         textAlign: "center",
-        color: "grey",  
+        color: "grey",
     },
 });
 
-const PDFFileCreator = () => {
+export const PDFFileCreator = ({ products, customer, invoiceNumber }) => {
+
+    console.log(`Local objects: ${products} --- ${customer} --- ${invoiceNumber}`);
+
+    console.log(`input customer: ${JSON.stringify(products)}`);
+    const getCustomerAddress = () => {
+        return `${customer?.addressDto?.street ?? ""}, ${
+            customer?.addressDto?.city ?? ""
+        }, ${customer?.addressDto?.state ?? ""} - ${
+            customer?.addressDto?.zipcode ?? ""
+        }
+        `;
+    };
+
     return (
         <Document>
             <Page style={styles.body} wrap={true}>
@@ -370,23 +387,23 @@ const PDFFileCreator = () => {
                     <View style={styles.leftSubHeader}>
                         <View style={{ flexDirection: "row" }}>
                             <Text style={styles.defaultText}>
-                                To: Sri Rudra Pharma Distributors{" "}
+                                To: {customer?.name ?? ""}{" "}
                             </Text>
                             <Text style={styles.defalutBoldedText}>
-                                {"(18596)"}
+                                {`(${customer?.customerNumber ?? ""})`}
                             </Text>
                         </View>
                         <Text style={styles.defaultText}>
-                            Address: Kukatpally, Hyderabad, Telangana - 500072
+                            {`Address: ${getCustomerAddress()}`}
                         </Text>
-                        <View style={styles.inLineChildrenSubHeader}>
                             <Text style={styles.defaultText}>
                                 D.L No. 21-B-TG 18-02-2016 18563.18564
                             </Text>
                             <Text style={styles.gstinTextStyles}>
                                 GSTIN. 220A98670095HYZB
                             </Text>
-                        </View>
+                        {/* <View style={styles.inLineChildrenSubHeader}>
+                        </View> */}
                     </View>
                     <View style={styles.rightSubHeader}>
                         <View style={{ flexDirection: "row" }}>
@@ -396,13 +413,15 @@ const PDFFileCreator = () => {
                         <View style={{ flexDirection: "row" }}>
                             <Text style={styles.defaultText}>Invoice : </Text>
                             <Text style={styles.defalutBoldedText}>
-                                INV1879
+                                {invoiceNumber}
                             </Text>
                         </View>
                         <View style={{ flexDirection: "row" }}>
                             <Text style={styles.defaultText}>Date : </Text>
                             <Text style={styles.defalutBoldedText}>
-                                25-12-2023
+                                {getDayMonthYearFormat(
+                                    generateFormattedDateString()
+                                )}
                             </Text>
                         </View>
                     </View>
@@ -434,21 +453,7 @@ const PDFFileCreator = () => {
                         <Text style={styles.tableHeaderDiscount}>DISC</Text>
                         <Text style={styles.tableHeaderAmount}>AMOUNT</Text>
                     </View>
-                    <View style={styles.tableDataWrapper}>
-                        <Text style={styles.tableDataHSN}>693564</Text>
-                        <Text style={styles.tableDataManufacturer}>Glenmark</Text>
-                        <Text style={styles.tableDataBatchNumber}>BG9087A</Text>
-                        <Text style={styles.tableDataName}>Dermiford Gel 10g</Text>
-                        <Text style={styles.tableDataPackSize}>1 OIN</Text>
-                        <Text style={styles.tableDataQuantity}>300.0</Text>
-                        <Text style={styles.tableDataFree}>5.0</Text>
-                        <Text style={styles.tableDataExpiryDate}>10/23</Text>
-                        <Text style={styles.tableDataGST}>12%</Text>
-                        <Text style={styles.tableDataRate}>1400.00</Text>
-                        <Text style={styles.tableDataMRP}>1900.00</Text>
-                        <Text style={styles.tableDataDiscount}>5</Text>
-                        <Text style={styles.tableDataAmount}>158625.00</Text>
-                    </View>
+                    <InoviceItem items={products} />
                 </View>
                 <Text
                     style={styles.pageNumber}
@@ -459,6 +464,63 @@ const PDFFileCreator = () => {
                 ></Text>
             </Page>
         </Document>
+    );
+};
+
+const InoviceItem = ({items}) => {
+    return (
+        <>
+            {items !== undefined &&
+                items !== null &&
+                items.length > 0 &&
+                items.map((item) => {
+                    return (
+                        <>
+                            <View style={styles.tableDataWrapper}>
+                                <Text style={styles.tableDataHSN}>
+                                    {"651952"}
+                                </Text>
+                                <Text style={styles.tableDataManufacturer}>
+                                    {item.company}
+                                </Text>
+                                <Text style={styles.tableDataBatchNumber}>
+                                    {item.batchNumber}
+                                </Text>
+                                <Text style={styles.tableDataName}>
+                                    {item.name}
+                                </Text>
+                                <Text style={styles.tableDataPackSize}>
+                                    {item.packingType}
+                                </Text>
+                                <Text style={styles.tableDataQuantity}>
+                                    {item.quantity}
+                                </Text>
+                                <Text style={styles.tableDataFree}>
+                                    {item.quantity}
+                                </Text>
+                                <Text style={styles.tableDataExpiryDate}>
+                                    {item.expiryDate}
+                                </Text>
+                                <Text style={styles.tableDataGST}>
+                                    {item.sGst}
+                                </Text>
+                                <Text style={styles.tableDataRate}>
+                                    {item.rate}
+                                </Text>
+                                <Text style={styles.tableDataMRP}>
+                                    {item.mrp}
+                                </Text>
+                                <Text style={styles.tableDataDiscount}>
+                                    {item.discount}
+                                </Text>
+                                <Text style={styles.tableDataAmount}>
+                                    {item.price}
+                                </Text>
+                            </View>
+                        </>
+                    );
+                })}
+        </>
     );
 };
 

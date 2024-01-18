@@ -1,7 +1,7 @@
 import React from 'react';
 import { FaQuestionCircle } from 'react-icons/fa';
-import '../../css/header.css';
-import pic from '../../Img/pic.jpg';
+import '../../utils/css/header.css';
+import pic from '../../utils/Img/pic.jpg';
 
 export const Header = () => {
     return (

@@ -10,7 +10,7 @@ import {
     SettingOutlined,
 } from "@ant-design/icons";
 
-import "../../css/sidebar.css";
+import "../../utils/css/sidebar.css";
 import { useNavigate } from "react-router-dom";
 
 export const SideBar = () => {
