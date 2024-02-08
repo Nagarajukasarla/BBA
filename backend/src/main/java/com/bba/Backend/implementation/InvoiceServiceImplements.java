@@ -22,7 +22,7 @@ public class InvoiceServiceImplements implements InvoiceService {
 
     @Override
     public ResponseEntity<?> saveInvoice(@NonNull InvoiceRequest invoiceRequest) {
-        var newInvoiceNumber = "INV" + invoiceRepository.getNextInvoiceNumber();
+        var newInvoiceNumber = invoiceRepository.getNextInvoiceNumber() + "";
         var invoice = Invoice.builder()
                 .customerNumber(invoiceRequest.customerNumber)
                 .number(newInvoiceNumber)

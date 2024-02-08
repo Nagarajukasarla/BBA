@@ -1,9 +1,8 @@
-
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/bba
+    url: jdbc:postgresql://google/bba?cloudSqlInstance=noble-airport-411617:us-west1:bba-database-server&socketFactory=com.google.cloud.sql.postgres.SocketFactory
     username: postgres
-    password: root
+    password: postgres
   jpa:
     show-sql: true
     properties:
@@ -12,6 +11,13 @@ spring:
         format_sql: true
     hibernate:
       ddl-auto: update
+  hikari:
+    data-source-properties:
+      SocketFactory: com.google.cloud.sql.postgres.SocketFactory
+      cloudSqlInstance: noble-airport-411617:us-west1:bba-database-server
+  output:
+    ansi:
+      enabled: ALWAYS
 
 logging:
   level:

@@ -4,7 +4,7 @@ import { PlusCircleOutlined } from "@ant-design/icons";
 import { createCompany } from "../../../services/api/post/authorizedPostService";
 import { useNavigate } from "react-router-dom";
 import { authenticate } from "../../../services/api/get/authorizedGetServices";
-import { getToken } from "../../../services/load/loadBrowserContent";
+import { getToken } from "../../../services/cookies/tokenUtils";
 
 export const Companies = () => {
     const navigate = useNavigate();

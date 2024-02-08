@@ -1,5 +1,6 @@
 package com.bba.Backend.config.jwtConfig;
 
+import com.bba.Backend.controllers.DemoController;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -25,6 +26,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
+    private final DemoController demoController;
 
     @Override
     protected void doFilterInternal (
@@ -43,13 +45,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         logger.info("Authorization Header: " + authHeader);
 
-        jwt = authHeader.substring(7);
+        try {
+            jwt = authHeader.substring(7);
+            userEmail = jwtService.extractUsername(jwt);
 
-        userEmail = jwtService.extractUsername(jwt);
+            if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
 
-        if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
-            try {
                 if (jwtService.isTokenValid(jwt, userDetails)) {
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             userDetails,
@@ -60,18 +62,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             new WebAuthenticationDetailsSource().buildDetails(request)
                     );
                     SecurityContextHolder.getContext().setAuthentication(authToken);
-                }
-                else {
+                } else {
                     logger.info("Unauthorized !!");
                 }
             }
-            catch (ExpiredJwtException e) {
-                logger.info("Your JWT Token has been expired!!");
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                response.getWriter().write("Your JWT Token has expired");
-                response.getWriter().flush();
-                return;
-            }
+        }
+        catch (ExpiredJwtException e) {
+            logger.info("Your JWT Token has been expired!!");
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.getWriter().write("Your JWT Token is expired");
+            response.getWriter().flush();
+            return;
         }
         filterChain.doFilter(request, response);
     }

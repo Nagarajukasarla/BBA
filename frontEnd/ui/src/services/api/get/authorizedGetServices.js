@@ -4,7 +4,7 @@ import { getStatus } from "../statusUtils/responseStatus";
 // Validating user
 export const authenticate = async (token) => {
     try {
-        const response = await fetch("http://localhost:8080/api/v1/demo-controller", {
+        const response = await fetch("https://noble-airport-411617.uw.r.appspot.com/api/v1/demo-controller", {
             method: "GET",
             headers: {
                 'Content-Type' : 'application/json',
@@ -30,7 +30,7 @@ export const authenticate = async (token) => {
 
 export const getAllProducts = async (token) => {
     try {
-        const response = await fetch("http://localhost:8080/api/v1/product/get-items", {
+        const response = await fetch("https://noble-airport-411617.uw.r.appspot.com/api/v1/product/get-items", {
             method: "GET",
             headers: {
                 'Content-Type' : 'application/json',
@@ -54,7 +54,7 @@ export const getAllProducts = async (token) => {
 
 export const getAllCustomers  = async (token) => {
     try {
-        const response = await fetch('http://localhost:8080/api/v1/customer/get-all', {
+        const response = await fetch('https://noble-airport-411617.uw.r.appspot.com/api/v1/customer/get-all', {
             method: "GET",
             headers: {
                 "Content-Type" : "application/json",

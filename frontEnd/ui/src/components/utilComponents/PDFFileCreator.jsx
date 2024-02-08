@@ -339,9 +339,7 @@ export const PDFFileCreator = ({ products, customer, invoiceNumber }) => {
         return `${customer?.addressDto?.street ?? ""}, ${
             customer?.addressDto?.city ?? ""
         }, ${customer?.addressDto?.state ?? ""} - ${
-            customer?.addressDto?.zipcode ?? ""
-        }
-        `;
+            customer?.addressDto?.zipcode ?? ""}`;
     };
 
     return (
@@ -396,14 +394,14 @@ export const PDFFileCreator = ({ products, customer, invoiceNumber }) => {
                         <Text style={styles.defaultText}>
                             {`Address: ${getCustomerAddress()}`}
                         </Text>
+                        <View style={styles.inLineChildrenSubHeader}>
                             <Text style={styles.defaultText}>
                                 D.L No. 21-B-TG 18-02-2016 18563.18564
                             </Text>
                             <Text style={styles.gstinTextStyles}>
                                 GSTIN. 220A98670095HYZB
                             </Text>
-                        {/* <View style={styles.inLineChildrenSubHeader}>
-                        </View> */}
+                        </View>
                     </View>
                     <View style={styles.rightSubHeader}>
                         <View style={{ flexDirection: "row" }}>
@@ -413,15 +411,13 @@ export const PDFFileCreator = ({ products, customer, invoiceNumber }) => {
                         <View style={{ flexDirection: "row" }}>
                             <Text style={styles.defaultText}>Invoice : </Text>
                             <Text style={styles.defalutBoldedText}>
-                                {invoiceNumber}
+                                {`${invoiceNumber}`}
                             </Text>
                         </View>
                         <View style={{ flexDirection: "row" }}>
                             <Text style={styles.defaultText}>Date : </Text>
                             <Text style={styles.defalutBoldedText}>
-                                {getDayMonthYearFormat(
-                                    generateFormattedDateString()
-                                )}
+                                {getDayMonthYearFormat()}
                             </Text>
                         </View>
                     </View>

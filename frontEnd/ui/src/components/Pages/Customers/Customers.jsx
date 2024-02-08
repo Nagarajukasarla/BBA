@@ -21,7 +21,7 @@ import {
     authenticate,
     getAllCustomers,
 } from "../../../services/api/get/authorizedGetServices";
-import { getToken } from "../../../services/load/loadBrowserContent";
+import { getToken } from "../../../services/cookies/tokenUtils";
 
 export const Customers = () => {
     const [loading, setLoading] = useState(false);

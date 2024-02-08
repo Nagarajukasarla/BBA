@@ -33,7 +33,7 @@ import {
     getAllCustomers,
     getAllProducts,
 } from "../../../services/api/get/authorizedGetServices";
-import { getToken } from "../../../services/load/loadBrowserContent";
+import { getToken } from "../../../services/cookies/tokenUtils";
 import { useNavigate } from "react-router-dom";
 import {
     generateFormattedDateString,
@@ -951,7 +951,6 @@ export const NewInvoice = () => {
                                     <button
                                         onClick={() => {
                                             setIsInvoiceReady(true);
-                                            console.log(`Active customer: ${JSON.stringify(customer)}`);
                                         }}
                                     >
                                         Generate Invoice

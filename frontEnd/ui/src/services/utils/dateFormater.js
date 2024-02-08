@@ -44,13 +44,10 @@ export const getFormattedDate = (date) => {
  * @param {string} date - The date string to be converted.
  * @return {string} The date in the format "dd-mm-yyyy".
  */
-export const getDayMonthYearFormat = (date) => {
-    if (date === null || date === undefined) {
-        return;
-    }
+export const getDayMonthYearFormat = () => {
+    const date = generateFormattedDateString();
     const values = date.substring(0, 9).split("-");
     return `${values[2] < 10 ? "0" + values[2] : values[2]}-${
         values[1] < 10 ? "0" + values[1] : values[1]
-    }-${values[0]}
-    `;
+    }-${values[0]}`;
 };

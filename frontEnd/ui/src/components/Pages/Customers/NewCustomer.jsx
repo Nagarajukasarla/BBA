@@ -13,7 +13,7 @@ import {
 import "./css/newCustomer.css";
 import "../../coreComponents/Styles/primaryStyle.css";
 import { saveCustomer } from "../../../services/api/post/authorizedPostService";
-import { getToken } from "../../../services/load/loadBrowserContent";
+import { getToken } from "../../../services/cookies/tokenUtils";
 import { useNavigate } from "react-router-dom";
 import { generateFormattedDateString } from "../../../services/utils/dateFormater";
 

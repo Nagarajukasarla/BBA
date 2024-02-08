@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../../../utils/css/login.css";
+import { setToken } from '../../../services/cookies/tokenUtils';
 
 export const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
-    const [showErrorMessage, setShowErrorMessage] = useState(false);
+    const [isFieldEmpty, setIsFieldEmpty] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -33,14 +35,14 @@ export const Login = () => {
             })
             .then((data) => {
                 if (data && data.token) {
-                    localStorage.setItem("token", data.token);
+                    setToken(data.token);
                     navigate("/app/dashboard");
                 }
             })
 
             .catch((error) => {
                 console.log("Error: ", error);
-                setShowErrorMessage(true);
+                setIsFieldEmpty(true);
             });
     };
 
@@ -62,10 +64,10 @@ export const Login = () => {
                 <div className="head-txt">
                     <p>Login</p>
                 </div>
-                {showErrorMessage && (
+                {isFieldEmpty && (
                     <div className="login-error">
-                        <img src="../../Img/warning.png" alt="warning" />
-                        <p>Invalid Username or Password</p>
+                        <img src="./warning.png"  alt="warning" />
+                        <p>{errorMessage}</p>
                     </div>
                 )}
                 <div className="login-form">

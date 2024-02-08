@@ -6,7 +6,7 @@ import {
     authenticate,
     getAllProducts,
 } from "../../../services/api/get/authorizedGetServices";
-import { getToken } from "../../../services/load/loadBrowserContent";
+import { getToken } from "../../../services/cookies/tokenUtils";
 import { getYearMonthFormat } from "../../../services/utils/dateFormater";
 
 export const Stocks = () => {

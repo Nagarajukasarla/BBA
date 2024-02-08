@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ClipLoader from "react-spinners/ClipLoader";
 import './style.css'
-import { getToken } from "../../services/load/loadBrowserContent";
+import { getToken } from "../../services/cookies/tokenUtils";
 
 export const AuthLoader = () => {
     const navigate = useNavigate();
@@ -10,7 +10,7 @@ export const AuthLoader = () => {
     const token = getToken();
     const authenticate = () => {
         if (token) {
-            fetch("http://localhost:8080/api/v1/demo-controller", {
+            fetch("https://noble-airport-411617.uw.r.appspot.com/api/v1/demo-controller", {
                 method: "GET",
                 headers: {
                     'Authorization': `Bearer ${token}`,

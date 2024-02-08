@@ -4,7 +4,7 @@ import { Col, Row, Typography, Space, Button } from 'antd';
 import { ToolFilled } from "@ant-design/icons";
 import { useNavigate } from 'react-router-dom';
 import { authenticate } from '../../../services/api/get/authorizedGetServices';
-import { getToken } from '../../../services/load/loadBrowserContent';
+import { getToken } from '../../../services/cookies/tokenUtils';
 
 export const Settings = () => {
 

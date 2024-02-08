@@ -14,7 +14,7 @@ import { CloseCircleOutlined } from "@ant-design/icons";
 import {
     saveProduct
 } from "../../../services/api/post/authorizedPostService";
-import { getToken } from "../../../services/load/loadBrowserContent";
+import { getToken } from "../../../services/cookies/tokenUtils";
 import "../../coreComponents/Styles/primaryStyle.css";
 
 import { validate } from "../../../services/validation/validate";
