@@ -1,7 +1,7 @@
 import React from "react";
 import { Col, Typography } from "antd";
 
-export const Server = () => {
+export const ServerDown = () => {
     return (
         <>
             <Col>

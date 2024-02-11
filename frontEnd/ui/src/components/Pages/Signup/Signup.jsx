@@ -54,7 +54,7 @@ export const Signup = () => {
                         </select>
                     </div>
                     <div className="submit-btn">
-                        <button type="submit">Submit</button>
+                        <button>Submit</button>
                     </div>
                 </form>
             </div>

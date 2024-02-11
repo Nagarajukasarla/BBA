@@ -1,10 +1,10 @@
 import { getStatus } from "../statusUtils/responseStatus";
-
+import { apiUrl } from "../../../config";
 
 // Validating user
 export const authenticate = async (token) => {
     try {
-        const response = await fetch("https://noble-airport-411617.uw.r.appspot.com/api/v1/demo-controller", {
+        const response = await fetch(`${apiUrl}/api/v1/demo-controller`, {
             method: "GET",
             headers: {
                 'Content-Type' : 'application/json',
@@ -15,6 +15,7 @@ export const authenticate = async (token) => {
             return true;
         }
         else {
+            console.log(`Authentication response status ${response.status}`);
             if (response.status === 500) {
                 alert("Internal Server Error");
                 return false;
@@ -30,7 +31,7 @@ export const authenticate = async (token) => {
 
 export const getAllProducts = async (token) => {
     try {
-        const response = await fetch("https://noble-airport-411617.uw.r.appspot.com/api/v1/product/get-items", {
+        const response = await fetch(`${apiUrl}/api/v1/product/get-items`, {
             method: "GET",
             headers: {
                 'Content-Type' : 'application/json',
@@ -54,7 +55,7 @@ export const getAllProducts = async (token) => {
 
 export const getAllCustomers  = async (token) => {
     try {
-        const response = await fetch('https://noble-airport-411617.uw.r.appspot.com/api/v1/customer/get-all', {
+        const response = await fetch(`${apiUrl}/api/v1/customer/get-all`, {
             method: "GET",
             headers: {
                 "Content-Type" : "application/json",

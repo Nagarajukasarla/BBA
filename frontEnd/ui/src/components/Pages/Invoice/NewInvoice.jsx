@@ -14,7 +14,7 @@ import {
     message,
 } from "antd";
 
-import "./css/newInvoice.css";
+import "./utils/css/newInvoice.css";
 import "../../coreComponents/Styles/primaryStyle.css";
 import {
     onPressedCGSTHandler,
@@ -27,7 +27,7 @@ import {
     onPressedPackingTypeHandler,
     onPressedQuantityHandler,
     onPressedSGSTHandler,
-} from "./events/KeyboardEvents";
+} from "./utils/events/KeyboardEvents";
 import {
     authenticate,
     getAllCustomers,
@@ -39,11 +39,11 @@ import {
     generateFormattedDateString,
     getYearMonthFormat,
 } from "../../../services/utils/dateFormater";
-import { getInvoiceRequestObj } from "./utils";
+import { getInvoiceRequestObj } from "./utils/helpers/invoiceHelpers";
 import { createInvoice } from "../../../services/api/post/authorizedPostService";
-import { PDFDownloadButton } from "../../utilComponents/PDFDownloadButton";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import PDFFileCreator from "../../utilComponents/PDFFileCreator";
+import { validate } from "../../../services/validation/validate";
 
 export const NewInvoice = () => {
     const productSearchDropdown = document.getElementById("productSearch");
@@ -140,44 +140,6 @@ export const NewInvoice = () => {
         }
     };
 
-    useEffect(() => {
-        if (checkAuthentication(getToken())) {
-            fetchCustomers().then((data) => {
-                setCustomers(data);
-            });
-            fetchProducts().then((data) => {
-                setProducts(data);
-            });
-            retriveInvoiceDataFromLocalStorage();
-        }
-
-        console.log(`Current customer: ${customer}`);
-
-        //eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    useEffect(() => {
-        setDiscount(customer?.discount);
-    }, [customer]);
-
-    useEffect(() => {
-        setInvoiceDataToLocalStorage();
-        //eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [invoiceData]);
-
-    useEffect(() => {
-        setCompany(product?.company);
-        setQuantity(product?.quantity);
-        setPackingType(product?.packingType);
-        setManufacturingDate(getYearMonthFormat(product?.manufacturingDate));
-        setExpiryDate(getYearMonthFormat(product?.expiryDate));
-        setSGst(product?.sGstInPercent);
-        setCGst(product?.cGstInPercent);
-        setIGst(product?.iGstInPercent);
-        setRate(product?.rate);
-        setMrp(product?.mrp);
-    }, [product]);
-
     const customerNameHelper = (customer) => {
         if (!customer) {
             return "";
@@ -210,48 +172,6 @@ export const NewInvoice = () => {
             label: productNameHelper(product),
             customValue: product,
         }));
-    };
-
-    const resetInvoice = () => {
-        setCustomer(null);
-        setInvoiceData([]);
-        setSerialNumber(0);
-        setPaymentModeValue("");
-        localStorage.removeItem("invoice");
-    };
-
-    const result = (type) => {
-        messageApi.open({
-            type: `${type}`,
-            content:
-                type === "success" ? "Saved successfully" : "Failed to Save",
-        });
-    };
-
-    const onPressedSaveButtonHandler = () => {
-        console.log(invoiceData ? invoiceData.length : 0);
-        if (invoiceData.length > 0) {
-            // Write request api
-            let obj = getInvoiceRequestObj(
-                customer?.customerNumber ?? "",
-                paymentModeValue,
-                invoiceData,
-                generateFormattedDateString()
-            );
-            console.log(obj);
-            createInvoice(obj, getToken()).then((response) => {
-                if (response) {
-                    resetInvoice();
-                    result("success");
-                } else {
-                    result("error");
-                }
-            });
-        }
-    };
-
-    const onPressedSaveAndPrintHandler = () => {
-        onPressedSaveButtonHandler();
     };
 
     const paymentModes = [
@@ -364,11 +284,11 @@ export const NewInvoice = () => {
         textAlign: "start",
     };
 
+
     /**
      * Sets the invoice data to local storage.
      *
      */
-
     const setInvoiceDataToLocalStorage = () => {
         if (
             invoiceData &&
@@ -391,6 +311,23 @@ export const NewInvoice = () => {
         }
     };
 
+    /**
+     * Adds an item to the invoice table.
+     *
+     * @param {Object} itemObj - The item object to be added to the invoice table.
+     * @returns {void}
+     */
+    const addToInvoiceTable = (itemObj) => {
+        if (
+            itemObj !== null &&
+            itemObj !== undefined &&
+            itemObj.product !== undefined
+        ) {
+            setInvoiceData([...invoiceData, itemObj]);
+            setInvoiceDataToLocalStorage();
+        }
+    };
+ 
     const retriveInvoiceDataFromLocalStorage = () => {
         let invoiceInJSON = localStorage.getItem("invoice");
         if (!(invoiceInJSON === "null" || invoiceInJSON === null)) {
@@ -418,6 +355,24 @@ export const NewInvoice = () => {
         }
     };
 
+    /**
+     * Resets the product by setting all related state variables to null or empty strings.
+     */
+    const resetProduct = () => {
+        setProduct(null);
+        setCompany("");
+        setQuantity("");
+        setPackingType("");
+        setManufacturingDate("");
+        setExpiryDate("");
+        setDiscount(customer?.discount ?? "");
+        setSGst("");
+        setCGst("");
+        setIGst("");
+        setRate("");
+        setMrp("");
+    };
+
     const onClickAddButton = () => {
         itemObj.serialNumber = serialNumber + 1;
         itemObj.product = product?.name;
@@ -434,53 +389,259 @@ export const NewInvoice = () => {
         itemObj.discount = discount;
         itemObj.price = (rate * quantity).toFixed(2);
         itemObj.batchNumber = product?.batchNumber ?? "";
-        addToInvoiceTable(itemObj);
-        setSerialNumber(serialNumber + 1);
-        resetProduct();
-        productSearchDropdown.focus();
-
-
-        console.log(`Select customer ${customer}`);
-    };
-
-    const addToInvoiceTable = (itemObj) => {
-        if (
-            itemObj !== null &&
-            itemObj !== undefined &&
-            itemObj.product !== undefined
-        ) {
-            setInvoiceData([...invoiceData, itemObj]);
-            setInvoiceDataToLocalStorage();
+        if (validate(itemObj)) {
+            addToInvoiceTable(itemObj);
+            setSerialNumber(serialNumber + 1);
+            resetProduct();
+            productSearchDropdown.focus();
         }
     };
 
-    const resetProduct = () => {
-        setProduct(null);
-        setCompany("");
-        setQuantity("");
-        setPackingType("");
-        setManufacturingDate("");
-        setExpiryDate("");
-        setDiscount(customer?.discount ?? "");
-        setSGst("");
-        setCGst("");
-        setIGst("");
-        setRate("");
-        setMrp("");
+
+    /**
+     * Resets the invoice by setting the customer to null, clearing the invoice data, resetting the serial number,
+     * clearing the payment mode value, and removing the invoice from local storage.
+     *
+     * @param {}- No parameters
+     * @return {void} No return value
+     */
+    const resetInvoice = () => {
+        setCustomer(null);
+        setInvoiceData([]);
+        setSerialNumber(0);
+        setPaymentModeValue("");
+        localStorage.removeItem("invoice");
     };
+
+    const result = (type) => {
+        messageApi.open({
+            type: `${type}`,
+            content:
+                type === "success" ? "Saved successfully" : "Failed to Save",
+        });
+    };
+
+    /**
+     * Save a new invoice with the given data.
+     *
+     * @return {boolean} Returns true if the invoice is saved successfully, false otherwise.
+     */
+    const saveNewInvoice = async () => {
+        if (invoiceData.length > 0) {
+            let obj = getInvoiceRequestObj(
+                customer?.customerNumber,
+                paymentModeValue,
+                invoiceData,
+                generateFormattedDateString()
+            );
+            console.log(obj);
+            const response = createInvoice(obj, getToken());
+            if (response) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    };
+
+    const onPressedSaveButtonHandler = () => {
+        saveNewInvoice().then((response) => {
+            if (response) {
+                result("success");
+                resetInvoice();
+            } else {
+                result("error");
+            }
+        });
+    };
+
+    const onPressedGenerateHandler = () => {
+        saveNewInvoice().then((response) => {
+            if (response) {
+                result("success");
+            } else {
+                result("error");
+            }
+        });
+    };
+
+    const onPressedPrintHandler = () => {
+        resetInvoice();
+    }
+
+    const onPressedEmailHandler = () => {
+        saveNewInvoice().then((response) => {
+            if (response) {
+                result("success");
+            } else {
+                result("error");
+            }
+        });
+    };
+
+    
+
+    const styles1 = {
+        margin: "8px 5px 8px 5px",
+        // border: "1px solid black",
+    };
+
+    const checkDisability = () => {
+        if (serialNumber < 1) {
+            return true;
+        }
+        return false;
+    };
+
+    useEffect(() => {
+        if (checkAuthentication(getToken())) {
+            fetchCustomers().then((data) => {
+                setCustomers(data);
+            });
+            fetchProducts().then((data) => {
+                setProducts(data);
+            });
+            retriveInvoiceDataFromLocalStorage();
+        }
+
+        console.log(`Current customer: ${customer}`);
+
+        //eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
+        setDiscount(customer?.discount);
+    }, [customer]);
+
+    useEffect(() => {
+        setInvoiceDataToLocalStorage();
+        //eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [invoiceData]);
+
+    useEffect(() => {
+        setCompany(product?.company);
+        setQuantity(product?.quantity);
+        setPackingType(product?.packingType);
+        setManufacturingDate(getYearMonthFormat(product?.manufacturingDate));
+        setExpiryDate(getYearMonthFormat(product?.expiryDate));
+        setSGst(product?.sGstInPercent);
+        setCGst(product?.cGstInPercent);
+        setIGst(product?.iGstInPercent);
+        setRate(product?.rate);
+        setMrp(product?.mrp);
+    }, [product]);
+
+    useState(() => {
+        checkDisability();
+    }, [serialNumber]);
 
     return (
         <>
             {contextHolder}
             <div className="newInvoiceWrapper">
                 <Col span={24}>
-                    <Row>
+                    <Row style={styles1} justify="space-between" align="middle">
                         <Typography.Title
                             level={4}
                             className="customerDropdownTitle"
+                            // style={{border: "1px solid black"}}
                         >
                             New Invoice
                         </Typography.Title>
+                        <Row
+                        // style={{ border: "1px solid black" }}
+                        >
+                            <Space
+                                direction="horizontal"
+                                style={{ marginRight: "8px" }}
+                            >
+                                <button
+                                    className="primaryButtonStyle actionButtons"
+                                    onClick={() => {
+                                        resetInvoice();
+                                    }}
+                                    disabled={checkDisability(serialNumber)}
+                                    style={{
+                                        cursor: checkDisability()
+                                            ? "not-allowed"
+                                            : "pointer",
+                                    }}
+                                >
+                                    Reset
+                                </button>
+                                {isInvoiceReady && (
+                                    <PDFDownloadLink
+                                        document={
+                                            <PDFFileCreator
+                                                products={invoiceData}
+                                                customer={customer}
+                                                invoiceNumber={"INV2889"}
+                                            />
+                                        }
+                                        fileName={`${"INV2889"}`}
+                                    >
+                                        {({ loading }) =>
+                                            loading ? (
+                                                <button className="primaryButtonStyle">
+                                                    Loading...
+                                                </button>
+                                            ) : (
+                                                <button className="primaryButtonStyle"
+                                                    onClick={() => {
+                                                        onPressedPrintHandler();
+                                                        setTimeout(() => {
+                                                            setIsInvoiceReady(false);
+                                                        }, 1000);
+                                                    }}
+                                                >
+                                                    Print
+                                                </button>
+                                            )
+                                        }
+                                    </PDFDownloadLink>
+                                )}
+                                {!isInvoiceReady && (
+                                    <button
+                                        className="primaryButtonStyle"
+                                        onClick={() => {
+                                            setIsInvoiceReady(true);
+                                            onPressedGenerateHandler();
+                                        }}
+                                        disabled={checkDisability(serialNumber)}
+                                        style={{
+                                            cursor: checkDisability()
+                                                ? "not-allowed"
+                                                : "pointer",
+                                        }}
+                                    >
+                                        Generate Invoice
+                                    </button>
+                                )}
+                                <button
+                                    className="primaryButtonStyle"
+                                    onClick={onPressedSaveButtonHandler}
+                                    disabled={checkDisability()}
+                                    style={{
+                                        cursor: checkDisability()
+                                            ? "not-allowed"
+                                            : "pointer",
+                                    }}
+                                >
+                                    Save
+                                </button>
+                                <button
+                                    className="primaryButtonStyle"
+                                    disabled={checkDisability()}
+                                    style={{
+                                        cursor: checkDisability()
+                                            ? "not-allowed"
+                                            : "pointer",
+                                    }}
+                                >
+                                    Email
+                                </button>
+                            </Space>
+                        </Row>
                     </Row>
                     <Card bodyStyle={{ margin: "0px", padding: "8px" }}>
                         <Row>
@@ -921,52 +1082,6 @@ export const NewInvoice = () => {
                                     y: 270,
                                 }}
                             ></Table>
-                        </Row>
-                        <Row
-                            style={{ marginTop: "20px", paddingRight: "60px" }}
-                            justify="end"
-                        >
-                            <Space direction="horizontal">
-                                {isInvoiceReady && (
-                                    <PDFDownloadLink
-                                        document={
-                                            <PDFFileCreator
-                                                products={invoiceData}
-                                                customer={customer}
-                                                invoiceNumber={"INV2889"}
-                                            />
-                                        }
-                                        fileName={`${"INV2889"}`}
-                                    >
-                                        {({ loading }) =>
-                                            loading ? (
-                                                <button>Loading...</button>
-                                            ) : (
-                                                <button>Print</button>
-                                            )
-                                        }
-                                    </PDFDownloadLink>
-                                )}
-                                {!isInvoiceReady && (
-                                    <button
-                                        onClick={() => {
-                                            setIsInvoiceReady(true);
-                                        }}
-                                    >
-                                        Generate Invoice
-                                    </button>
-                                )}
-                                <button
-                                    className="primary-save-button-style"
-                                    style={{ marginRight: "8px" }}
-                                    onClick={onPressedSaveButtonHandler}
-                                >
-                                    Save
-                                </button>
-                                <button className="invoiceEmailButton confirmButtons">
-                                    Email
-                                </button>
-                            </Space>
                         </Row>
                     </Card>
                 </Col>

@@ -1,18 +1,18 @@
 .primary-save-button-style {
     letter-spacing: .3px;
     font-size: 14px;
-    border: 2px solid rgb(5, 122, 15);
+    border: 2px solid #1677ff;
     padding: 6px 11px;
     border-radius: 6px;
     color: white;
-    background-color: rgb(5, 122, 15);
+    background-color: #1677ff;
     cursor: pointer;
     transition: transform .15s ease-in-out;
 }
 
 .primary-save-button-style:hover {
-    border: 2px solid rgb(8, 147, 20);
-    background-color: rgb(8, 147, 20);
+    background-color: #4d97ff;
+    border: 2px solid #4d97ff;
 }
 
 .primary-save-button-style:active {

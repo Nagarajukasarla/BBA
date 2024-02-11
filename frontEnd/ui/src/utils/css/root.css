@@ -7,8 +7,7 @@
 .main {
     display: flex;
     flex-direction: column;
-    width: 100vw;
-    height: 100vh;
+    /* height: 100vh; */
 }
 
 .header {
@@ -20,8 +19,7 @@
 
 .sidebarWrapper {
     width: 200px;
-    height: 85vh;
-    
+    height: 100%;
 }
 
 .sideMenuWithDashborad {
@@ -36,16 +34,7 @@
 }
 
 .appContentContainer {
-    max-height: 85vh;
+    max-height: 90vh;
     overflow-y: scroll;
     /* border: 1px solid red; */
-}
-
-.appFooter {
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: black;
-    color: white;
 }

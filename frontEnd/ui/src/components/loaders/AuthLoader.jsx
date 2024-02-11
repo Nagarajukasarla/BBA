@@ -1,8 +1,10 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ClipLoader from "react-spinners/ClipLoader";
-import './style.css'
+import "./style.css";
 import { getToken } from "../../services/cookies/tokenUtils";
+
+import { apiUrl } from "../../config";
 
 export const AuthLoader = () => {
     const navigate = useNavigate();
@@ -10,24 +12,28 @@ export const AuthLoader = () => {
     const token = getToken();
     const authenticate = () => {
         if (token) {
-            fetch("https://noble-airport-411617.uw.r.appspot.com/api/v1/demo-controller", {
+            fetch(`${`${apiUrl}/api/v1/demo-controller`}`, {
                 method: "GET",
                 headers: {
+                    'Content-Type' : 'application/json',
                     'Authorization': `Bearer ${token}`,
                 },
             })
                 .then((response) => {
                     if (response.ok) {
-                        console.log("Verified!")
+                        console.log("Verified!");
                         navigate("/app/dashboard");
                     }
+                    else {
+                        console.log(`Authorization failed with 403!`);
+                    }
                 })
+                
                 .catch((error) => {
-                    console.error("Authentication failed : ", error);
+                    console.error(`Authentication failed : ${error}`);
                     navigate("/login");
                 });
-        }
-        else {
+        } else {
             navigate("/login");
         }
     };

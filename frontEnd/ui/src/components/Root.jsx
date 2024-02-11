@@ -15,7 +15,6 @@ export const Root = () => {
                     <Outlet />
                 </div>
             </Space>
-            <AppFooter />
         </div>
     );
 };

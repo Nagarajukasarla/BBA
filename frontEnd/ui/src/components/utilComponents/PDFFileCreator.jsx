@@ -483,7 +483,7 @@ const InoviceItem = ({items}) => {
                                     {item.batchNumber}
                                 </Text>
                                 <Text style={styles.tableDataName}>
-                                    {item.name}
+                                    {item.product}
                                 </Text>
                                 <Text style={styles.tableDataPackSize}>
                                     {item.packingType}

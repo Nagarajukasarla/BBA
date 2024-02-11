@@ -15,7 +15,7 @@ import { NewCustomer } from "./components/Pages/Customers/NewCustomer";
 import { Companies } from "./components/Pages/Companies/Companies";
 import { IconsWindow } from "./components/IconsWindow";
 import { AuthLoader } from "./components/loaders/AuthLoader";
-import { Server } from "./components/notifiers/Server";
+import { ServerDown } from "./components/notifiers/ServerDown";
 import { AddOrEditStock } from "./components/Pages/Stocks/AddOrEditStock";
 
 function App() {
@@ -40,7 +40,7 @@ function App() {
                 <Route path="companies" element={<Companies />} />
                 <Route path="icons" element={<IconsWindow />} />
             </Route>
-            <Route path="/server-down" element={<Server />} />
+            <Route path="/server-down" element={<ServerDown />} />
         </Routes>
     );
 }

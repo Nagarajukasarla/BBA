@@ -1,7 +1,7 @@
 import { Col, Space, Row, Typography, Button, Table, Tooltip } from "antd";
 import { PlusCircleOutlined, EditOutlined } from "@ant-design/icons";
 import React, { useEffect } from "react";
-import "./css/invoiceStyle.css";
+import "./utils/css/invoiceStyle.css";
 import { useNavigate } from "react-router-dom";
 
 export const Invoice = () => {

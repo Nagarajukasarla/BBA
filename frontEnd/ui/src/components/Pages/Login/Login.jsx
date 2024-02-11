@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../../../utils/css/login.css";
 import { setToken } from '../../../services/cookies/tokenUtils';
+import { apiUrl } from "../../../config";
 
 export const Login = () => {
     const [email, setEmail] = useState("");
@@ -12,11 +13,20 @@ export const Login = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        setEmail(event.target.value);
-        setPassword(event.target.value);
         // handel null check here
 
-        fetch("http://localhost:8080/api/v1/auth/authenticate", {
+        if (email === undefined || email === "") {
+            setErrorMessage("Email can't be empty!");
+            return;
+        }
+        if (password === undefined || password === "") {
+            setErrorMessage("Password can't be empty!");
+            return;
+        }
+
+
+
+        fetch(`${apiUrl}/api/v1/auth/authenticate`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -79,7 +89,7 @@ export const Login = () => {
                                 value={email}
                                 id="email"
                                 placeholder="Email"
-                                onChange={handleInputChange}
+                                onChange={(event) => handleInputChange(event)}
                             />
                         </div>
                         <div className="passwd">
@@ -89,11 +99,11 @@ export const Login = () => {
                                 value={password}
                                 id="password"
                                 placeholder="Password"
-                                onChange={handleInputChange}
+                                onChange={(event) => handleInputChange(event)}
                             />
                         </div>
                         <div className="login-btn">
-                            <button type="submit" onClick={handleSubmit}>
+                            <button onClick={handleSubmit}>
                                 Login
                             </button>
                         </div>
