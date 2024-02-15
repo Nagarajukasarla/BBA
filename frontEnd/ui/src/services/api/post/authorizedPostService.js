@@ -1,7 +1,13 @@
 import { getStatus } from "../statusUtils/responseStatus";
 import { apiUrl } from "../../../config";
 
-/* Saving new company */
+/**
+ * Create a new company using the provided token and company name.
+ *
+ * @param {string} token - The authentication token.
+ * @param {string} companyName - The name of the company to be created.
+ * @return {boolean} Returns true if the company is successfully created, otherwise false.
+ */
 export const createCompany = async (token, companyName) => {
     try {
         const response = await fetch(`${apiUrl}/api/v1/company/save`, {
@@ -28,7 +34,13 @@ export const createCompany = async (token, companyName) => {
     }
 };
 
-/* Saving new product */
+/**
+ * Saves a product using the provided product data and authorization token.
+ *
+ * @param {object} product - The product data to be saved
+ * @param {string} token - The authorization token
+ * @return {boolean} Whether the product was successfully saved
+ */
 export const saveProduct = async (product, token) => {
     try {
         const response = fetch(`${apiUrl}/api/v1/product/save`, {
@@ -66,8 +78,13 @@ export const saveProduct = async (product, token) => {
     }
 };
 
-/* Fetching product */
-
+/**
+ * Retrieves a product from the API using the provided product name and token.
+ *
+ * @param {string} productName - The name of the product to retrieve
+ * @param {string} token - The authentication token
+ * @return {Promise} The product data retrieved from the API
+ */
 export const getProduct = async (productName, token) => {
     try {
         const response = await fetch(`${apiUrl}/api/v1/product/get`, {
@@ -93,7 +110,13 @@ export const getProduct = async (productName, token) => {
     }
 };
 
-// Saving new Customer
+/**
+ * Save customer data to the server.
+ *
+ * @param {Object} customer - The customer object containing name, email, phone, createdDate, and addressDto
+ * @param {string} token - The authentication token
+ * @return {boolean|Error} - Returns true if the customer data is saved successfully, otherwise returns an Error object
+ */
 export const saveCustomer = async (customer, token) => {
     try {
         const response = await fetch(`${apiUrl}/api/v1/customer/save`, {
@@ -125,11 +148,11 @@ export const saveCustomer = async (customer, token) => {
 };
 
 /**
- * Asynchronously creates a new invoice using the provided invoice data and authentication token.
+ * Function to create an invoice using the provided data and authorization token.
  *
- * @param {Object} invoice - the invoice data including customer number, payment mode, generation date, items, and amount
- * @param {string} token - the authentication token
- * @return {boolean} true if the invoice is successfully saved, false otherwise
+ * @param {Object} invoice - The invoice object containing customer number, payment mode, generation date, items, and amount.
+ * @param {string} token - The authorization token for the API request.
+ * @return {Object|boolean} - The saved invoice data if successful, or false if there was an error.
  */
 export const createInvoice = async (invoice, token) => {
     try {
@@ -150,8 +173,7 @@ export const createInvoice = async (invoice, token) => {
 
         if (response.ok) {
             const data = await response.json();
-            console.log(data);
-            return true;
+            return data;
         } else {
             console.log(`Invoice not saved: ${getStatus(response.status)}`);
             return false;

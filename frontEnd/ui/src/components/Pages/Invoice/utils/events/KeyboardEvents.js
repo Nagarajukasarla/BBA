@@ -10,13 +10,19 @@ export const onPressedQuantityHandler = (event, { discountRef }) => {
     }
 };
 
-export const onPressedPackingTypeHandler = (event, { manufacturingDateField }) => {
+export const onPressedPackingTypeHandler = (
+    event,
+    { manufacturingDateField }
+) => {
     if (event.keyCode === 13) {
         manufacturingDateField.focus();
     }
 };
 
-export const onPressedManufacturingDateHandler = (event, { expiryDateField }) => {
+export const onPressedManufacturingDateHandler = (
+    event,
+    { expiryDateField }
+) => {
     if (event.keyCode === 13) {
         expiryDateField.focus();
     }
@@ -56,4 +62,4 @@ export const onPressedMrpHandler = (event, { rateField }) => {
     if (event.keyCode === 13) {
         rateField.focus();
     }
-}
+};

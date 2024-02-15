@@ -62,6 +62,8 @@ export const NewInvoice = () => {
     const quantityRef = useRef(null);
     const discountRef = useRef(null);
 
+    let productDropDownState = false;
+
     let itemObj = {
         serialNumber: "",
         product: "",
@@ -99,6 +101,8 @@ export const NewInvoice = () => {
     const [products, setProducts] = useState([]);
     const [serialNumber, setSerialNumber] = useState(0);
     const [isInvoiceReady, setIsInvoiceReady] = useState(false);
+    const [dropdownActiveState, setDropdownActiveState] = useState(false);
+    const [invoiceNumber, setInvoiceNumber] = useState("");
     const navigate = useNavigate();
     const [messageApi, contextHolder] = message.useMessage();
 
@@ -284,7 +288,6 @@ export const NewInvoice = () => {
         textAlign: "start",
     };
 
-
     /**
      * Sets the invoice data to local storage.
      *
@@ -327,7 +330,14 @@ export const NewInvoice = () => {
             setInvoiceDataToLocalStorage();
         }
     };
- 
+
+    const updateSelectedProduct = () => {
+        const index = products.findIndex((item) => item.id === product.id);
+        if (index !== -1) {
+            products[index].quantity -= parseInt(quantity);
+        }
+    };
+
     const retriveInvoiceDataFromLocalStorage = () => {
         let invoiceInJSON = localStorage.getItem("invoice");
         if (!(invoiceInJSON === "null" || invoiceInJSON === null)) {
@@ -342,7 +352,6 @@ export const NewInvoice = () => {
                 );
             }
         }
-
         console.log(`Selected customer: ${customer}`);
     };
 
@@ -374,6 +383,10 @@ export const NewInvoice = () => {
     };
 
     const onClickAddButton = () => {
+        if (quantity === 0) {
+            showMessage("warning", "Items are not sufficient");
+            return;
+        }
         itemObj.serialNumber = serialNumber + 1;
         itemObj.product = product?.name;
         itemObj.company = company;
@@ -394,9 +407,9 @@ export const NewInvoice = () => {
             setSerialNumber(serialNumber + 1);
             resetProduct();
             productSearchDropdown.focus();
+            updateSelectedProduct();
         }
     };
-
 
     /**
      * Resets the invoice by setting the customer to null, clearing the invoice data, resetting the serial number,
@@ -413,18 +426,22 @@ export const NewInvoice = () => {
         localStorage.removeItem("invoice");
     };
 
-    const result = (type) => {
+    /**
+     * A function that opens a message with the specified type and content based on the type.
+     *
+     * @param {type} type - the type of the message | success | error
+     */
+    const showMessage = (type, message) => {
         messageApi.open({
             type: `${type}`,
-            content:
-                type === "success" ? "Saved successfully" : "Failed to Save",
+            content: `${message}`,
         });
     };
 
     /**
-     * Save a new invoice with the given data.
+     * Asynchronously saves a new invoice if invoiceData is not empty.
      *
-     * @return {boolean} Returns true if the invoice is saved successfully, false otherwise.
+     * @return {Promise} a Promise that resolves to the created invoice
      */
     const saveNewInvoice = async () => {
         if (invoiceData.length > 0) {
@@ -435,22 +452,17 @@ export const NewInvoice = () => {
                 generateFormattedDateString()
             );
             console.log(obj);
-            const response = createInvoice(obj, getToken());
-            if (response) {
-                return true;
-            } else {
-                return false;
-            }
+            return createInvoice(obj, getToken());
         }
     };
 
     const onPressedSaveButtonHandler = () => {
         saveNewInvoice().then((response) => {
             if (response) {
-                result("success");
+                showMessage("success", "Successfully Saved!");
                 resetInvoice();
             } else {
-                result("error");
+                showMessage("error", "Failed to Save!");
             }
         });
     };
@@ -458,28 +470,29 @@ export const NewInvoice = () => {
     const onPressedGenerateHandler = () => {
         saveNewInvoice().then((response) => {
             if (response) {
-                result("success");
+                showMessage("success", "Successfully Saved!");
+                setInvoiceNumber(response);
+                setIsInvoiceReady(true);
             } else {
-                result("error");
+                showMessage("error", "Failed to Save!");
             }
         });
     };
 
     const onPressedPrintHandler = () => {
         resetInvoice();
-    }
+    };
 
     const onPressedEmailHandler = () => {
         saveNewInvoice().then((response) => {
             if (response) {
-                result("success");
+                showMessage("success", "Successfully Saved!");
+                resetInvoice();
             } else {
-                result("error");
+                showMessage("error", "Failed to Save!");
             }
         });
     };
-
-    
 
     const styles1 = {
         margin: "8px 5px 8px 5px",
@@ -504,7 +517,7 @@ export const NewInvoice = () => {
             retriveInvoiceDataFromLocalStorage();
         }
 
-        console.log(`Current customer: ${customer}`);
+        setDropdownActiveState(customer === null ? true : false);
 
         //eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -575,10 +588,10 @@ export const NewInvoice = () => {
                                             <PDFFileCreator
                                                 products={invoiceData}
                                                 customer={customer}
-                                                invoiceNumber={"INV2889"}
+                                                invoiceNumber={`INV${invoiceNumber}`}
                                             />
                                         }
-                                        fileName={`${"INV2889"}`}
+                                        fileName={`INV${invoiceNumber}`}
                                     >
                                         {({ loading }) =>
                                             loading ? (
@@ -586,12 +599,10 @@ export const NewInvoice = () => {
                                                     Loading...
                                                 </button>
                                             ) : (
-                                                <button className="primaryButtonStyle"
+                                                <button
+                                                    className="primaryButtonStyle"
                                                     onClick={() => {
                                                         onPressedPrintHandler();
-                                                        setTimeout(() => {
-                                                            setIsInvoiceReady(false);
-                                                        }, 1000);
                                                     }}
                                                 >
                                                     Print
@@ -604,7 +615,6 @@ export const NewInvoice = () => {
                                     <button
                                         className="primaryButtonStyle"
                                         onClick={() => {
-                                            setIsInvoiceReady(true);
                                             onPressedGenerateHandler();
                                         }}
                                         disabled={checkDisability(serialNumber)}
@@ -667,9 +677,9 @@ export const NewInvoice = () => {
                                             style={{
                                                 width: 380,
                                             }}
-                                            className="customerSelectionDropdown"
+                                            className="selectableDropdown"
                                             value={customerNameHelper(customer)}
-                                            onChange={(
+                                            onSelect={(
                                                 value,
                                                 selectedCustomer
                                             ) => {
@@ -682,7 +692,6 @@ export const NewInvoice = () => {
                                                     );
                                                 }
                                             }}
-                                            onClear={() => setCustomer(null)}
                                             placeholder="Select Customer"
                                             options={getCustomerAsOptions(
                                                 customers
@@ -697,6 +706,8 @@ export const NewInvoice = () => {
                                             dropdownStyle={dropDownStyles}
                                             showSearch
                                             allowClear
+                                            defaultOpen
+                                            autoFocus
                                         />
                                     </ConfigProvider>
                                 }
@@ -715,6 +726,7 @@ export const NewInvoice = () => {
                                     value={paymentModeValue}
                                     onChange={(event) => {
                                         setPaymentModeValue(event.target.value);
+                                        productSearchDropdown.focus();
                                     }}
                                     options={paymentModes}
                                     optionType="button"
@@ -742,10 +754,10 @@ export const NewInvoice = () => {
                                         }}
                                     >
                                         <Select
-                                            className="customerSelectionDropdown"
+                                            className="selectableDropdown"
                                             id="productSearch"
                                             value={productNameHelper(product)}
-                                            onChange={(
+                                            onSelect={(
                                                 value,
                                                 selectedProduct
                                             ) => {
@@ -772,6 +784,15 @@ export const NewInvoice = () => {
                                                         input.toLowerCase()
                                                     ) > 0
                                             }
+                                            onFocus={() => {
+                                                console.log(
+                                                    `Before : ${productDropDownState}`
+                                                );
+                                                productDropDownState = true;
+                                                console.log(
+                                                    `After : ${productDropDownState}`
+                                                );
+                                            }}
                                             placeholder="Select Product"
                                             dropdownStyle={dropDownStyles}
                                             showSearch

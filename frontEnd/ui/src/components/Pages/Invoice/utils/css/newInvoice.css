@@ -1,4 +1,4 @@
-.customerSelectionDropdown {
+.selectableDropdown {
     width: 300px;
     text-align: start;
     border: .8px solid rgb(156, 156, 156);
@@ -6,11 +6,11 @@
     outline: none;
 }
 
-.customerSelectionDropdown:hover {
+.selectableDropdown:hover {
     border: .8px solid #4096FF;
 }
 
-.customerSelectionDropdown:active {
+.selectableDropdown:active {
     border: .8px solid #4096FF;
 }
 
