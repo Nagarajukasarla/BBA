@@ -134,8 +134,8 @@ export const Stocks = () => {
             key: "mrpColumn",
             title: "Mrp",
             dataIndex: "mrp",
-            width: "4%"
-        }
+            width: "4%",
+        },
     ];
 
     return (
@@ -199,6 +199,7 @@ export const Stocks = () => {
                             scroll={{
                                 y: 470,
                             }}
+                            
                         ></Table>
                     </Row>
                 </Space>

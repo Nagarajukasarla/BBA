@@ -65,7 +65,7 @@ export const NewInvoice = () => {
     let productDropDownState = false;
 
     let itemObj = {
-        serialNumber: "",
+        serialNumber: 0,
         product: "",
         company: "",
         quantity: "",
@@ -178,6 +178,11 @@ export const NewInvoice = () => {
         }));
     };
 
+    const deleteItem = (product) => {
+        const updatedItems = invoiceData?.filter((item) => item?.serialNumber !== product?.serialNumber);
+        setInvoiceData([...updatedItems]);
+    };
+
     const paymentModes = [
         {
             value: "cash",
@@ -198,46 +203,40 @@ export const NewInvoice = () => {
 
     const invoiceColumns = [
         {
-            key: "1",
-            title: "S.No",
-            dataIndex: "serialNumber",
-            width: "6%",
-        },
-        {
             key: "2",
-            title: "Product",
+            title: "PRODUCT",
             dataIndex: "product",
-            width: "13%",
+            width: "14%",
         },
         {
             key: "3",
-            title: "Company",
+            title: "COMPANY",
             dataIndex: "company",
-            width: "8%",
+            width: "11%",
         },
         {
             key: "4",
-            title: "Quantity",
+            title: "QUAN",
             dataIndex: "quantity",
-            width: "8%",
-        },
-        {
-            key: "5",
-            title: "Pack",
-            dataIndex: "packingType",
             width: "6%",
         },
         {
+            key: "5",
+            title: "PACK",
+            dataIndex: "packingType",
+            width: "5%",
+        },
+        {
             key: "6",
-            title: "Mf Date",
+            title: "MFD",
             dataIndex: "manufacturingDate",
-            width: "7%",
+            width: "5%",
         },
         {
             key: "7",
-            title: "Exp Date",
+            title: "EXP",
             dataIndex: "expiryDate",
-            width: "7%",
+            width: "5%",
         },
         {
             key: "8",
@@ -259,25 +258,25 @@ export const NewInvoice = () => {
         },
         {
             key: "11",
-            title: "Rate",
+            title: "RATE",
             dataIndex: "rate",
-            width: "5%",
+            width: "7%",
         },
         {
             key: "12",
-            title: "Mrp",
+            title: "MRP",
             dataIndex: "mrp",
             width: "6%",
         },
         {
             key: "13",
-            title: "Discount",
+            title: "DISC",
             dataIndex: "discount",
-            width: "7%",
+            width: "5%",
         },
         {
             key: "14",
-            title: "Price",
+            title: "PRICE",
             dataIndex: "price",
             width: "8%",
         },
@@ -339,7 +338,7 @@ export const NewInvoice = () => {
     };
 
     const retriveInvoiceDataFromLocalStorage = () => {
-        let invoiceInJSON = localStorage.getItem("invoice");
+        const invoiceInJSON = localStorage.getItem("invoice");
         if (!(invoiceInJSON === "null" || invoiceInJSON === null)) {
             let retrivedInvoice = JSON.parse(invoiceInJSON);
             setCustomer(retrivedInvoice.customer);
@@ -500,11 +499,18 @@ export const NewInvoice = () => {
     };
 
     const checkDisability = () => {
-        if (serialNumber < 1) {
+        if (invoiceData.length < 1) {
             return true;
         }
         return false;
     };
+
+    const checkDisabilityForReset = () => {
+        if (invoiceData.length < 1 && customer === null && (paymentModeValue === undefined || paymentModeValue === '')) {
+            return true;
+        }
+        return false;
+    }
 
     useEffect(() => {
         if (checkAuthentication(getToken())) {
@@ -573,9 +579,9 @@ export const NewInvoice = () => {
                                     onClick={() => {
                                         resetInvoice();
                                     }}
-                                    disabled={checkDisability(serialNumber)}
+                                    disabled={checkDisabilityForReset()}
                                     style={{
-                                        cursor: checkDisability()
+                                        cursor: checkDisabilityForReset()
                                             ? "not-allowed"
                                             : "pointer",
                                     }}
@@ -617,7 +623,7 @@ export const NewInvoice = () => {
                                         onClick={() => {
                                             onPressedGenerateHandler();
                                         }}
-                                        disabled={checkDisability(serialNumber)}
+                                        disabled={checkDisability()}
                                         style={{
                                             cursor: checkDisability()
                                                 ? "not-allowed"
@@ -1095,13 +1101,13 @@ export const NewInvoice = () => {
                         </Row>
                         <Row style={{ marginTop: "20px" }}>
                             <Table
-                                key={serialNumber}
                                 bordered
                                 columns={invoiceColumns}
                                 dataSource={invoiceData}
                                 scroll={{
                                     y: 270,
                                 }}
+                                pagination={false}
                             ></Table>
                         </Row>
                     </Card>
