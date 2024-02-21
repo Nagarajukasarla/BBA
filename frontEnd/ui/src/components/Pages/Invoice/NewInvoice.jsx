@@ -12,6 +12,7 @@ import {
     Table,
     ConfigProvider,
     message,
+    Tooltip,
 } from "antd";
 
 import "./utils/css/newInvoice.css";
@@ -39,6 +40,7 @@ import {
     generateFormattedDateString,
     getYearMonthFormat,
 } from "../../../services/utils/dateFormater";
+import { DeleteOutlined } from "@ant-design/icons";
 import { getInvoiceRequestObj } from "./utils/helpers/invoiceHelpers";
 import { createInvoice } from "../../../services/api/post/authorizedPostService";
 import { PDFDownloadLink } from "@react-pdf/renderer";
@@ -178,8 +180,16 @@ export const NewInvoice = () => {
         }));
     };
 
+    /**
+     * Deletes the specified product from the invoice data and updates the invoice.
+     *
+     * @param {Object} product - The product to be deleted
+     * @return {void}
+     */
     const deleteItem = (product) => {
-        const updatedItems = invoiceData?.filter((item) => item?.serialNumber !== product?.serialNumber);
+        const updatedItems = invoiceData?.filter(
+            (item) => item?.serialNumber !== product?.serialNumber
+        );
         setInvoiceData([...updatedItems]);
     };
 
@@ -280,6 +290,24 @@ export const NewInvoice = () => {
             dataIndex: "price",
             width: "8%",
         },
+        {
+            key: "x",
+            title: "ACTION",
+            dataIndex: "action",
+            width: "6.15%",
+            render: (_, item) => (
+                <Tooltip title="Delete">
+                    <DeleteOutlined
+                        onClick={() => deleteItem(item)}
+                        style={{
+                            color: "red",
+                            fontSize: "18px",
+                            cursor: "pointer",
+                        }}
+                    />
+                </Tooltip>
+            ),
+        },
     ];
 
     const dropDownStyles = {
@@ -330,6 +358,9 @@ export const NewInvoice = () => {
         }
     };
 
+    /**
+     * Updates the selected product's quantity in the products array.
+     */
     const updateSelectedProduct = () => {
         const index = products.findIndex((item) => item.id === product.id);
         if (index !== -1) {
@@ -337,6 +368,9 @@ export const NewInvoice = () => {
         }
     };
 
+    /**
+     * Retrieves invoice data from local storage and sets the customer, payment mode value, invoice data, and serial number.
+     */
     const retriveInvoiceDataFromLocalStorage = () => {
         const invoiceInJSON = localStorage.getItem("invoice");
         if (!(invoiceInJSON === "null" || invoiceInJSON === null)) {
@@ -381,6 +415,11 @@ export const NewInvoice = () => {
         setMrp("");
     };
 
+    /**
+     * An onClick event handler for adding a new item to the invoice.
+     *
+     * @return {void}
+     */
     const onClickAddButton = () => {
         if (quantity === 0) {
             showMessage("warning", "Items are not sufficient");
@@ -498,6 +537,11 @@ export const NewInvoice = () => {
         // border: "1px solid black",
     };
 
+    /**
+     * This function checks if the invoiceData array is empty.
+     *
+     * @return {boolean} true if invoiceData is empty, false otherwise
+     */
     const checkDisability = () => {
         if (invoiceData.length < 1) {
             return true;
@@ -505,12 +549,21 @@ export const NewInvoice = () => {
         return false;
     };
 
+    /**
+     * Check if there are no invoices, no customer, and no payment mode value.
+     *
+     * @return {boolean} true if there are no invoices, no customer, and no payment mode value; false otherwise
+     */
     const checkDisabilityForReset = () => {
-        if (invoiceData.length < 1 && customer === null && (paymentModeValue === undefined || paymentModeValue === '')) {
+        if (
+            invoiceData.length < 1 &&
+            customer === null &&
+            (paymentModeValue === undefined || paymentModeValue === "")
+        ) {
             return true;
         }
         return false;
-    }
+    };
 
     useEffect(() => {
         if (checkAuthentication(getToken())) {
