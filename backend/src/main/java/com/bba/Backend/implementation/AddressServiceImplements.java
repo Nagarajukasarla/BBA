@@ -62,7 +62,7 @@ public class AddressServiceImplements implements AddressService {
             return Collections.emptyList();
         }
         Comparator<AddressDto> customerNumberComparator = Comparator.comparing(AddressDto::getCustomerNumber);
-        return values.stream()
+        return values.parallelStream()
                 .map(mapper::mapAddressToAddressDto)
                 .sorted(customerNumberComparator)
                 .toList();

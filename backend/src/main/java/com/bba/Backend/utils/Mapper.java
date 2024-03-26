@@ -2,13 +2,19 @@ package com.bba.Backend.utils;
 
 import com.bba.Backend.dto.AddressDto;
 import com.bba.Backend.dto.CustomerDto;
+import com.bba.Backend.dto.InvoiceDto;
 import com.bba.Backend.dto.ItemDto;
 import com.bba.Backend.models.Item;
+import com.bba.Backend.projections.InvoiceProjection;
 import com.bba.Backend.utils.mappers.DtoMapper;
 import com.bba.Backend.models.Customer;
 import com.bba.Backend.models.util.Address;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.Map;
+import java.util.Objects;
 
 
 @Service
@@ -28,10 +34,42 @@ public class Mapper implements DtoMapper {
                 .customerNumber(customer.getCustomerNumber())
                 .email(customer.getEmail())
                 .phone(customer.getPhone())
-                .pendingAmount(customer.getPendingAmount())
+                .paidAmount(customer.getPaidAmount())
+                .pendingAmount(customer.getTotalPurchaseAmount() - customer.getPaidAmount())
                 .createdDate(new DateTime(customer.getCreatedDate()))
                 .totalPurchaseAmount(customer.getTotalPurchaseAmount())
                 .discount(customer.getDiscount())
+                .duePeriod(customer.getDuePeriod())
+                .addressDto(addressDto)
+                .build();
+    }
+
+    @Override
+    public CustomerDto mapCustomerToCustomerDtoWithAddressAndPurchaseStatus (@NonNull Map<String, Object> customerWithAddressAndPurchaseStatus) {
+        var pendingAmount = (Double) customerWithAddressAndPurchaseStatus.get("total_purchase_amount") -
+                (Double) customerWithAddressAndPurchaseStatus.get("paid_amount");
+
+        var addressDto = AddressDto.builder()
+                .blockNumber((String) customerWithAddressAndPurchaseStatus.get("block_number"))
+                .customerNumber((Integer) customerWithAddressAndPurchaseStatus.get("customer_number"))
+                .street((String) customerWithAddressAndPurchaseStatus.get("street"))
+                .city((String) customerWithAddressAndPurchaseStatus.get("city"))
+                .state((String) customerWithAddressAndPurchaseStatus.get("state"))
+                .zipcode((String) customerWithAddressAndPurchaseStatus.get("zipcode"))
+                .build();
+
+        return CustomerDto.builder()
+                .id((Integer) customerWithAddressAndPurchaseStatus.get("id"))
+                .name((String) customerWithAddressAndPurchaseStatus.get("name"))
+                .customerNumber((Integer) customerWithAddressAndPurchaseStatus.get("customer_number"))
+                .email((String) customerWithAddressAndPurchaseStatus.get("email"))
+                .phone((String) customerWithAddressAndPurchaseStatus.get("phone"))
+                .paidAmount((Double) customerWithAddressAndPurchaseStatus.get("paid_amount"))
+                .totalPurchaseAmount((Double) customerWithAddressAndPurchaseStatus.get("total_purchase_amount"))
+                .pendingAmount(pendingAmount)
+                .createdDate(new DateTime((Date) customerWithAddressAndPurchaseStatus.get("created_date")))
+                .duePeriod((Integer) customerWithAddressAndPurchaseStatus.get("due_period"))
+                .discount((Double) customerWithAddressAndPurchaseStatus.get("discount"))
                 .addressDto(addressDto)
                 .build();
     }
@@ -77,6 +115,17 @@ public class Mapper implements DtoMapper {
                 .expiryDate(new DateTime(item.getExpiryDate()))
                 .isFastMoving(item.getIsFastMoving())
                 .mrp(item.getMrp())
+                .build();
+    }
+
+    @Override
+    public InvoiceDto mapInvoiceProjectionToInvoiceDto(InvoiceProjection invoiceProjection) {
+        return InvoiceDto.builder()
+                .number(invoiceProjection.getNumber())
+                .customerNumber(invoiceProjection.getCustomer_number())
+                .customerName(invoiceProjection.getName())
+                .amount(invoiceProjection.getAmount())
+                .generationDate(new DateTime(invoiceProjection.getGeneration_date()))
                 .build();
     }
 }

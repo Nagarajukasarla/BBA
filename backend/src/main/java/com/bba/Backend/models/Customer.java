@@ -34,17 +34,20 @@ public class Customer {
     @Column(name = "phone", length = 256, nullable = false)
     private String phone;
 
-    @Column(name = "pending_amount")
-    private long pendingAmount;
+    @Column(name = "paid_amount")
+    private Double paidAmount;
 
     @Column(name = "created_date", length = 256)
     private Date createdDate;
 
     @Column(name = "total_purchase_amount")
-    private long totalPurchaseAmount;
+    private Double totalPurchaseAmount;
 
     @Column(name = "discount")
     private Double discount;
+
+    @Column(name = "due_period")
+    private Integer duePeriod;
 
     @Override
     public String toString() {
@@ -54,10 +57,11 @@ public class Customer {
                 "customerNumber= " + getCustomerNumber() + ",\n\t" +
                 "email= " + getEmail() + ",\n\t" +
                 "phone= " + getPhone() + ",\n\t" +
-                "pendingAmount= " + getPendingAmount() + ",\n\t" +
+                "paidAmount= " + getPaidAmount() + ",\n\t" +
                 "createdDate= " + getCreatedDate() + ",\n\t" +
                 "totalPurchaseAmount= " + getTotalPurchaseAmount() + "\n\t" +
-                "discount= " + getDiscount() + "\n" +
+                "discount= " + getDiscount() + "\n\t" +
+                "duePeriod=" + getDuePeriod() + "\n" +
                 "}";
     }
 }

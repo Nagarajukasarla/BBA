@@ -19,4 +19,9 @@ public class InvoiceController {
     public ResponseEntity<?> saveInvoice (@RequestBody InvoiceRequest invoiceRequest) {
         return invoiceService.saveInvoice(invoiceRequest);
     }
+
+    @GetMapping(path = "/get-invoices")
+    public ResponseEntity<?> getInvoices () {
+        return invoiceService.getAllInvoices();
+    }
 }

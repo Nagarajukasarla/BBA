@@ -5,7 +5,6 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.data.annotation.Persistent;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -20,7 +19,7 @@ public class DatabaseInitialization implements ApplicationRunner {
         executeNativeQuery("CREATE SEQUENCE IF NOT EXISTS \"_invoice_number_seq\" INCREMENT BY 1 START WITH 1879");
     }
 
-    private void executeNativeQuery (String query) {
+    public void executeNativeQuery (String query) {
         entityManager.createNativeQuery(query).executeUpdate();
     }
 }

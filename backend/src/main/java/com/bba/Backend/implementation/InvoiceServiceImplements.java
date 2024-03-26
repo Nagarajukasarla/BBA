@@ -5,6 +5,7 @@ import com.bba.Backend.repositories.InvoiceRepository;
 import com.bba.Backend.requestModels.InvoiceRequest;
 import com.bba.Backend.services.InvoiceService;
 import com.bba.Backend.utils.DateTime;
+import com.bba.Backend.utils.Mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
@@ -12,12 +13,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.logging.Logger;
 
+
 @Service
 @RequiredArgsConstructor
 public class InvoiceServiceImplements implements InvoiceService {
 
     private final InvoiceRepository invoiceRepository;
     private final InvoiceItemImplements invoiceItemImplements;
+    private final Mapper mapper;
     private final Logger logger = Logger.getLogger(InvoiceServiceImplements.class.getName());
 
     @Override
@@ -37,4 +40,11 @@ public class InvoiceServiceImplements implements InvoiceService {
         return ResponseEntity.ok(result.getNumber());
     }
 
+    @Override
+    public ResponseEntity<?> getAllInvoices() {
+        var invoices = invoiceRepository.getInvoices();
+        return ResponseEntity.ok(invoices
+                .parallelStream()
+                .map(mapper::mapInvoiceProjectionToInvoiceDto));
+    }
 }

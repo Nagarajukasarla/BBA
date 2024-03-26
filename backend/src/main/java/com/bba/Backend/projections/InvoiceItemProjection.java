@@ -1,4 +1,4 @@
-package com.bba.Backend.dto;
+package com.bba.Backend.projections;
 
 public interface InvoiceItemProjection {
 

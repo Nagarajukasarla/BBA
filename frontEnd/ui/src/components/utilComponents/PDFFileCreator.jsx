@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
     Page,
     Document,
@@ -24,10 +24,7 @@ import LexendExaLight from "../../utils/fonts/LexendExa-Light.ttf";
 import LexendExaMedium from "../../utils/fonts/LexendExa-Medium.ttf";
 import LexendExaRegular from "../../utils/fonts/LexendExa-Regular.ttf";
 import LexendExaSemiBold from "../../utils/fonts/LexendExa-SemiBold.ttf";
-import {
-    generateFormattedDateString,
-    getDayMonthYearFormat,
-} from "../../services/utils/dateFormater";
+import { getDayMonthYearFormat } from "../../services/utils/dateFormater";
 
 Font.register({
     family: "InterBlack",

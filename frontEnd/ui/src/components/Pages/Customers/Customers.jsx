@@ -56,7 +56,7 @@ export const Customers = () => {
                     ),
                     phone: item.phone,
                     purchasedAmount: item.totalPurchaseAmount,
-                    paidAmount: item.totalPurchaseAmount - item.pendingAmount,
+                    paidAmount: item.paidAmount,
                     pendingAmount: item.pendingAmount,
                 }));
 

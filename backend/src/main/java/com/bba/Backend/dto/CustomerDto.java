@@ -10,7 +10,7 @@ import org.springframework.lang.NonNull;
 @Builder
 public class CustomerDto {
 
-    public int id;
+    public Integer id;
 
     public String name;
 
@@ -20,15 +20,19 @@ public class CustomerDto {
 
     public String phone;
 
-    public long pendingAmount;
+    public Double paidAmount;
+
+    public Double pendingAmount;
 
     public DateTime createdDate;
 
     public AddressDto addressDto;
 
-    public long totalPurchaseAmount;
+    public Double totalPurchaseAmount;
 
     public Double discount;
+
+    public Integer duePeriod;
 
     public void setCreatedDate(@NonNull String formattedDate) {
         this.createdDate = new DateTime(formattedDate);
@@ -46,10 +50,12 @@ public class CustomerDto {
                 "customerNumber= " + customerNumber + ",\n\t" +
                 "email= " + email + ",\n\t" +
                 "phone= " + phone + ",\n\t" +
-                "pendingAmount= " + pendingAmount + ",\n\t" +
+                "paidAmount= " + paidAmount + ",\n\t" +
+                "pendingAmount=" + pendingAmount + "\n\t" +
                 "createdDate= " + createdDate + ",\n\t" +
                 "totalPurchaseAmount= " + totalPurchaseAmount + "\n\t" +
-                "discount= " + discount + "\n" +
+                "discount= " + discount + "\n\t" +
+                "duePeriod=" + duePeriod + "\n" +
                 "address ={ " + addressDto.toString() + "\n" + "}," + "\n" +
                 "}";
     }

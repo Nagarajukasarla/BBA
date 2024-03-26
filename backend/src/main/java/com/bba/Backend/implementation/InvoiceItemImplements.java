@@ -6,10 +6,13 @@ import com.bba.Backend.repositories.InvoiceItemRepository;
 import com.bba.Backend.repositories.ItemRepository;
 import com.bba.Backend.services.InvoiceItemService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 
 @Service
@@ -18,10 +21,20 @@ public class InvoiceItemImplements implements InvoiceItemService {
 
     private final InvoiceItemRepository invoiceItemRepository;
     private final ItemRepository itemRepository;
+    private final ModelMapper modelMapper;
+
+    private final Logger logger = Logger.getLogger(InvoiceItemService.class.getName());
 
     @Override
     public void saveInvoiceItems(String invoiceNumber, @NonNull List<InvoiceItemDto> itemDto) {
         itemDto.forEach(item -> saveItem(invoiceNumber, item));
+    }
+
+    @Override
+    public ResponseEntity<?> getInvoiceItems(String invoiceNumber) {
+        var invoiceItems = invoiceItemRepository.findAllByInvoiceNumber(invoiceNumber);
+        logger.info("Items: " + invoiceItems.toString());
+        return ResponseEntity.ok(invoiceItems);
     }
 
     private void saveItem(String invoiceNumber, @NonNull InvoiceItemDto invoiceItemDto) {

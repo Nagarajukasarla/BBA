@@ -1,4 +1,4 @@
-package com.bba.Backend.dto;
+package com.bba.Backend.projections;
 
 import com.bba.Backend.utils.DateTime;
 
@@ -6,8 +6,9 @@ import java.util.Date;
 
 public interface InvoiceProjection {
      String getNumber();
+     Integer getCustomer_number();
      String getName();
      Double getAmount();
-     String getGeneration_date();
+     Date getGeneration_date();
      String getPayment_mode();
 }

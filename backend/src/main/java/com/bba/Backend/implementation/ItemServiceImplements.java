@@ -28,7 +28,7 @@ public class ItemServiceImplements implements ItemService {
 
     private static final Logger logger = Logger.getLogger(ItemServiceImplements.class.getName());
 
-    // Just to fetch item
+    // To fetch item
     public ItemDto fetchItem (@NonNull ItemRequest request) {
         var item = itemRepository.findByName(request.getName());
         return item.map(value -> ItemDto.builder()
@@ -92,8 +92,7 @@ public class ItemServiceImplements implements ItemService {
             if (status) {
                 item.get().setQuantity(item.get().getQuantity() + itemDto.getQuantity());
                 itemRepository.save(item.get());
-            }
-            else {
+            } else {
                 save(itemDto);
             }
             return ResponseEntity.ok("\"" + item.get().getName() + "\" is successfully saved");
@@ -105,7 +104,7 @@ public class ItemServiceImplements implements ItemService {
     @Override
     public List<ItemDto> getItems() {
         return itemRepository.findAll()
-                .stream()
+                .parallelStream()
                 .map(mapper::mapItemToItemDto)
                 .collect(Collectors.toList());
     }

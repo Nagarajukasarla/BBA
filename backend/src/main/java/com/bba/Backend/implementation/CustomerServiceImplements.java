@@ -37,6 +37,7 @@ public class CustomerServiceImplements implements CustomerService {
                 .phone(customerDto.getPhone())
                 .customerNumber(customerNumber)
                 .createdDate(DateTime.formatDate(customerDto.getCreatedDate()))
+                .duePeriod(customerDto.getDuePeriod())
                 .build();
 
         customerDto.addressDto.setCustomerNumber(customerNumber);
@@ -64,11 +65,9 @@ public class CustomerServiceImplements implements CustomerService {
 
     @Override
     public List<CustomerDto> getAllCustomers() {
-        Sort.Order sortByCustomerNumber = Sort.Order.asc("customerNumber");
-        var customers = customerRepository.findAll(Sort.by(sortByCustomerNumber));
-        var customersAddress = addressService.getAllCustomersAddress();
-        return IntStream.range(0, customers.size())
-                .mapToObj(i -> mapper.mapCustomerToCustomerDto(customers.get(i), customersAddress.get(i)))
+        var customers = customerRepository.getCustomersWithAddressAndPurchaseStatus();
+        return customers.parallelStream()
+                .map(mapper::mapCustomerToCustomerDtoWithAddressAndPurchaseStatus)
                 .collect(Collectors.toList());
     }
 }

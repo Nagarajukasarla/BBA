@@ -23,10 +23,10 @@ public class Partner implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "_partner_id_seq")
     @SequenceGenerator(name = "_partner_id_seq", sequenceName = "_partner_id_seq", allocationSize = 1)
-    private int id;
+    private Integer id;
 
     @Column(name = "owner", length = 256, nullable = false)
-    private boolean isOwner;
+    private Boolean isOwner;
 
     @Column(name = "first_name", length = 256, nullable = false)
     private String firstName;

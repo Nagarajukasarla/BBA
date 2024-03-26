@@ -17,16 +17,20 @@ import java.util.List;
 @AllArgsConstructor
 public class InvoiceDto {
 
-    private String id;
+    public String id;
 
-    private Integer number;
+    public String number;
 
-    private DateTime generationDate;
+    public Integer customerNumber;
 
-    private List<InvoiceItem> invoiceItems;
+    public String customerName;
 
-    private Customer customer;
-    
+    public DateTime generationDate;
+
+    public String paymentMode;
+
+    public Double amount;
+
     public void setGenerationDate (@NonNull String formattedDate) {
         this.generationDate = new DateTime(formattedDate);
     }
