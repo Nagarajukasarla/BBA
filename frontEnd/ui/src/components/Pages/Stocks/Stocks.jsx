@@ -7,7 +7,7 @@ import {
     getAllProducts,
 } from "../../../services/api/get/authorizedGetServices";
 import { getToken } from "../../../services/cookies/tokenUtils";
-import { getYearMonthFormat } from "../../../services/utils/dateFormater";
+import { getMonthYearFormat } from "../../../services/utils/dateFormater";
 
 export const Stocks = () => {
     const [loading, setLoading] = useState(false);
@@ -34,8 +34,8 @@ export const Stocks = () => {
                     batchNumber: item.batchNumber,
                     company: item.company,
                     quantity: item.quantity,
-                    manufacturingDate: getYearMonthFormat(item.manufacturingDate),
-                    expiryDate: getYearMonthFormat(item.expiryDate),
+                    manufacturingDate: getMonthYearFormat(item.manufacturingDate),
+                    expiryDate: getMonthYearFormat(item.expiryDate),
                     sGst: item.sGstInPercent,
                     cGst: item.cGstInPercent,
                     iGst: item.iGstInPercent,
@@ -58,7 +58,7 @@ export const Stocks = () => {
         if (checkAuthentication(getToken())) {
             setLoading(true);
             fetchProducts().then(() => setLoading(false));
-            getYearMonthFormat(products.at(0).manufacturingDate);
+            getMonthYearFormat(products.at(0).manufacturingDate);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);

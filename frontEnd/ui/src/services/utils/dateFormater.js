@@ -15,7 +15,7 @@ export const generateFormattedDateString = () => {
  * @returns date string in format -> "MM/YY"
  *
  **/
-export const getYearMonthFormat = (date) => {
+export const getMonthYearFormat = (date) => {
     if (date === undefined || date === null) {
         return;
     }
@@ -35,7 +35,7 @@ export const getFormattedDate = (date) => {
     const time = "00:00:00";
     let month = date.split("/")[0];
     let year = date.split("/")[1];
-    return "20" + year + "-" + month + "-" + day + "T" + time;
+    return `20${year}-${month}-${day}T${time}`;
 };
 
 /**
@@ -47,7 +47,22 @@ export const getFormattedDate = (date) => {
 export const getDayMonthYearFormat = () => {
     const date = generateFormattedDateString();
     const values = date.substring(0, 9).split("-");
-    return `${values[2] < 10 ? "0" + values[2] : values[2]}-${
-        values[1] < 10 ? "0" + values[1] : values[1]
-    }-${values[0]}`;
+    const day = values[2] < 10 ? "0" + values[2] : values[2];
+    const month = values[1] < 10 ? "0" + values[1] : values[1];
+    return `${day}-${month}-${values[0]}`;
+};
+
+export const getDayMonthYearWithTimeFormat = (inputDate) => {
+    console.log(inputDate);
+    const values = inputDate.split("T");
+    const dateValues = values[0].split("-");
+    return (
+        dateValues[2] +
+        "-" +
+        dateValues[1] +
+        "-" +
+        dateValues[0].substring(2) +
+        " " +
+        values[1]
+    );
 };

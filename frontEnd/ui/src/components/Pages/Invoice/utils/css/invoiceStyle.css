@@ -14,3 +14,9 @@
     font-size: 18px;
     margin-left: 5px;
 }
+
+.addOrEditInvoiceBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

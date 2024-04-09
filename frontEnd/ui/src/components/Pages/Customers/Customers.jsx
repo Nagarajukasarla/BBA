@@ -22,6 +22,7 @@ import {
     getAllCustomers,
 } from "../../../services/api/get/authorizedGetServices";
 import { getToken } from "../../../services/cookies/tokenUtils";
+import { mapCustomerDetails } from "../../../services/utils/customer/client/customerHelper";
 
 export const Customers = () => {
     const [loading, setLoading] = useState(false);
@@ -31,16 +32,11 @@ export const Customers = () => {
 
     const checkAuthentication = async (token) => {
         if (!(await authenticate(token))) {
-            console.log("Unauthenticated!");
+            console.log("Unauthenticated in Customers!");
             navigate("/login");
             return false;
         }
         return true;
-    };
-
-    const mapCustomerDetails = (name, addressDto) => {
-        let address = `${addressDto.blockNumber}, \n ${addressDto.street}, \n${addressDto.city}, \n ${addressDto.state}`;
-        return [name, address];
     };
 
     const fetchCustomers = async () => {
@@ -51,8 +47,18 @@ export const Customers = () => {
                     key: item.id,
                     customerNumber: item.customerNumber,
                     customerDetails: mapCustomerDetails(
-                        item.name,
-                        item.addressDto
+                        {
+                            name: item.customerName,
+                            address: item.addressDto,
+                            include: [
+                                'blockNumber',
+                                'street',
+                                'area',
+                                'city',
+                                'state'
+                            ],
+                            concat: false
+                        }
                     ),
                     phone: item.phone,
                     purchasedAmount: item.totalPurchaseAmount,
@@ -61,7 +67,7 @@ export const Customers = () => {
                 }));
 
                 setCustomers(mappedCustomers);
-                console.log("Mapped Products: \n" + mappedCustomers);
+                console.log("Mapped Products: \n" + JSON.stringify(customers));
             } else {
                 throw new Error("Data Not Found!");
             }
