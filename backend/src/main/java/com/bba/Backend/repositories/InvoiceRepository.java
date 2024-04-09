@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Map;
 
 @EnableJpaRepositories
 @Repository
@@ -16,6 +15,6 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Integer> {
     @Query("SELECT nextval('_invoice_number_seq')")
     Integer getNextInvoiceNumber();
 
-    @Query(value = "SELECT * FROM get_invoice()", nativeQuery = true)
+    @Query(value = "SELECT * FROM get_invoices()", nativeQuery = true)
     List<InvoiceProjection> getInvoices();
 }

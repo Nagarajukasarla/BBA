@@ -19,6 +19,8 @@ public class AddressDto {
 
     public String street;
 
+    public String area;
+
     public String city;
 
     public String state;
@@ -33,6 +35,7 @@ public class AddressDto {
                 "customerNumber= " + customerNumber + ",\n\t" +
                 "partnerEmail= " + partnerEmail + ",\n\t" +
                 "street= " + street + ",\n\t" +
+                "area=" + area + ",\n\t" +
                 "city= " + city + ",\n\t" +
                 "state= " + state + ",\n\t" +
                 "zipcode= " + zipcode + "\n" +

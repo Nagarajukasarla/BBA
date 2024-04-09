@@ -32,19 +32,21 @@ public class CustomerServiceImplements implements CustomerService {
     public CustomerDto saveCustomer(@NonNull CustomerDto customerDto) {
         var customerNumber = customerRepository.getNextCustomerNumber();
         var customer = Customer.builder()
-                .name(customerDto.getName())
+                .name(customerDto.getCustomerName())
                 .email(customerDto.getEmail())
                 .phone(customerDto.getPhone())
                 .customerNumber(customerNumber)
                 .createdDate(DateTime.formatDate(customerDto.getCreatedDate()))
                 .duePeriod(customerDto.getDuePeriod())
+                .discount(customerDto.getDiscount())
                 .build();
 
         customerDto.addressDto.setCustomerNumber(customerNumber);
-        return (mapper.mapCustomerToCustomerDto(
-                customerRepository.save(customer),
-                mapper.mapAddressToAddressDto(addressService.saveAddressOfCustomer(customerDto.getAddressDto()))
-            )
+        return (
+                mapper.mapCustomerToCustomerDto(
+                    customerRepository.save(customer),
+                    mapper.mapAddressToAddressDto(addressService.saveAddressOfCustomer(customerDto.getAddressDto()))
+                )
         );
     }
 

@@ -20,7 +20,7 @@ public class InvoiceController {
         return invoiceService.saveInvoice(invoiceRequest);
     }
 
-    @GetMapping(path = "/get-invoices")
+    @GetMapping(path = "/get-all")
     public ResponseEntity<?> getInvoices () {
         return invoiceService.getAllInvoices();
     }

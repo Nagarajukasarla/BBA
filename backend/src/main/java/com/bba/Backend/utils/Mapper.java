@@ -30,7 +30,7 @@ public class Mapper implements DtoMapper {
     public CustomerDto mapCustomerToCustomerDto(@NonNull Customer customer, @NonNull AddressDto addressDto) {
         return CustomerDto.builder()
                 .id(customer.getId())
-                .name(customer.getName())
+                .customerName(customer.getName())
                 .customerNumber(customer.getCustomerNumber())
                 .email(customer.getEmail())
                 .phone(customer.getPhone())
@@ -44,23 +44,21 @@ public class Mapper implements DtoMapper {
                 .build();
     }
 
+    /**
+     * This method takes <b> Map< String, Object> </b> of Customer data and generate customerDto
+     * @param customerWithAddressAndPurchaseStatus should not be null
+     * @return customerDto - customerDto with address and purchase status
+     */
     @Override
     public CustomerDto mapCustomerToCustomerDtoWithAddressAndPurchaseStatus (@NonNull Map<String, Object> customerWithAddressAndPurchaseStatus) {
-        var pendingAmount = (Double) customerWithAddressAndPurchaseStatus.get("total_purchase_amount") -
-                (Double) customerWithAddressAndPurchaseStatus.get("paid_amount");
+        var pendingAmount = calculatePendingAmount(customerWithAddressAndPurchaseStatus.get("total_purchase_amount"),
+                customerWithAddressAndPurchaseStatus.get("paid_amount"));
 
-        var addressDto = AddressDto.builder()
-                .blockNumber((String) customerWithAddressAndPurchaseStatus.get("block_number"))
-                .customerNumber((Integer) customerWithAddressAndPurchaseStatus.get("customer_number"))
-                .street((String) customerWithAddressAndPurchaseStatus.get("street"))
-                .city((String) customerWithAddressAndPurchaseStatus.get("city"))
-                .state((String) customerWithAddressAndPurchaseStatus.get("state"))
-                .zipcode((String) customerWithAddressAndPurchaseStatus.get("zipcode"))
-                .build();
+        var addressDto = buildAddressDto(customerWithAddressAndPurchaseStatus);
 
         return CustomerDto.builder()
                 .id((Integer) customerWithAddressAndPurchaseStatus.get("id"))
-                .name((String) customerWithAddressAndPurchaseStatus.get("name"))
+                .customerName((String) customerWithAddressAndPurchaseStatus.get("customer_name"))
                 .customerNumber((Integer) customerWithAddressAndPurchaseStatus.get("customer_number"))
                 .email((String) customerWithAddressAndPurchaseStatus.get("email"))
                 .phone((String) customerWithAddressAndPurchaseStatus.get("phone"))
@@ -87,6 +85,7 @@ public class Mapper implements DtoMapper {
                 .customerNumber(address.getCustomerNumber())
                 .partnerEmail(address.getPartnerEmail())
                 .street(address.getStreet())
+                .area(address.getArea())
                 .city(address.getCity())
                 .state(address.getState())
                 .zipcode(address.getZipcode())
@@ -118,14 +117,67 @@ public class Mapper implements DtoMapper {
                 .build();
     }
 
+
+    /**
+     * This method takes projection with invoice and customer details
+     * @param invoiceProjection should not be null
+     * @return InvoiceDto
+     */
     @Override
-    public InvoiceDto mapInvoiceProjectionToInvoiceDto(InvoiceProjection invoiceProjection) {
+    public InvoiceDto mapInvoiceProjectionToInvoiceDto(@NonNull InvoiceProjection invoiceProjection) {
         return InvoiceDto.builder()
-                .number(invoiceProjection.getNumber())
+                .id(invoiceProjection.getId())
+                .invoiceNumber(invoiceProjection.getInvoice_number())
                 .customerNumber(invoiceProjection.getCustomer_number())
-                .customerName(invoiceProjection.getName())
+                .customerName(invoiceProjection.getCustomer_name())
                 .amount(invoiceProjection.getAmount())
                 .generationDate(new DateTime(invoiceProjection.getGeneration_date()))
+                .paymentMode(invoiceProjection.getPayment_mode())
+                .customerAddressDto(buildAddressDto(invoiceProjection))
                 .build();
     }
+
+
+    /**
+     * This method takes <b> Map< String, Object> </b> of Customer with Address and build addressDto
+     * @param customerWithAddressAndPurchaseStatus should not be null
+     * @return AddressDto
+     */
+    private AddressDto buildAddressDto(@NonNull Map<String, Object> customerWithAddressAndPurchaseStatus) {
+        return AddressDto.builder()
+                .blockNumber((String) customerWithAddressAndPurchaseStatus.get("block_number"))
+                .customerNumber((Integer) customerWithAddressAndPurchaseStatus.get("customer_number"))
+                .street((String) customerWithAddressAndPurchaseStatus.get("street"))
+                .area((String) customerWithAddressAndPurchaseStatus.get("area"))
+                .city((String) customerWithAddressAndPurchaseStatus.get("city"))
+                .state((String) customerWithAddressAndPurchaseStatus.get("state"))
+                .zipcode((String) customerWithAddressAndPurchaseStatus.get("zipcode"))
+                .build();
+    }
+
+    /**
+     * This method takes <b>InvoiceProjection</b> and returns build address of customer
+     * @param invoiceProjection should not be null
+     * @return AddressDto
+     */
+
+    private AddressDto buildAddressDto (@NonNull InvoiceProjection invoiceProjection) {
+        return AddressDto.builder()
+                .customerNumber(invoiceProjection.getCustomer_number())
+                .area(invoiceProjection.getArea())
+                .city(invoiceProjection.getCity())
+                .state(invoiceProjection.getState())
+                .build();
+    }
+
+    /**
+     * This method calculate pendingAmount of customer
+     * @param totalPurchaseAmount Object
+     * @param paidAmount Object
+     * @return Double
+     */
+    private Double calculatePendingAmount (Object totalPurchaseAmount, Object paidAmount) {
+        return (Double) totalPurchaseAmount - (Double) paidAmount;
+    }
+
 }

@@ -12,7 +12,7 @@ public class CustomerDto {
 
     public Integer id;
 
-    public String name;
+    public String customerName;
 
     public Integer customerNumber;
 
@@ -46,7 +46,7 @@ public class CustomerDto {
     public String toString() {
         return "CustomerDto { " + "\n\t" +
                 "id= " + id + ",\n\t" +
-                "name= " + name + ",\n\t" +
+                "name= " + customerName + ",\n\t" +
                 "customerNumber= " + customerNumber + ",\n\t" +
                 "email= " + email + ",\n\t" +
                 "phone= " + phone + ",\n\t" +

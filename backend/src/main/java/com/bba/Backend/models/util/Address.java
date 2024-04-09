@@ -28,8 +28,11 @@ public class Address {
     @Column(name = "partner_email")
     private String partnerEmail;
 
-    @Column(name = "street", nullable = false)
+    @Column(name = "street")
     private String street;
+
+    @Column(name = "area")
+    private String area;
 
     @Column(name = "city", nullable = false)
     private String city;
@@ -56,6 +59,7 @@ public class Address {
                 "customerNumber= " + getCustomerNumber() + ",\n\t" +
                 "partnerEmail= " + getPartnerEmail() + ",\n\t" +
                 "street= " + getStreet() + ",\n\t" +
+                "area=" + getArea() + ",\n\t" +
                 "city= " + getCity() + ",\n\t" +
                 "state= " + getState() + ",\n\t" +
                 "zipcode= " + getZipcode() + "\n" +

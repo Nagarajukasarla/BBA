@@ -2,6 +2,7 @@ package com.bba.Backend.utils;
 
 import com.bba.Backend.utils.enums.DateFormat;
 import lombok.*;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.lang.NonNull;
 
 import java.text.ParseException;
@@ -79,7 +80,7 @@ public class DateTime {
      *
      */
 
-    public DateTime (Date date) {
+    public DateTime (@NonNull Date date) {
         //  Date Format: Sun Oct 29 23:09:35 IST 2023
         String dateStr = date.toString();
         String[] values = dateStr.split(" ");
@@ -89,7 +90,7 @@ public class DateTime {
         }
         else {
             setDate(values[0]);
-            setTime("00:00:00");
+            setTime(values[1]);
         }
     }
 

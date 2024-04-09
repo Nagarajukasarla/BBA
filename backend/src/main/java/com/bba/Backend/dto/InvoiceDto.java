@@ -17,9 +17,9 @@ import java.util.List;
 @AllArgsConstructor
 public class InvoiceDto {
 
-    public String id;
+    public Integer id;
 
-    public String number;
+    public String invoiceNumber;
 
     public Integer customerNumber;
 
@@ -30,6 +30,8 @@ public class InvoiceDto {
     public String paymentMode;
 
     public Double amount;
+
+    public AddressDto customerAddressDto;
 
     public void setGenerationDate (@NonNull String formattedDate) {
         this.generationDate = new DateTime(formattedDate);

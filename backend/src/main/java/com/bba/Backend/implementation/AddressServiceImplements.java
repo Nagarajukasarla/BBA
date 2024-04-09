@@ -27,6 +27,7 @@ public class AddressServiceImplements implements AddressService {
                 .blockNumber(addressDto.getBlockNumber())
                 .partnerEmail(addressDto.getPartnerEmail())
                 .street(addressDto.getStreet())
+                .area(addressDto.getArea())
                 .city(addressDto.getCity())
                 .state(addressDto.getState())
                 .zipcode(addressDto.getZipcode())
@@ -40,6 +41,7 @@ public class AddressServiceImplements implements AddressService {
                 .blockNumber(addressDto.getBlockNumber())
                 .customerNumber(addressDto.getCustomerNumber())
                 .street(addressDto.getStreet())
+                .area(addressDto.getArea())
                 .city(addressDto.getCity())
                 .state(addressDto.getState())
                 .zipcode(addressDto.getZipcode())
@@ -47,13 +49,11 @@ public class AddressServiceImplements implements AddressService {
         return addressRepository.save(address);
     }
 
-
     @Override
     public Optional<AddressDto> getAddressOfCustomer(Integer customerNumber) {
         var address = addressRepository.findByCustomerNumber(customerNumber);
         return address.map(mapper::mapAddressToAddressDto);
     }
-
 
     @Override
     public List<AddressDto> getAllCustomersAddress() {

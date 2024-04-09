@@ -1,14 +1,25 @@
 package com.bba.Backend.projections;
 
-import com.bba.Backend.utils.DateTime;
-
 import java.util.Date;
 
 public interface InvoiceProjection {
-     String getNumber();
+     Integer getId();
+
+     String getInvoice_number();
+
      Integer getCustomer_number();
-     String getName();
+
+     String getCustomer_name();
+
+     String getArea();
+
+     String getCity();
+
+     String getState();
+
      Double getAmount();
+
      Date getGeneration_date();
+
      String getPayment_mode();
 }

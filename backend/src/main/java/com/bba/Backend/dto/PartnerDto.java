@@ -27,7 +27,7 @@ public class PartnerDto {
         setGender(partner.getGender());
     }
 
-    private int id;
+    private Integer id;
 
     private Boolean isOwner;
 
