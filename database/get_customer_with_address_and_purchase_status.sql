@@ -6,7 +6,7 @@
 CREATE OR REPLACE FUNCTION get_customers_with_address_and_purchase_status()
 	RETURNS TABLE (
 		id INTEGER,
-		name VARCHAR,
+		customer_name VARCHAR,
 		customer_number INTEGER,
 		email VARCHAR,
 		phone VARCHAR,
@@ -17,6 +17,7 @@ CREATE OR REPLACE FUNCTION get_customers_with_address_and_purchase_status()
 		due_period INTEGER,
 		block_number VARCHAR,
 		street VARCHAR,
+		area VARCHAR,
 		city VARCHAR,
 		state VARCHAR,
 		zipcode VARCHAR
@@ -42,7 +43,8 @@ BEGIN
 		C.discount,
 		C.due_period,
 		A.block_number, 
-		A.street, 
+		A.street,
+		A.area,
 		A.city,
 		A.state, 
 		A.zipcode 
@@ -66,7 +68,8 @@ BEGIN
 		C.discount,
 		C.due_period,
 		A.block_number, 
-		A.street, 
+		A.street,
+		A.area,
 		A.city,
 		A.state, 
 		A.zipcode;
