@@ -17,31 +17,34 @@ import { IconsWindow } from "./components/IconsWindow";
 import { AuthLoader } from "./components/loaders/AuthLoader";
 import { ServerDown } from "./components/notifiers/ServerDown";
 import { AddOrEditStock } from "./components/Pages/Stocks/AddOrEditStock";
+import Context from "./components/context/Context";
 
 function App() {
     return (
-        <Routes>
-            <Route path="/" element={<AuthLoader />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/app/*" element={<Root />}>
-                <Route path="dashboard" element={<Dashboard />} />
-                <Route path="invoice" element={<Invoice />} />
-                <Route path="new-invoice" element={<NewInvoice />} />
-                <Route path="customers" element={<Customers />} />
-                <Route path="new-customer" element={<NewCustomer />} />
-                <Route path="stocks" element={<Stocks />} >
-                    <Route path="add" element={<AddOrEditStock />} />
-                    <Route path="edit" element={<AddOrEditStock />} />
+        <Context>
+            <Routes>
+                <Route path="/" element={<AuthLoader />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/app/*" element={<Root />}>
+                    <Route path="dashboard" element={<Dashboard />} />
+                    <Route path="invoice" element={<Invoice />} />
+                    <Route path="new-invoice" element={<NewInvoice />} />
+                    <Route path="customers" element={<Customers />} />
+                    <Route path="new-customer" element={<NewCustomer />} />
+                    <Route path="stocks" element={<Stocks />}>
+                        <Route path="add" element={<AddOrEditStock />} />
+                        <Route path="edit" element={<AddOrEditStock />} />
+                    </Route>
+                    <Route path="subscriptions" element={<Subscriptions />} />
+                    <Route path="about" element={<About />} />
+                    <Route path="settings" element={<Settings />} />
+                    <Route path="companies" element={<Companies />} />
+                    <Route path="icons" element={<IconsWindow />} />
                 </Route>
-                <Route path="subscriptions" element={<Subscriptions />} />
-                <Route path="about" element={<About />} />
-                <Route path="settings" element={<Settings />} />
-                <Route path="companies" element={<Companies />} />
-                <Route path="icons" element={<IconsWindow />} />
-            </Route>
-            <Route path="/server-down" element={<ServerDown />} />
-        </Routes>
+                <Route path="/server-down" element={<ServerDown />} />
+            </Routes>
+        </Context>
     );
 }
 

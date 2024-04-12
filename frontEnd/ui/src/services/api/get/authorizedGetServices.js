@@ -75,3 +75,26 @@ export const getAllCustomers  = async (token) => {
         throw error;
     }
 };
+
+export const getAllInvoices = async (token) => {
+    try {
+        const response = await fetch(`${apiUrl}/api/v1/invoice/get-all`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            return data;
+        }
+        else {
+            throw new Error(getStatus(response.status));
+        }
+    }
+    catch (error) {
+        throw error;
+    }
+};

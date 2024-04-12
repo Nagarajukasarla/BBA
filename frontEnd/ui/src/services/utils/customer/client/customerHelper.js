@@ -1,4 +1,3 @@
-
 /**
  * Maps the customer with address details based on the provided parameters.
  *
@@ -9,7 +8,7 @@
  * @param {boolean} param0.concat - Whether to concatenate the details or not
  * @return {string|Array} The mapped customer details based on the provided options
  */
-export const mapCustomerDetails = ({ name, address, include=[], concat }) => {
+export const mapCustomerDetails = ({ name, address, include = [], concat }) => {
     let details = "";
 
     for (let field of include) {
@@ -23,7 +22,6 @@ export const mapCustomerDetails = ({ name, address, include=[], concat }) => {
     return concat ? `${name}, ${details}` : [name, details];
 };
 
-
 /**
  * Generates a formatted string representing the customer's information including customer number, name, and city.
  *
@@ -34,21 +32,26 @@ export const customerNameHelper = (customer) => {
     if (!customer) {
         return "";
     }
-    return `${customer?.customerNumber ?? ""} - ${customer?.customerName ?? ""}, ${
-        customer?.addressDto?.city ?? ""
-    }`;
+    return `${customer?.customerNumber ?? ""} - ${
+        customer?.customerName ?? ""
+    }, ${customer?.addressDto?.city ?? ""}`;
 };
 
 /**
- * Generates options from a list of customers.
+ * Generates options for customers to be used as dropdown options.
  *
- * @param {array} customers - The list of customers to convert to options.
- * @return {array} An array of options with value, label, and customValue properties.
+ * @param {Object} param0 - Object containing customers array and addAllOption boolean
+ * @return {Array} Array of options for dropdown selection
  */
-export const getCustomerAsOptions = (customers) => {
-    return customers.map((item) => ({
+export const getCustomerAsOptions = ({ customers, addAllOption }) => {
+    let options = customers.map((item) => ({
         value: item.customerNumber,
         label: customerNameHelper(item),
         customValue: item,
     }));
+    if (addAllOption) {
+        options.unshift({  value: "All", label: "--All--", customValue: null })
+        return options;
+    }
+    return options;
 };
