@@ -1,5 +1,6 @@
 package com.bba.Backend.implementation;
 
+import com.bba.Backend.dto.InvoiceFilterRequest;
 import com.bba.Backend.models.Invoice;
 import com.bba.Backend.repositories.InvoiceRepository;
 import com.bba.Backend.requestModels.InvoiceRequest;
@@ -44,6 +45,18 @@ public class InvoiceServiceImplements implements InvoiceService {
     public ResponseEntity<?> getAllInvoices() {
         var invoices = invoiceRepository.getInvoices();
         return ResponseEntity.ok(invoices
+                .parallelStream()
+                .map(mapper::mapInvoiceProjectionToInvoiceDto));
+    }
+
+    @Override
+    public ResponseEntity<?> getFilteredInvoices(InvoiceFilterRequest invoiceFilterRequest) {
+        var filteredInvoices = invoiceRepository.getFilteredInvoices(
+                invoiceFilterRequest.getCustomerNumber(),
+                invoiceFilterRequest.getPaymentMode(),
+                invoiceFilterRequest.getStatus());
+
+        return ResponseEntity.ok(filteredInvoices
                 .parallelStream()
                 .map(mapper::mapInvoiceProjectionToInvoiceDto));
     }

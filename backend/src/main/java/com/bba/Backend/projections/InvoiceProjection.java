@@ -22,4 +22,6 @@ public interface InvoiceProjection {
      Date getGeneration_date();
 
      String getPayment_mode();
+
+     String getStatus();
 }

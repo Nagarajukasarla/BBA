@@ -4,17 +4,16 @@ import com.bba.Backend.dto.AddressDto;
 import com.bba.Backend.dto.CustomerDto;
 import com.bba.Backend.dto.InvoiceDto;
 import com.bba.Backend.dto.ItemDto;
+import com.bba.Backend.models.Customer;
 import com.bba.Backend.models.Item;
+import com.bba.Backend.models.util.Address;
 import com.bba.Backend.projections.InvoiceProjection;
 import com.bba.Backend.utils.mappers.DtoMapper;
-import com.bba.Backend.models.Customer;
-import com.bba.Backend.models.util.Address;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.Map;
-import java.util.Objects;
 
 
 @Service
@@ -133,6 +132,7 @@ public class Mapper implements DtoMapper {
                 .amount(invoiceProjection.getAmount())
                 .generationDate(new DateTime(invoiceProjection.getGeneration_date()))
                 .paymentMode(invoiceProjection.getPayment_mode())
+                .status(invoiceProjection.getStatus())
                 .customerAddressDto(buildAddressDto(invoiceProjection))
                 .build();
     }

@@ -9,14 +9,12 @@ import com.bba.Backend.utils.DateTime;
 import com.bba.Backend.utils.Mapper;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +24,6 @@ public class CustomerServiceImplements implements CustomerService {
     private final AddressService addressService;
     private final Mapper mapper;
     public static Logger logger = Logger.getLogger(CustomerService.class.getName());
-
 
     @Override
     public CustomerDto saveCustomer(@NonNull CustomerDto customerDto) {

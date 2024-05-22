@@ -29,6 +29,8 @@ public class InvoiceDto {
 
     public String paymentMode;
 
+    public String status;
+
     public Double amount;
 
     public AddressDto customerAddressDto;
