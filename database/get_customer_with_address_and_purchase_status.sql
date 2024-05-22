@@ -77,8 +77,3 @@ END $$
 LANGUAGE 'plpgsql';
 
 SELECT * FROM get_customers_with_address_and_purchase_status();
-
-
-
-
-

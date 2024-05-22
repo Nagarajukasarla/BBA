@@ -1,7 +1,7 @@
 
 -- Displays All Invoices. Used in Invoices Page -- 
 
-DROP FUNCTION get_invoices(); --
+-- DROP FUNCTION get_invoices(); --
 
 CREATE OR REPLACE FUNCTION get_invoices()
 	RETURNS TABLE (
@@ -14,7 +14,8 @@ CREATE OR REPLACE FUNCTION get_invoices()
 		state VARCHAR,
 		generation_date TIMESTAMP(6) WITHOUT TIME ZONE,
 		amount DOUBLE PRECISION,
-		payment_mode VARCHAR
+		payment_mode VARCHAR,
+		status VARCHAR
 	)
 AS $$
 
@@ -30,7 +31,8 @@ BEGIN
 			A.state,
 			I.generation_date, 
 			I.amount,
-			I.payment_mode
+			I.payment_mode,
+			I.status
 	FROM 
 		public._invoice I
 	JOIN 
