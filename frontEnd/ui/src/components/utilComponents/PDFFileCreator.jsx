@@ -24,7 +24,7 @@ import LexendExaLight from "../../utils/fonts/LexendExa-Light.ttf";
 import LexendExaMedium from "../../utils/fonts/LexendExa-Medium.ttf";
 import LexendExaRegular from "../../utils/fonts/LexendExa-Regular.ttf";
 import LexendExaSemiBold from "../../utils/fonts/LexendExa-SemiBold.ttf";
-import { getDayMonthYearFormat } from "../../services/utils/dateFormater";
+import { getDayMonthYearFormat } from "../../services/utils/common/helpers/client/dateHelpers";
 
 Font.register({
     family: "InterBlack",

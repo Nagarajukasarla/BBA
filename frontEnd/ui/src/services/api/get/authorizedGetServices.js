@@ -76,6 +76,28 @@ export const getAllCustomers  = async (token) => {
     }
 };
 
+/**
+ * Each invoice item contains
+ * - id
+ * - invoiceNumber
+ * - customerNumber
+ * - customerName
+ * - area
+ * - city
+ * - state
+ * - generationDate
+ * - amount
+ * - paymentMode
+ * - status
+ * - CustomerAddress :
+ *      - customerNumber
+ *      - area
+ *      - city
+ *      - state
+ * @param {String} token 
+ * @returns {Array}
+ */
+
 export const getAllInvoices = async (token) => {
     try {
         const response = await fetch(`${apiUrl}/api/v1/invoice/get-all`, {

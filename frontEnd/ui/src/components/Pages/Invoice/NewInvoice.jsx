@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
     Col,
     Row,
@@ -31,21 +31,25 @@ import {
 } from "./utils/events/KeyboardEvents";
 import {
     authenticate,
-    getAllCustomers,
     getAllProducts,
 } from "../../../services/api/get/authorizedGetServices";
 import { getToken } from "../../../services/cookies/tokenUtils";
 import { useNavigate } from "react-router-dom";
 import {
     generateFormattedDateString,
-    getYearMonthFormat,
-} from "../../../services/utils/dateFormater";
+    getMonthYearFormat,
+} from "../../../services/utils/common/helpers/client/dateHelpers";
 import { DeleteOutlined } from "@ant-design/icons";
 import { getInvoiceRequestObj } from "./utils/helpers/invoiceHelpers";
+import {
+    getCustomerAsOptions,
+    customerNameHelper,
+} from "../../../services/utils/common/helpers/client/customerHelpers";
 import { createInvoice } from "../../../services/api/post/authorizedPostService";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import PDFFileCreator from "../../utilComponents/PDFFileCreator";
-import { validate } from "../../../services/validation/validate";
+import { validate } from "../../../services/utils/common/validation/validate";
+import { Data } from "../../context/Context";
 
 export const NewInvoice = () => {
     const productSearchDropdown = document.getElementById("productSearch");
@@ -99,14 +103,17 @@ export const NewInvoice = () => {
     const [rate, setRate] = useState("");
     const [mrp, setMrp] = useState("");
     const [paymentModeValue, setPaymentModeValue] = useState("");
-    const [customers, setCustomers] = useState([]);
     const [products, setProducts] = useState([]);
     const [serialNumber, setSerialNumber] = useState(0);
     const [isInvoiceReady, setIsInvoiceReady] = useState(false);
     const [dropdownActiveState, setDropdownActiveState] = useState(false);
     const [invoiceNumber, setInvoiceNumber] = useState("");
+    const [customersAsOptions, setCustomersAsOptions] = useState([]);
+
     const navigate = useNavigate();
     const [messageApi, contextHolder] = message.useMessage();
+    const { customers, setCustomers } = useContext(Data);
+
 
     const checkAuthentication = async (token) => {
         if (!(await authenticate(token))) {
@@ -115,21 +122,6 @@ export const NewInvoice = () => {
             return false;
         }
         return true;
-    };
-
-    const fetchCustomers = async () => {
-        try {
-            const fectchedCustomers = await getAllCustomers(getToken());
-            if (fectchedCustomers && fectchedCustomers.length > 0) {
-                return fectchedCustomers;
-            } else {
-                console.log("Data not found!");
-                return [];
-            }
-        } catch (error) {
-            console.log("Error occurred: " + error);
-            return [];
-        }
     };
 
     const fetchProducts = async () => {
@@ -146,30 +138,13 @@ export const NewInvoice = () => {
         }
     };
 
-    const customerNameHelper = (customer) => {
-        if (!customer) {
-            return "";
-        }
-        return `${customer?.customerNumber ?? ""} - ${customer?.name ?? ""}, ${
-            customer?.addressDto?.city ?? ""
-        }`;
-    };
-
     const productNameHelper = (product) => {
         if (!product) {
             return "";
         }
-        return ` ${product?.name ?? ""} - ${getYearMonthFormat(
+        return ` ${product?.name ?? ""} - ${getMonthYearFormat(
             product?.expiryDate ?? ""
         )}`;
-    };
-
-    const getCustomerAsOptions = (customers) => {
-        return customers.map((item) => ({
-            value: item.customerNumber,
-            label: customerNameHelper(item),
-            customValue: item,
-        }));
     };
 
     const getProductsAsOptions = (products) => {
@@ -567,17 +542,12 @@ export const NewInvoice = () => {
 
     useEffect(() => {
         if (checkAuthentication(getToken())) {
-            fetchCustomers().then((data) => {
-                setCustomers(data);
-            });
             fetchProducts().then((data) => {
                 setProducts(data);
             });
             retriveInvoiceDataFromLocalStorage();
         }
-
         setDropdownActiveState(customer === null ? true : false);
-
         //eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -594,8 +564,8 @@ export const NewInvoice = () => {
         setCompany(product?.company);
         setQuantity(product?.quantity);
         setPackingType(product?.packingType);
-        setManufacturingDate(getYearMonthFormat(product?.manufacturingDate));
-        setExpiryDate(getYearMonthFormat(product?.expiryDate));
+        setManufacturingDate(getMonthYearFormat(product?.manufacturingDate));
+        setExpiryDate(getMonthYearFormat(product?.expiryDate));
         setSGst(product?.sGstInPercent);
         setCGst(product?.cGstInPercent);
         setIGst(product?.iGstInPercent);
@@ -606,6 +576,10 @@ export const NewInvoice = () => {
     useState(() => {
         checkDisability();
     }, [serialNumber]);
+
+    useEffect(() => {
+        setCustomersAsOptions(getCustomerAsOptions({ customers: customers, addAllOptions: false }));
+    }, [customers]);
 
     return (
         <>
@@ -752,9 +726,7 @@ export const NewInvoice = () => {
                                                 }
                                             }}
                                             placeholder="Select Customer"
-                                            options={getCustomerAsOptions(
-                                                customers
-                                            )}
+                                            options={customersAsOptions}
                                             filterOption={(input, option) =>
                                                 option.label
                                                     .toLowerCase()

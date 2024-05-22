@@ -22,7 +22,7 @@ import {
     getAllCustomers,
 } from "../../../services/api/get/authorizedGetServices";
 import { getToken } from "../../../services/cookies/tokenUtils";
-import { mapCustomerDetails } from "../../../services/utils/customer/client/customerHelper";
+import { mapCustomerDetails } from "../../../services/utils/common/helpers/client/customerHelpers";
 
 export const Customers = () => {
     const [loading, setLoading] = useState(false);

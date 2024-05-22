@@ -1,5 +1,6 @@
 import { getStatus } from "../statusUtils/responseStatus";
 import { apiUrl } from "../../../config";
+import { FOCUSABLE_SELECTOR } from "@testing-library/user-event/dist/utils";
 
 /**
  * Create a new company using the provided token and company name.
@@ -180,6 +181,36 @@ export const createInvoice = async (invoice, token) => {
         }
     } catch (error) {
         console.log(`Error in saving new invoice ${error}`);
+        return false;
+    }
+};
+
+
+export const getFilteredInvoices = async (token, filters) => {
+    try {
+        const response = await fetch(`${apiUrl}/api/v1/invoice/get-filtered`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                customerNumber: filters?.customerNumber??null,
+                paymentMode: filters?.paymentMode??null,
+                status: filters?.status??null
+            }),
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            return data;
+        }
+        else {
+            console.log(`No filtered Invoices found: ${getStatus(response.status)}`);
+        }
+    }
+    catch(error) {
+        console.log(`Error occured while filtering invoices: ${error}`);
         return false;
     }
 };

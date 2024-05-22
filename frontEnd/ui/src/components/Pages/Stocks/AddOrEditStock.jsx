@@ -17,10 +17,10 @@ import {
 import { getToken } from "../../../services/cookies/tokenUtils";
 import "../../coreComponents/Styles/primaryStyle.css";
 
-import { validate } from "../../../services/validation/validate";
+import { validate } from "../../../services/utils/common/validation/validate";
 import {
     getFormattedDate,
-} from "../../../services/utils/dateFormater";
+} from "../../../services/utils/common/helpers/client/dateHelpers";
 import {
     onPressedBatchNumberHandler,
     onPressedCGSTHandler,

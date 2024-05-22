@@ -1,4 +1,4 @@
-import { getAllCustomers } from "../../../api/get/authorizedGetServices";
+import { getAllCustomers } from "../../../../api/get/authorizedGetServices";
 
 export const fetchCustomers = async (token) => {
     try {

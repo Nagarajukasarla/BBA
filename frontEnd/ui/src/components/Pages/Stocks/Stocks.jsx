@@ -7,7 +7,7 @@ import {
     getAllProducts,
 } from "../../../services/api/get/authorizedGetServices";
 import { getToken } from "../../../services/cookies/tokenUtils";
-import { getMonthYearFormat } from "../../../services/utils/dateFormater";
+import { getMonthYearFormat } from "../../../services/utils/common/helpers/client/dateHelpers";
 
 export const Stocks = () => {
     const [loading, setLoading] = useState(false);

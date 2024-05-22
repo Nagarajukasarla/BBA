@@ -1,5 +1,4 @@
-import { createContext, useContext, useState } from "react";
-import { fetchCustomers } from "../../services/utils/customer/server/customerHelper";
+import { createContext, useState } from "react";
 
 export const Data = createContext();
 
