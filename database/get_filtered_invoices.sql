@@ -1,7 +1,9 @@
 CREATE OR REPLACE FUNCTION get_filtered_invoices(
 	p_customer_number INTEGER, 
 	p_payment_mode VARCHAR, 
-	p_status VARCHAR
+	p_status VARCHAR,
+	p_start_date TIMESTAMP(6) WITHOUT TIME ZONE,
+	p_end_date TIMESTAMP(6) WITHOUT TIME ZONE
 )
 RETURNS TABLE (
 	id INTEGER,
@@ -40,9 +42,11 @@ BEGIN
 		WHERE
 			(p_customer_number IS NULL OR p_customer_number = I.customer_number) AND
 			(p_payment_mode IS NULL OR p_payment_mode = I.payment_mode) AND
+			(p_start_date IS NULL OR p_end_date IS NULL OR I.generation_date BETWEEN p_start_date AND p_end_date) AND
 			(p_status IS NULL OR p_status = I.status);
 END $$
 LANGUAGE 'plpgsql';
 
 
-SELECT * FROM get_filtered_invoices(59957, 'credit', 'paid');
+SELECT * FROM get_filtered_invoices(NULL, NULL, NULL, '2024-01-15 00:00:00', '2024-01-30 23:59:59');
+SELECT * FROM public._invoice ORDER BY generation_date;
