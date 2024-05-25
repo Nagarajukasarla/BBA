@@ -36,12 +36,13 @@ export const Stocks = () => {
                     quantity: item.quantity,
                     manufacturingDate: getMonthYearFormat(item.manufacturingDate),
                     expiryDate: getMonthYearFormat(item.expiryDate),
-                    sGst: item.sGstInPercent,
-                    cGst: item.cGstInPercent,
-                    iGst: item.iGstInPercent,
+                    sGst: item.sgstInPercent,
+                    cGst: item.cgstInPercent,
+                    iGst: item.igstInPercent,
                     rate: item.rate,
-                    mrp: item.mrp
+                    mrp: item.mrp,
                 }));
+                console.log(JSON.stringify(mappedProducts));
                 setProducts(mappedProducts);
             } else {
                 throw new Error("Data not found");

@@ -1,6 +1,8 @@
-import { getFilteredInvoices } from "../../../../../services/api/post/authorizedPostService";
-import { mapCustomerDetails } from "../../../../../services/utils/common/helpers/client/customerHelpers";
-import { getDayMonthYearFormat, getDayMonthYearWithTimeFormat } from "../../../../../services/utils/common/helpers/client/dateHelpers";
+import {
+    getDayBeforeYestardayDateRange,
+    getTodayDateRange,
+    getYestardayDateRange,
+} from "../../../../../services/utils/common/helpers/client/dateHelpers";
 
 const invoiceFilterOptions = ["customerNumber", "paymentMode", "status"];
 
@@ -49,7 +51,7 @@ const generateItems = (invoiceData) => {
     });
 };
 
-export const checkWhetherOtherFiltersAreSet = (
+const checkWhetherOtherFiltersAreSet = (
     currentFilterOption,
     { customerNumber, purchaseType /* Other filters */ }
 ) => {
@@ -86,6 +88,8 @@ const calculateAmount = (invoiceData) => {
     return amount;
 };
 
+// Below filter is incomplete
+// This filter should be utilized when server is heavy with huge requests
 export const filterInvoices = (invoices = [], filterArray = []) => {
     let filteredInvoices = [];
     if (!doesAnyFilterExist(filterArray)) return invoices;
@@ -98,11 +102,9 @@ export const filterInvoices = (invoices = [], filterArray = []) => {
         }
     }
     console.log(filterArray);
-    // Iterate over the filterArray, add filter only if it is set
     for (const item of Object.values(invoices)) {
         let canIncluceded = true;
         for (let idx = 0; idx < filterArray.length; idx++) {
-            //const temp = filterArray[idx].option.VALUE;
             if (filterArray[idx] === true) {
                 canIncluceded = canIncluceded && filterArray[idx];
             } else if (
@@ -130,22 +132,69 @@ export const filterInvoices = (invoices = [], filterArray = []) => {
 const doesAnyFilterExist = (filterArray) => {
     for (let idx = 0; idx < filterArray.length; idx) {
         //  option.CREDIT  !== option.ALL
-        if (filterArray[idx].option.VALUE !== filterArray[idx].option.DEFAULT_VALUE) {
+        if (
+            filterArray[idx].option.VALUE !==
+            filterArray[idx].option.DEFAULT_VALUE
+        ) {
             return true;
         }
     }
 };
 
-export const createFiltersObj = ({ customer, purchaseType, invoiceStatus }) => {
-    console.log(customer?.customerNumber);
+/**
+ * Creates a filters object based on the provided customer, purchaseType, and invoiceStatus.
+ *
+ * @param {Object} options - An object containing the customer, purchaseType, and invoiceStatus.
+ * @param {Object} options.customer - An object representing the customer.
+ * @param {string} options.purchaseType - The purchase type.
+ * @param {string} options.invoiceStatus - The invoice status.
+ * @return {Object} - An object containing the customerNumber, paymentMode, and status filters.
+ */
+export const createFiltersObj = ({
+    customer,
+    purchaseType,
+    invoiceStatus,
+    dayWise
+}) => {
+    const getValidValue = (value, allValue) =>
+        value === allValue || value === "" || value === undefined
+            ? null
+            : value.toLowerCase();
+
     const filters = {
-        customerNumber: customer?.customerNumber??null,
-        paymentMode: (purchaseType === "--All--" || purchaseType === "" || purchaseType === undefined) ? null : purchaseType.toLowerCase(),
-        status: (invoiceStatus === "--All--" || invoiceStatus === "" || purchaseType === undefined) ? null : invoiceStatus.toLowerCase()
+        customerNumber: customer?.customerNumber ?? null,
+        paymentMode: getValidValue(purchaseType, "--All--"),
+        status: getValidValue(invoiceStatus, "--All--"),
+        dateRange: dayWise === "--All--" || dayWise === "" || dayWise === undefined
+                    ? null
+                    : getDateRange(dayWise.replace(/\s+/g, "").trim().toLowerCase()),
     };
     return filters;
 };
 
+/**
+ * Returns the date range based on the given day.
+ *
+ * @param {string} day - The day for which the date range is needed. Possible values are "today", "yestarday", and "daybeforeyestarday".
+ * @return {Array} An array representing the date range. If the day is "today", it returns the today date range. If the day is "yestarday", it returns the date range for the previous day. If the day is "daybeforeyestarday", it returns the date range for the day before yesterday. If the day is any other value, it returns an empty array.
+ */
+const getDateRange = (day) => {
+
+    const dateRangeFunctions = {
+        "today": getTodayDateRange,
+        "yestarday": getYestardayDateRange,
+        "daybeforeyestarday": getDayBeforeYestardayDateRange
+    }
+
+    return dateRangeFunctions[day] ? dateRangeFunctions[day]() : null;
+};
+
+/**
+ * Creates a filter array based on the given filters.
+ *
+ * @param {Array} filters - An array of filters.
+ * @return {Array} An array of filter objects with default and value properties.
+ */
 export const createFilterArray = (filters = []) => {
     let filterArray = [
         {
@@ -179,39 +228,4 @@ export const createFilterArray = (filters = []) => {
         },
     ];
     return filterArray;
-};
-
-
-export const fetchFilteredInvoices = async (token, filters) => {
-    let mappedInvoices = [];
-    try {
-        await getFilteredInvoices(token, filters).then(
-            (invoices) => {
-                if (invoices && invoices.length > 0) {
-                    console.log(JSON.stringify(invoices));
-                    mappedInvoices = invoices.map((item) => ({
-                        key: item.id,
-                        invoiceNumber: item.invoiceNumber,
-                        customerNumber: item.customerNumber,
-                        generationDate: getDayMonthYearWithTimeFormat(item.generationDate),
-                        amount: item.amount,
-                        paymentMode: item.paymentMode,
-                        customerDetails: mapCustomerDetails({
-                            name: item.customerName,
-                            address: item.customerAddressDto,
-                            include: ["area", "city", "state"],
-                            concat: false
-                        }),
-                        status: item.status
-                    }));
-                   // console.log(`Filterd invoices: ${JSON.stringify(mappedInvoices)}`);
-                }
-            }
-        );
-        return mappedInvoices;
-    } 
-    catch (error) {
-        console.log(`Error while fetching filterd invoice: ${error}`);
-        return false;
-    }
 };

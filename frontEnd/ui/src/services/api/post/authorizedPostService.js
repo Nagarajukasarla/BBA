@@ -1,13 +1,12 @@
 import { getStatus } from "../statusUtils/responseStatus";
 import { apiUrl } from "../../../config";
-import { FOCUSABLE_SELECTOR } from "@testing-library/user-event/dist/utils";
 
 /**
  * Create a new company using the provided token and company name.
  *
  * @param {string} token - The authentication token.
  * @param {string} companyName - The name of the company to be created.
- * @return {boolean} Returns true if the company is successfully created, otherwise false.
+ * @return {Promise<boolean>} Returns true if the company is successfully created, otherwise false.
  */
 export const createCompany = async (token, companyName) => {
     try {
@@ -21,16 +20,28 @@ export const createCompany = async (token, companyName) => {
                 name: companyName,
             }),
         });
-        if (response.ok) {
-            const data = await response.json();
-            console.log(data);
-            return true;
-        } else {
-            // HANDLE ERROR based response status, before fix GITHUB_ISSUE #12
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error(
+                `Server responded with an error: ${errorData.message}`
+            );
             return false;
         }
+
+        const data = await response.json();
+        console.log(data);
+        return true;
     } catch (error) {
-        console.error(`Error while saving new company ${error}`);
+        if (error.name === "TypeError") {
+            console.error(
+                "Network error or resource unavailable. Please check your internet connection."
+            );
+        } else {
+            console.error(
+                `Unexpected error while saving new company: ${error}`
+            );
+        }
         return false;
     }
 };
@@ -44,7 +55,7 @@ export const createCompany = async (token, companyName) => {
  */
 export const saveProduct = async (product, token) => {
     try {
-        const response = fetch(`${apiUrl}/api/v1/product/save`, {
+        const response = await fetch(`${apiUrl}/api/v1/product/save`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -66,16 +77,25 @@ export const saveProduct = async (product, token) => {
                 isFastMoving: false,
             }),
         });
-        if (response.ok) {
-            const data = await response.json();
-            console.log(data);
-            return true;
-        } else {
-            // HANDLE ERROR based response status, before fix GITHUB_ISSUE #12
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error(
+                `Server responded with an error: ${errorData.message}`
+            );
             return false;
         }
+
+        const data = await response.json();
+        console.log(data);
+        return true;
     } catch (error) {
-        throw new Error(`Error in saving prouct: ${error}`);
+        if (error.name === "TypeError") {
+            console.error("Network error or request was blocked:", error);
+        } else {
+            console.error(`Error in saving product: ${error}`);
+        }
+        return false;
     }
 };
 
@@ -99,15 +119,21 @@ export const getProduct = async (productName, token) => {
             }),
         });
 
-        if (response.ok) {
-            const data = await response.json();
-            console.log(data);
-            return data;
-        } else {
-            throw new Error(getStatus(response.status));
+        if (!response.ok) {
+            const errorMessage = await getStatus(response.status);
+            throw new Error(errorMessage);
         }
+
+        const data = await response.json();
+        console.log(data);
+        return data;
     } catch (error) {
-        throw new Error(`Error while fetching product: ${error}`);
+        if (error.name === "TypeError") {
+            console.error("Network error or request was blocked:", error);
+        } else {
+            console.error(`Error while fetching product: ${error.message}`);
+        }
+        throw error; // rethrow the error to propagate it to the caller
     }
 };
 
@@ -135,15 +161,20 @@ export const saveCustomer = async (customer, token) => {
             }),
         });
 
-        if (response.ok) {
-            const data = await response.json();
-            console.log(data);
-            return true;
-        } else {
-            throw new Error(getStatus(response.status));
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error("Error in saving customer ", errorData);
         }
+
+        const data = await response.json();
+        console.log(data);
+        return true;
     } catch (error) {
-        console.error(`Error while saving new customer: ${error}`);
+        if (error.name === "TypeError") {
+            console.error("Network error or request was blocked:", error);
+        } else {
+            console.error(`Error while saving new customer: ${error}`);
+        }
         return error;
     }
 };
@@ -172,45 +203,66 @@ export const createInvoice = async (invoice, token) => {
             }),
         });
 
-        if (response.ok) {
-            const data = await response.json();
-            return data;
-        } else {
-            console.log(`Invoice not saved: ${getStatus(response.status)}`);
+        if (!response.ok) {
+            const errorMessage = await getStatus(response.status);
+            console.error(`Invoice not saved: ${errorMessage}`);
             return false;
         }
+
+        const data = await response.json();
+        return data;
     } catch (error) {
-        console.log(`Error in saving new invoice ${error}`);
+        if (error.name === 'TypeError') {
+            console.error('Network error or request was blocked:', error);
+        } else {
+            console.error(`Error in saving new invoice: ${error.message}`);
+        }
         return false;
     }
 };
 
-
+/**
+ * Retrieves filtered invoices from the API based on the provided filters and authentication token.
+ *
+ * @param {string} token - The authentication token.
+ * @param {Object} filters - The filters to apply to the invoice search.
+ * @param {string} [filters.customerNumber] - The customer number to filter by.
+ * @param {string} [filters.paymentMode] - The payment mode to filter by.
+ * @param {string} [filters.status] - The status to filter by.
+ * @param {Array} [filters.dateRange] - The date range to filter by.
+ * @return {Promise<Object|boolean>} - The filtered invoice data if successful, or false if there was an error.
+ */
 export const getFilteredInvoices = async (token, filters) => {
     try {
         const response = await fetch(`${apiUrl}/api/v1/invoice/get-filtered`, {
-            method: 'POST',
+            method: "POST",
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({
-                customerNumber: filters?.customerNumber??null,
-                paymentMode: filters?.paymentMode??null,
-                status: filters?.status??null
+                customerNumber: filters?.customerNumber ?? null,
+                paymentMode: filters?.paymentMode ?? null,
+                status: filters?.status ?? null,
+                startDate: filters?.dateRange?.startDate ?? null,
+                endDate: filters?.dateRange?.endDate ?? null,
             }),
         });
 
         if (response.ok) {
             const data = await response.json();
             return data;
+            // const errorMessage = await getStatus(response.status);
+            // console.error(`No filtered invoices found: ${errorMessage}`);
+            // return false;
         }
-        else {
-            console.log(`No filtered Invoices found: ${getStatus(response.status)}`);
+
+    } catch (error) {
+        if (error.name === 'TypeError') {
+            console.error('Network error or request was blocked:', error);
+        } else {
+            console.error(`Error occurred while filtering invoices: ${error.message}`);
         }
-    }
-    catch(error) {
-        console.log(`Error occured while filtering invoices: ${error}`);
         return false;
     }
 };

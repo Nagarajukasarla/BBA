@@ -12,12 +12,13 @@ import {
     notification,
     ConfigProvider,
 } from "antd";
+import debounce from 'lodash/debounce';
 import {
     PlusCircleOutlined,
     EditOutlined,
     InfoCircleTwoTone,
 } from "@ant-design/icons";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import "./utils/css/invoiceStyle.css";
 import { useNavigate } from "react-router-dom";
 import { authenticate } from "../../../services/api/get/authorizedGetServices";
@@ -25,13 +26,17 @@ import { getToken } from "../../../services/cookies/tokenUtils";
 import {
     customerNameHelper,
     getCustomerAsOptions,
+    mapCustomerDetails,
 } from "../../../services/utils/common/helpers/client/customerHelpers";
 import { fetchCustomers } from "../../../services/utils/common/helpers/server/customerHelpers";
 import { Data } from "../../context/Context";
 import {
     createFiltersObj,
-    fetchFilteredInvoices,
+    filterInvoices,
 } from "./utils/helpers/invoiceHelpers";
+import { getFilteredInvoices } from "../../../services/api/post/authorizedPostService";
+import { getDayMonthYearWithTimeFormat } from "../../../services/utils/common/helpers/client/dateHelpers";
+import { data } from "browserslist";
 
 export const Invoice = () => {
     const [invoices, setInvoices] = useState([]);
@@ -57,38 +62,77 @@ export const Invoice = () => {
         return true;
     };
 
-    const setFilteredInvoices = async (filters) => {
-        const filteredInvoices = await fetchFilteredInvoices(
-            getToken(),
-            filters
-        );
-        setInvoices(filteredInvoices);
+    const fetchFilteredInvoices = async (token, filters) => {
+        let mappedInvoices = [];
+        try {
+            await getFilteredInvoices(token, filters).then(
+                (invoices) => {
+                    if (invoices && invoices.length > 0) {
+                        mappedInvoices = invoices.map((item) => ({
+                            key: item.id,
+                            invoiceNumber: item.invoiceNumber,
+                            customerNumber: item.customerNumber,
+                            generationDate: getDayMonthYearWithTimeFormat(item.generationDate),
+                            amount: item.amount,
+                            paymentMode: item.paymentMode,
+                            customerDetails: mapCustomerDetails({
+                                name: item.customerName,
+                                address: item.customerAddressDto,
+                                include: ["area", "city", "state"],
+                                concat: false
+                            }),
+                            status: item.status
+                        }));
+                    }
+                }
+            );
+            return mappedInvoices;
+        } 
+        catch (error) {
+            console.log(`Error while fetching filterd invoice: ${error}`);
+            return false;
+        }
     };
 
+
+    const useDebouncedCallback = (callback, delay) => {
+        return useMemo(() => debounce(callback, delay), [callback, delay]);
+    };
+
+    const fetchInvoices = useCallback(async (filters) => {
+        const token = getToken();
+        setLoading(true);
+        await fetchFilteredInvoices(token, filters).then((data) => {
+            setInvoices(data);
+        });
+        setLoading(false);
+    }, []);
+
+    const debouncedFetchInvoices = useDebouncedCallback(fetchInvoices, 300);
+
+    const setFilteredInvoices = useCallback((filters) => {
+        debouncedFetchInvoices(filters);
+    }, [debouncedFetchInvoices]);
+
     useEffect(() => {
-        console.log(JSON.stringify(customer));
         const filters = createFiltersObj({
             customer,
             purchaseType,
             invoiceStatus,
+            dayWise
         });
         setFilteredInvoices(filters);
-    }, [customer, purchaseType, invoiceStatus]);
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [customer, purchaseType, invoiceStatus, dayWise]);
 
     useEffect(() => {
         document.title = "Invoice";
         if (checkAuthentication(getToken())) {
-            const filters = createFiltersObj({
-                customer,
-                purchaseType,
-                invoiceStatus,
-            });
             setLoading(true);
-            setFilteredInvoices(filters).then(() => setLoading(false));
-            setLoading(true);
-            fetchCustomers(getToken()).then((data) => {
+            fetchCustomers(getToken()).then((customers) => {
                 setLoading(false);
-                setCustomers(data);
+                setCustomers(customers);
             });
         }
 
@@ -221,9 +265,6 @@ export const Invoice = () => {
         {
             value: "Day Before Yestarday",
         },
-        {
-            value: "Custom",
-        },
     ];
 
     const newInvoice = () => {
@@ -247,14 +288,16 @@ export const Invoice = () => {
     };
 
     const onSelectPurchaseType = (value) => {
-        console.log(value);
         setPurchaseType(value);
     };
 
     const onSelectedInvoiceStatus = (value) => {
-        console.log(value);
         setInvoiceStatus(value);
     };
+
+    const onSelectedDayWise = (value) => {
+        setDayWise(value);
+    }
 
     return (
         <>
@@ -358,9 +401,7 @@ export const Invoice = () => {
                                         value={
                                             purchaseType === ""
                                                 ? "--All--"
-                                                : capatalizeFirstLetter(
-                                                      purchaseType
-                                                  )
+                                                : purchaseType
                                         }
                                         options={purchaseTypeOptions}
                                         onSelect={onSelectPurchaseType}
@@ -417,10 +458,10 @@ export const Invoice = () => {
                                         value={
                                             dayWise === ""
                                                 ? "--All--"
-                                                : capatalizeFirstLetter(dayWise)
+                                                : dayWise
                                         }
                                         options={dayWiseOptions}
-                                        onSelect={(value) => setDayWise(value)}
+                                        onSelect={onSelectedDayWise}
                                     />
                                 </ConfigProvider>
                             </Space>
