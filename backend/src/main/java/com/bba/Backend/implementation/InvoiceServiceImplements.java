@@ -54,7 +54,9 @@ public class InvoiceServiceImplements implements InvoiceService {
         var filteredInvoices = invoiceRepository.getFilteredInvoices(
                 invoiceFilterRequest.getCustomerNumber(),
                 invoiceFilterRequest.getPaymentMode(),
-                invoiceFilterRequest.getStatus());
+                invoiceFilterRequest.getStatus(),
+                invoiceFilterRequest.getStartDate(),
+                invoiceFilterRequest.getEndDate());
 
         return ResponseEntity.ok(filteredInvoices
                 .parallelStream()

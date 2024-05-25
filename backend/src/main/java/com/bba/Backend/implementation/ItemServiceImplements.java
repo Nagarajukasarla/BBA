@@ -14,6 +14,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -70,7 +74,6 @@ public class ItemServiceImplements implements ItemService {
                     .mrp(item.get().getMrp())
                     .isFastMoving(item.get().getIsFastMoving())
                     .build();
-            logger.info(itemDto.toString());
             return ResponseEntity.ok(itemDto);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Item not found");
@@ -86,7 +89,7 @@ public class ItemServiceImplements implements ItemService {
 
     @Override
     public ResponseEntity<String> saveItem (@NonNull ItemDto itemDto) {
-        var item = itemRepository.findItemByCompanyAndBatchNumber(itemDto.company, itemDto.batchNumber);
+        var item = itemRepository.findItemByCompanyAndBatchNumber(itemDto.getCompany(), itemDto.getBatchNumber());
         if (item.isPresent()) {
             Boolean status = ItemComparator.compareAllFieldsExcept(item.get(), itemDto, "quantity");
             if (status) {

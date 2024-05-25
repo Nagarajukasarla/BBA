@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 @EnableJpaRepositories
@@ -19,10 +20,12 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Integer> {
     @Query(value = "SELECT * FROM get_invoices() ORDER BY generation_date DESC", nativeQuery = true)
     List<InvoiceProjection> getInvoices();
 
-    @Query(value = "SELECT * FROM get_filtered_invoices(:p_customer_number, :p_payment_mode, :p_status)", nativeQuery = true)
+    @Query(value = "SELECT * FROM get_filtered_invoices(:p_customer_number, :p_payment_mode, :p_status, :p_start_date, :p_end_date)", nativeQuery = true)
     List<InvoiceProjection> getFilteredInvoices(
             @Param("p_customer_number") Integer customerNumber,
             @Param("p_payment_mode") String paymentMode,
-            @Param("p_status") String status
+            @Param("p_status") String status,
+            @Param("p_start_date") Date startDate,
+            @Param("p_end_date") Date endDate
     );
 }

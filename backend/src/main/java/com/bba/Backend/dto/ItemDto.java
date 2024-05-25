@@ -1,8 +1,12 @@
 package com.bba.Backend.dto;
 
 import com.bba.Backend.utils.DateTime;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.springframework.lang.NonNull;
+
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Getter
 @Setter
@@ -11,31 +15,31 @@ import org.springframework.lang.NonNull;
 @Builder
 public class ItemDto {
 
-    public Integer id;
+    private Integer id;
 
-    public String name;
+    private String name;
 
-    public String company;
+    private String company;
 
-    public Integer quantity;
+    private Integer quantity;
 
-    public Integer packingType;
+    private Integer packingType;
 
-    public String batchNumber;
+    private String batchNumber;
 
-    public Double rate;
+    private Double rate;
 
-    public Integer sGstInPercent;
+    private Integer sGstInPercent;
 
-    public Integer cGstInPercent;
+    private Integer cGstInPercent;
 
-    public Integer iGstInPercent;
+    private Integer iGstInPercent;
 
-    public DateTime manufacturingDate;
+    private DateTime manufacturingDate;
 
-    public DateTime expiryDate;
+    private DateTime expiryDate;
 
-    public Boolean isFastMoving;
+    private Boolean isFastMoving;
 
     private Double mrp;
 

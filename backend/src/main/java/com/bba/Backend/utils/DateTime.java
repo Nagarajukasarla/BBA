@@ -2,7 +2,6 @@ package com.bba.Backend.utils;
 
 import com.bba.Backend.utils.enums.DateFormat;
 import lombok.*;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.lang.NonNull;
 
 import java.text.ParseException;
@@ -29,7 +28,8 @@ public class DateTime {
      *
      */
 
-    public DateTime(@NonNull String formattedDate) {
+    public DateTime(String formattedDate) {
+        if (formattedDate == null) return;
         String[] value = formattedDate.split("T");
         String date = value[0];
         String time = value[1];
