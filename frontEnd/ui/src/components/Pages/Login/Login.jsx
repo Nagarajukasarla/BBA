@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../../../utils/css/login.css";
-import { setToken } from '../../../services/cookies/tokenUtils';
-import { apiUrl } from "../../../config";
+import '../../../services/cookies/TokenManager';
+import { login } from "../../../services/api/post/unauthorizedPostService";
+import TokenManager from "../../../services/cookies/TokenManager";
 
 export const Login = () => {
     const [email, setEmail] = useState("");
@@ -10,6 +11,23 @@ export const Login = () => {
     const navigate = useNavigate();
     const [isFieldEmpty, setIsFieldEmpty] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
+
+    const loginUser = async () => {
+        try {
+            await login(email, password).then((data) => {
+                if (data && data.token && data.shopId) {
+                    TokenManager.setToken(data.token);
+                    TokenManager.setShopId(data.shopId);
+                    navigate("/app/dashboard");
+                }
+            });
+        }
+        catch(error) {
+            console.log("Error occured while authentication.");
+            setIsFieldEmpty(true);
+            setErrorMessage(error);
+        }
+    };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -24,36 +42,8 @@ export const Login = () => {
             return;
         }
 
+        loginUser();
 
-
-        fetch(`${apiUrl}/api/v1/auth/authenticate`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                email: email,
-                password: password,
-            }),
-        })
-            .then((response) => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    console.error("Authentication Failed");
-                }
-            })
-            .then((data) => {
-                if (data && data.token) {
-                    setToken(data.token);
-                    navigate("/app/dashboard");
-                }
-            })
-
-            .catch((error) => {
-                console.log("Error: ", error);
-                setIsFieldEmpty(true);
-            });
     };
 
     const handleInputChange = (event) => {

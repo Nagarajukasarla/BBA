@@ -33,7 +33,6 @@ import {
     authenticate,
     getAllProducts,
 } from "../../../services/api/get/authorizedGetServices";
-import { getToken } from "../../../services/cookies/tokenUtils";
 import { useNavigate } from "react-router-dom";
 import {
     generateFormattedDateString,
@@ -50,6 +49,8 @@ import { PDFDownloadLink } from "@react-pdf/renderer";
 import PDFFileCreator from "../../utilComponents/PDFFileCreator";
 import { validate } from "../../../services/utils/common/validation/validate";
 import { Data } from "../../context/Context";
+import TokenManager from "../../../services/cookies/TokenManager";
+import CustomerLocalManager from "../Customers/CustomerLocalManager";
 
 export const NewInvoice = () => {
     const productSearchDropdown = document.getElementById("productSearch");
@@ -112,7 +113,7 @@ export const NewInvoice = () => {
 
     const navigate = useNavigate();
     const [messageApi, contextHolder] = message.useMessage();
-    const { customers, setCustomers } = useContext(Data);
+    const [customers, setCustomers ] = useState([]);
 
 
     const checkAuthentication = async (token) => {
@@ -126,7 +127,7 @@ export const NewInvoice = () => {
 
     const fetchProducts = async () => {
         try {
-            const fetchedProducts = await getAllProducts(getToken());
+            const fetchedProducts = await getAllProducts(TokenManager.getToken);
             if (fetchedProducts && fetchedProducts.length > 0) {
                 return fetchedProducts;
             } else {
@@ -465,7 +466,7 @@ export const NewInvoice = () => {
                 generateFormattedDateString()
             );
             console.log(obj);
-            return createInvoice(obj, getToken());
+            return createInvoice(obj, TokenManager.getToken());
         }
     };
 
@@ -541,11 +542,12 @@ export const NewInvoice = () => {
     };
 
     useEffect(() => {
-        if (checkAuthentication(getToken())) {
+        if (checkAuthentication(TokenManager.getToken())) {
             fetchProducts().then((data) => {
                 setProducts(data);
             });
             retriveInvoiceDataFromLocalStorage();
+            setCustomers(CustomerLocalManager.getCustomers());
         }
         setDropdownActiveState(customer === null ? true : false);
         //eslint-disable-next-line react-hooks/exhaustive-deps

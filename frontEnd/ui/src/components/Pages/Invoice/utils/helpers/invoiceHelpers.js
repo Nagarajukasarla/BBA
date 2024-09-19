@@ -1,5 +1,7 @@
 import {
+    getCustomDatesRange,
     getDayBeforeYestardayDateRange,
+    getSpecificDateRange,
     getTodayDateRange,
     getYestardayDateRange,
 } from "../../../../../services/utils/common/helpers/client/dateHelpers";
@@ -154,7 +156,9 @@ export const createFiltersObj = ({
     customer,
     purchaseType,
     invoiceStatus,
-    dayWise
+    dayWise,
+    specificDate,
+    dateRange
 }) => {
     const getValidValue = (value, allValue) =>
         value === allValue || value === "" || value === undefined
@@ -165,9 +169,7 @@ export const createFiltersObj = ({
         customerNumber: customer?.customerNumber ?? null,
         paymentMode: getValidValue(purchaseType, "--All--"),
         status: getValidValue(invoiceStatus, "--All--"),
-        dateRange: dayWise === "--All--" || dayWise === "" || dayWise === undefined
-                    ? null
-                    : getDateRange(dayWise.replace(/\s+/g, "").trim().toLowerCase()),
+       dateRange: getDateRange(dayWise, specificDate, dateRange)
     };
     return filters;
 };
@@ -178,15 +180,32 @@ export const createFiltersObj = ({
  * @param {string} day - The day for which the date range is needed. Possible values are "today", "yestarday", and "daybeforeyestarday".
  * @return {Array} An array representing the date range. If the day is "today", it returns the today date range. If the day is "yestarday", it returns the date range for the previous day. If the day is "daybeforeyestarday", it returns the date range for the day before yesterday. If the day is any other value, it returns an empty array.
  */
-const getDateRange = (day) => {
-
+const getDateRange = (dayWise, specificDate = Date, dateRange = []) => {
     const dateRangeFunctions = {
         "today": getTodayDateRange,
         "yestarday": getYestardayDateRange,
-        "daybeforeyestarday": getDayBeforeYestardayDateRange
+        "daybeforeyestarday": getDayBeforeYestardayDateRange,
+        "specificdate": getSpecificDateRange,
+        "range": getCustomDatesRange
+    };
+
+    if (dayWise !== "" && dayWise) {
+        if (dayWise === "--All--") return null;
+        dayWise = dayWise.replace(/\s+/g, "").trim().toLowerCase();
+        return dateRangeFunctions[dayWise] ? dateRangeFunctions[dayWise]() : null;
     }
 
-    return dateRangeFunctions[day] ? dateRangeFunctions[day]() : null;
+    if (specificDate) {
+        console.log(`Specific Date: ${specificDate}`);
+        return dateRangeFunctions["specificdate"](specificDate.$d);
+    }
+
+    if (dateRange[0] && dateRange[1]) {
+        return dateRangeFunctions["range"](dateRange[0].$d, dateRange[1].$d);
+    }
+
+    return null;
+
 };
 
 /**
@@ -229,3 +248,4 @@ export const createFilterArray = (filters = []) => {
     ];
     return filterArray;
 };
+

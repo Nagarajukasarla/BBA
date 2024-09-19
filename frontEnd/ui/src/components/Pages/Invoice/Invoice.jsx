@@ -11,32 +11,31 @@ import {
     Select,
     notification,
     ConfigProvider,
+    DatePicker,
 } from "antd";
-import debounce from 'lodash/debounce';
+import debounce from "lodash/debounce";
 import {
     PlusCircleOutlined,
     EditOutlined,
     InfoCircleTwoTone,
 } from "@ant-design/icons";
-import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import "./utils/css/invoiceStyle.css";
 import { useNavigate } from "react-router-dom";
 import { authenticate } from "../../../services/api/get/authorizedGetServices";
-import { getToken } from "../../../services/cookies/tokenUtils";
 import {
     customerNameHelper,
     getCustomerAsOptions,
     mapCustomerDetails,
 } from "../../../services/utils/common/helpers/client/customerHelpers";
-import { fetchCustomers } from "../../../services/utils/common/helpers/server/customerHelpers";
-import { Data } from "../../context/Context";
 import {
     createFiltersObj,
     filterInvoices,
 } from "./utils/helpers/invoiceHelpers";
 import { getFilteredInvoices } from "../../../services/api/post/authorizedPostService";
 import { getDayMonthYearWithTimeFormat } from "../../../services/utils/common/helpers/client/dateHelpers";
-import { data } from "browserslist";
+import TokenManager from "../../../services/cookies/TokenManager";
+import CustomerLocalManager from "../Customers/CustomerLocalManager";
 
 export const Invoice = () => {
     const [invoices, setInvoices] = useState([]);
@@ -46,14 +45,20 @@ export const Invoice = () => {
     const [invoiceStatus, setInvoiceStatus] = useState("");
     const [customersAsOptions, setCustomersAsOptions] = useState([]);
     const [dayWise, setDayWise] = useState("");
-    const [fromDate, setFromDate] = useState(null);
+    const [specificDate, setSpecificDate] = useState(null);
+    const [dateRange, setDateRange] = useState([null, null]);
 
-   const navigate = useNavigate();
+    const navigate = useNavigate();
     const { Search } = Input;
     const [api, contextHolder] = notification.useNotification();
-    const { customers, setCustomers } = useContext(Data);
+    const { RangePicker } = DatePicker;
 
-    const checkAuthentication = async (token) => {
+    const shopId = TokenManager.getShopId();
+    console.log("Hello bro!! line: 57");
+    const token = TokenManager.getToken();
+    const customers = CustomerLocalManager.getCustomers();
+
+    const checkAuthentication = async () => {
         if (!(await authenticate(token))) {
             console.log("Unauthenticated in Invoices!");
             navigate("/login");
@@ -62,47 +67,44 @@ export const Invoice = () => {
         return true;
     };
 
-    const fetchFilteredInvoices = async (token, filters) => {
+    const fetchFilteredInvoices = async (filters) => {
         let mappedInvoices = [];
         try {
-            await getFilteredInvoices(token, filters).then(
-                (invoices) => {
-                    if (invoices && invoices.length > 0) {
-                        mappedInvoices = invoices.map((item) => ({
-                            key: item.id,
-                            invoiceNumber: item.invoiceNumber,
-                            customerNumber: item.customerNumber,
-                            generationDate: getDayMonthYearWithTimeFormat(item.generationDate),
-                            amount: item.amount,
-                            paymentMode: item.paymentMode,
-                            customerDetails: mapCustomerDetails({
-                                name: item.customerName,
-                                address: item.customerAddressDto,
-                                include: ["area", "city", "state"],
-                                concat: false
-                            }),
-                            status: item.status
-                        }));
-                    }
+            await getFilteredInvoices(token, filters).then((invoices) => {
+                if (invoices && invoices.length > 0) {
+                    mappedInvoices = invoices.map((item) => ({
+                        key: item.id,
+                        invoiceNumber: item.invoiceNumber,
+                        customerNumber: item.customerNumber,
+                        generationDate: getDayMonthYearWithTimeFormat(
+                            item.generationDate
+                        ),
+                        amount: item.amount,
+                        paymentMode: item.paymentMode,
+                        customerDetails: mapCustomerDetails({
+                            name: item.customerName,
+                            address: item.customerAddressDto,
+                            include: ["area", "city", "state"],
+                            concat: false,
+                        }),
+                        status: item.status,
+                    }));
                 }
-            );
+            });
             return mappedInvoices;
-        } 
-        catch (error) {
+        } catch (error) {
             console.log(`Error while fetching filterd invoice: ${error}`);
             return false;
         }
     };
-
 
     const useDebouncedCallback = (callback, delay) => {
         return useMemo(() => debounce(callback, delay), [callback, delay]);
     };
 
     const fetchInvoices = useCallback(async (filters) => {
-        const token = getToken();
         setLoading(true);
-        await fetchFilteredInvoices(token, filters).then((data) => {
+        await fetchFilteredInvoices(filters).then((data) => {
             setInvoices(data);
         });
         setLoading(false);
@@ -110,43 +112,45 @@ export const Invoice = () => {
 
     const debouncedFetchInvoices = useDebouncedCallback(fetchInvoices, 300);
 
-    const setFilteredInvoices = useCallback((filters) => {
-        debouncedFetchInvoices(filters);
-    }, [debouncedFetchInvoices]);
+    const setFilteredInvoices = useCallback(
+        (filters) => {
+            debouncedFetchInvoices(filters);
+        },
+        [debouncedFetchInvoices]
+    );
 
     useEffect(() => {
         const filters = createFiltersObj({
             customer,
             purchaseType,
             invoiceStatus,
-            dayWise
+            dayWise,
+            specificDate,
+            dateRange,
         });
         setFilteredInvoices(filters);
-
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [customer, purchaseType, invoiceStatus, dayWise]);
+    }, [
+        customer,
+        purchaseType,
+        invoiceStatus,
+        dayWise,
+        specificDate,
+        dateRange,
+    ]);
 
     useEffect(() => {
         document.title = "Invoice";
-        if (checkAuthentication(getToken())) {
-            setLoading(true);
-            fetchCustomers(getToken()).then((customers) => {
-                setLoading(false);
-                setCustomers(customers);
-            });
-        }
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    useEffect(() => {
+        setLoading(true);
+        checkAuthentication().then(() => setLoading(false));
         setCustomersAsOptions(
             getCustomerAsOptions({
                 customers: customers,
                 addAllOption: true,
             })
         );
-    }, [customers]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const columns = [
         {
@@ -207,7 +211,7 @@ export const Invoice = () => {
             width: "3%",
             render: (obj) => (
                 <Typography.Text>
-                    {obj[0].toUpperCase() + obj.substring(1)}
+                    {obj && obj[0].toUpperCase() + obj.substring(1)}
                 </Typography.Text>
             ),
         },
@@ -268,7 +272,7 @@ export const Invoice = () => {
     ];
 
     const newInvoice = () => {
-        navigate("/app/new-invoice");
+        navigate("/app/invoice/new");
     };
 
     const capatalizeFirstLetter = (data) => {
@@ -280,7 +284,7 @@ export const Invoice = () => {
     const importantStyles = { marginTop: "-4px", important: true };
 
     const filterOptionsStyles = {
-        paddingRight: "20px",
+        paddingRight: "10px",
     };
 
     const onSelectedCustomer = (value, selectedCustomer) => {
@@ -297,7 +301,22 @@ export const Invoice = () => {
 
     const onSelectedDayWise = (value) => {
         setDayWise(value);
-    }
+        setSpecificDate(null);
+        setDateRange([null, null]);
+    };
+
+    const onPickSpecificDate = (value) => {
+        setSpecificDate(value);
+        setDayWise(null);
+        setDateRange([null, null]);
+    };
+
+    const onSelectDateRange = (value) => {
+        const [startDate, endDate] = value ? value : [null, null];
+        setDateRange([startDate, endDate]);
+        setDayWise(null);
+        setSpecificDate(null);
+    };
 
     return (
         <>
@@ -307,7 +326,7 @@ export const Invoice = () => {
                 <Col span={24}>
                     <Space direction="vertical" size={"small"}>
                         <Row
-                            style={{ padding: "20px 0 0 20px" }}
+                            style={{ padding: "20px 0 0 5px" }}
                             justify={"space-between"}
                             align="middle"
                         >
@@ -334,7 +353,7 @@ export const Invoice = () => {
                                 </Button>
                             </Space>
                         </Row>
-                        <Row style={{ padding: "0 20px" }} align="middle">
+                        <Row style={{ padding: "0 5px" }} align="middle">
                             <Space
                                 direction="vertical"
                                 style={{
@@ -396,7 +415,7 @@ export const Invoice = () => {
                                 >
                                     <Select
                                         style={{
-                                            width: 120,
+                                            width: 100,
                                         }}
                                         value={
                                             purchaseType === ""
@@ -416,11 +435,11 @@ export const Invoice = () => {
                                 }}
                             >
                                 <Typography.Text className="primary-input-field-header-style">
-                                    Invoice Status
+                                    Status
                                 </Typography.Text>
                                 <Select
                                     style={{
-                                        width: 120,
+                                        width: 110,
                                     }}
                                     value={
                                         invoiceStatus === ""
@@ -453,10 +472,10 @@ export const Invoice = () => {
                                 >
                                     <Select
                                         style={{
-                                            width: 180,
+                                            width: 170,
                                         }}
                                         value={
-                                            dayWise === ""
+                                            dayWise === "" || !dayWise
                                                 ? "--All--"
                                                 : dayWise
                                         }
@@ -464,6 +483,36 @@ export const Invoice = () => {
                                         onSelect={onSelectedDayWise}
                                     />
                                 </ConfigProvider>
+                            </Space>
+                            <Space
+                                direction="vertical"
+                                style={{
+                                    textAlign: "start",
+                                    ...filterOptionsStyles,
+                                }}
+                            >
+                                <Typography.Text className="primary-input-field-header-style">
+                                    Pick a Date
+                                </Typography.Text>
+                                <DatePicker
+                                    value={specificDate}
+                                    onChange={onPickSpecificDate}
+                                />
+                            </Space>
+                            <Space
+                                direction="vertical"
+                                style={{
+                                    textAlign: "start",
+                                    ...filterOptionsStyles,
+                                }}
+                            >
+                                <Typography.Text className="primary-input-field-header-style">
+                                    Date Range
+                                </Typography.Text>
+                                <RangePicker
+                                    value={dateRange}
+                                    onChange={onSelectDateRange}
+                                />
                             </Space>
                         </Row>
                         <Row style={{ padding: "15px 0 0 10px" }}>
@@ -478,13 +527,6 @@ export const Invoice = () => {
                                 }}
                             >
                                 <p className="invoiceHeader">Recent Orders</p>
-                                <Search
-                                    style={{
-                                        width: "360px",
-                                        height: "30px",
-                                    }}
-                                    placeholder="Invoice Number, Amount, Customer Name"
-                                />
                             </Space>
                         </Row>
                         <Space

@@ -4,7 +4,7 @@ import { Col, Row, Typography, Space, Button } from 'antd';
 import { ToolFilled } from "@ant-design/icons";
 import { useNavigate } from 'react-router-dom';
 import { authenticate } from '../../../services/api/get/authorizedGetServices';
-import { getToken } from '../../../services/cookies/tokenUtils';
+import TokenManager from '../../../services/cookies/TokenManager';
 
 export const Settings = () => {
 
@@ -13,7 +13,7 @@ export const Settings = () => {
     useEffect(() => {
         document.title = "Settings";
         const checkAuthentication = async () => {
-            if (!(await authenticate(getToken()))) {
+            if (!(await authenticate(TokenManager.getToken()))) {
                 console.log("Not authenticated");
                 navigate("/login");
             }

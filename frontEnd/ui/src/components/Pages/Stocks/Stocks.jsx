@@ -6,15 +6,15 @@ import {
     authenticate,
     getAllProducts,
 } from "../../../services/api/get/authorizedGetServices";
-import { getToken } from "../../../services/cookies/tokenUtils";
 import { getMonthYearFormat } from "../../../services/utils/common/helpers/client/dateHelpers";
+import TokenManager from "../../../services/cookies/TokenManager";
 
 export const Stocks = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
     const [products, setProducts] = useState([{}]);
     const navigate = useNavigate();
-    
+
     const checkAuthentication = async (token) => {
         if (!(await authenticate(token))) {
             console.log("Not authenticated");
@@ -23,10 +23,10 @@ export const Stocks = () => {
         }
         return true;
     };
-    
+
     const fetchProducts = async () => {
         try {
-            const response = await getAllProducts(getToken());
+            const response = await getAllProducts(TokenManager.getToken());
             if (response && response.length > 0) {
                 const mappedProducts = response.map((item) => ({
                     key: item.id,
@@ -34,7 +34,9 @@ export const Stocks = () => {
                     batchNumber: item.batchNumber,
                     company: item.company,
                     quantity: item.quantity,
-                    manufacturingDate: getMonthYearFormat(item.manufacturingDate),
+                    manufacturingDate: getMonthYearFormat(
+                        item.manufacturingDate
+                    ),
                     expiryDate: getMonthYearFormat(item.expiryDate),
                     sGst: item.sgstInPercent,
                     cGst: item.cgstInPercent,
@@ -51,24 +53,27 @@ export const Stocks = () => {
             throw error;
         }
     };
-    
+
     useEffect(() => {
         document.title = "Stocks";
         // Check authentication also need to be awaited bcoz it is async
         // So loader need to be called.
-        if (checkAuthentication(getToken())) {
+        if (checkAuthentication(TokenManager.getToken())) {
             setLoading(true);
             fetchProducts().then(() => setLoading(false));
             getMonthYearFormat(products.at(0).manufacturingDate);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-    
+
     const refreshProducts = () => {
         fetchProducts();
         console.log("Refreshed products: " + JSON.stringify(products, null, 2));
     };
 
+    const addStock = () => {
+        navigate("/app/stocks/add");
+    };
 
     const columns = [
         {
@@ -81,7 +86,7 @@ export const Stocks = () => {
             key: "batchNumberColumn",
             title: "Batch",
             dataIndex: "batchNumber",
-            width: "5%"
+            width: "5%",
         },
         {
             key: "companyColumn",
@@ -147,36 +152,26 @@ export const Stocks = () => {
                         style={{ padding: "10px 0 0 28px" }}
                         justify={"space-between"}
                     >
-                        <Typography.Title level={3}>Stocks {`==> Issue #13 urgent fix for this page`} </Typography.Title>
+                        <Typography.Title level={3}>
+                            Stocks {`==> Issue #13 urgent fix for this page`}{" "}
+                        </Typography.Title>
                         <Space
                             direction="horizontal"
                             size={"large"}
                             align="end"
                         >
-                            <Link
-                                to={{
-                                    pathname: "add",
-                                    state: {
-                                        obj: null,
-                                        isEditable: false,
-                                        onProductSaved: refreshProducts,
-                                    },
+                            <Button
+                                style={{
+                                    marginRight: "45px",
                                 }}
-                                style={{ textDecoration: "none" }}
+                                onClick={addStock}
+                                type="primary"
+                                shape="round"
+                                size="large"
                             >
-                                <Button
-                                    style={{
-                                        marginRight: "45px",
-                                    }}
-                                    // onClick={}
-                                    type="primary"
-                                    shape="round"
-                                    size="large"
-                                >
-                                    Add Stock
-                                    <PlusCircleOutlined />
-                                </Button>
-                            </Link>
+                                Add Stock
+                                <PlusCircleOutlined />
+                            </Button>
                         </Space>
                     </Row>
                     <Row style={{ padding: "10px 20px 10px 8px" }}>
@@ -200,7 +195,6 @@ export const Stocks = () => {
                             scroll={{
                                 y: 470,
                             }}
-                            
                         ></Table>
                     </Row>
                 </Space>
