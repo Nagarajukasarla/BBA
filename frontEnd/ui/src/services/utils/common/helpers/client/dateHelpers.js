@@ -39,11 +39,12 @@ export const getMonthYearFormat = (date) => {
 
 /**
  *
- * @param {string} date format MM/YY
+ * @param {string} date format MM/YY or M/YY
  * @returns formatted date time string -> "YYYY-MM-DDThh:mm:ss"
  *
  **/
 export const getFormattedDate = (date) => {
+    if (date.length < 5) date = `0${date}`;
     const day = "01";
     const time = "00:00:00";
     let month = date.split("/")[0];
@@ -58,14 +59,16 @@ export const getFormattedDate = (date) => {
  * @return {string} The formatted date string.
  */
 const getFormattedStringWithDate = (date) => {
-    return `${date.getFullYear()}-${
-        (date.getMonth() + 1).toString().padStart(2,"0")
-    }-${date.getDay().toString().padStart(2, "0")}T${date
+    const value =  `${date.getFullYear()}-${
+        (date.getMonth() + 1).toString().padStart(2, "0")
+    }-${date.getDate().toString().padStart(2, "0")}T${date
         .getHours().toString()
         .padStart(2, "0")
     }:${date.getMinutes().toString().padStart(2, "0")}:${date
         .getSeconds().toString()
         .padStart(2, "0")}`;
+
+    return value;
 };
 
 /**
@@ -198,6 +201,45 @@ export const getDayBeforeYestardayDateRange = () => {
         "endDate": getFormattedStringWithDate(dayBeforeYestardayEndDate)
     };
 };
+
+export const getSpecificDateRange = (date) => {
+    let specificDayStartDate = new Date(date);
+    let specificDayEndDate = new Date(date);
+    specificDayStartDate.setHours(0, 0, 0, 0);
+    specificDayEndDate.setHours(23, 59, 59, 59);
+    return {
+        "startDate": getFormattedStringWithDate(specificDayStartDate),
+        "endDate": getFormattedStringWithDate(specificDayEndDate)
+    };
+};
+
+export const getCustomDatesRange = (startDate, endDate) => {
+    startDate.setHours(0, 0, 0, 0);
+    endDate.setHours(23, 59, 59, 59);
+    return {
+        "startDate": getFormattedStringWithDate(startDate),
+        "endDate": getFormattedStringWithDate(endDate)
+    };
+};
+
+
+/**
+ * Checks if the start date is earlier than the end date.
+ * 
+ * @param {string} startDate - The start date in "YYYY-MM-DDThh:mm:ss" format.
+ * @param {string} endDate - The end date in "YYYY-MM-DDThh:mm:ss" format.
+ * @returns {boolean} Returns true if the start date is earlier than the end date, false otherwise.
+ */
+export const isStartEarlierThanEndDate = (startDate, endDate) => {
+    //startDate format YYYY-MM-DDThh:mm:ss
+    //startDate format YYYY-MM-DDThh:mm:ss
+    const startDateObj = new Date(startDate);
+    const endDateObj = new Date(endDate);
+    return startDateObj < endDateObj;
+};
+
+
+// ===================================================================================
 
 
 

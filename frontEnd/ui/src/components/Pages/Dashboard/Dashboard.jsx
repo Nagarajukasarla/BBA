@@ -1,12 +1,23 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
-import { Col, Row, Space, Typography, Card, Statistic, Dropdown } from "antd";
+import {
+    Col,
+    Row,
+    Space,
+    Typography,
+    Card,
+    Statistic,
+    Dropdown,
+    Flex,
+    Spin,
+} from "antd";
 import {
     ShoppingCartOutlined,
     CheckCircleOutlined,
     RiseOutlined,
     LineChartOutlined,
     DownOutlined,
+    LoadingOutlined,
 } from "@ant-design/icons";
 import {
     PieChart,
@@ -20,23 +31,44 @@ import {
     Line,
     CartesianGrid,
 } from "recharts";
+import { getAllCustomers } from "../../../services/api/get/authorizedGetServices";
+import TokenManager from "../../../services/cookies/TokenManager";
+import CustomerLocalManager from "../Customers/CustomerLocalManager";
 
 export const Dashboard = () => {
-    // const column1 = {
-    //     background: "blue",
-    //     width: "350px",
-    //     height: "350px",
-    // };
+    const [networkError, setNetworkError] = useState(false);
+    const [internalServerError, setInternalServerError] = useState(false);
+    const [loading, setLoading] = useState(false);
 
+    const fetchCustomers = async () => {
+        try {
+            const response = await getAllCustomers(TokenManager.getToken());
+            if (response && response.length > 0) {
+                CustomerLocalManager.setCustomers(response);
+            } else {
+                console.log("Empty customers");
+            }
+        } catch (error) {
+            if (error.message.includes("Network Error")) {
+                setNetworkError(true);
+            } else if (error.message.includes("Internal Server Error")) {
+                setInternalServerError(true);
+            } else {
+                console.log("An error occured: ", error.message);
+            }
+        }
+    };
 
     useEffect(() => {
         document.title = "Dashboard";
-    })
+        fetchCustomers().then(() => setLoading(false));
+    }, []);
 
     const DashboardCard = ({ icon, title, value, margin }) => {
         return (
             <Card style={{ width: "220px", marginLeft: margin }}>
-                <Space direction="horizontal"
+                <Space
+                    direction="horizontal"
                     style={{
                         marginLeft: "12px",
                     }}
@@ -47,6 +79,7 @@ export const Dashboard = () => {
             </Card>
         );
     };
+
     const data01 = [
         {
             name: "Group A",
@@ -131,6 +164,7 @@ export const Dashboard = () => {
             value: 8900,
         },
     ];
+
     const DashboardPieChart = ({ pieData }) => {
         return (
             <>
@@ -255,6 +289,28 @@ export const Dashboard = () => {
         );
     };
 
+    if (loading) {
+        return (
+            <div>
+                <Flex style={{width: "85vw", height: "89vh"}} align="center" justify="center">
+                    <Spin
+                        indicator={
+                            <LoadingOutlined style={{ fontSize: 80 }} spin />
+                        }
+                    />
+                </Flex>
+            </div>
+        );
+    }
+
+    if (networkError) {
+        return <h1> Network error </h1>;
+    }
+
+    if (internalServerError) {
+        return <h1>Internal Server Error</h1>;
+    }
+
     return (
         <div className="dashboardWrapper">
             <Col span={24}>
@@ -267,12 +323,13 @@ export const Dashboard = () => {
                             <DashboardCard
                                 icon={
                                     <ShoppingCartOutlined
-                                        style={{ 
+                                        style={{
                                             fontSize: "24px",
                                             color: "rgb(68, 141, 2029)",
-                                            backgroundColor: "rgb(156, 232, 241)",
+                                            backgroundColor:
+                                                "rgb(156, 232, 241)",
                                             borderRadius: "50px",
-                                            padding: "5px"
+                                            padding: "5px",
                                         }}
                                     />
                                 }
@@ -281,13 +338,14 @@ export const Dashboard = () => {
                             />
                             <DashboardCard
                                 icon={
-                                    <CheckCircleOutlined 
+                                    <CheckCircleOutlined
                                         style={{
                                             fontSize: "24px",
                                             color: "green",
-                                            backgroundColor: "rgba(0, 225, 0, 0.25)",
+                                            backgroundColor:
+                                                "rgba(0, 225, 0, 0.25)",
                                             borderRadius: "50px",
-                                            padding: "5px"
+                                            padding: "5px",
                                         }}
                                     />
                                 }
@@ -297,13 +355,13 @@ export const Dashboard = () => {
                             />
                             <DashboardCard
                                 icon={
-                                    <RiseOutlined 
+                                    <RiseOutlined
                                         style={{
                                             fontSize: "24px",
                                             color: "red",
                                             backgroundColor: "#D09C9C",
                                             borderRadius: "50px",
-                                            padding: "5px"
+                                            padding: "5px",
                                         }}
                                     />
                                 }
@@ -319,7 +377,7 @@ export const Dashboard = () => {
                                             color: "#3F4112",
                                             backgroundColor: "#C7CA84",
                                             borderRadius: "50px",
-                                            padding: "5px"
+                                            padding: "5px",
                                         }}
                                     />
                                 }

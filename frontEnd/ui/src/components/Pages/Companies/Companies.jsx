@@ -4,7 +4,7 @@ import { PlusCircleOutlined } from "@ant-design/icons";
 import { createCompany } from "../../../services/api/post/authorizedPostService";
 import { useNavigate } from "react-router-dom";
 import { authenticate } from "../../../services/api/get/authorizedGetServices";
-import { getToken } from "../../../services/cookies/tokenUtils";
+import TokenManager from "../../../services/cookies/TokenManager";
 
 export const Companies = () => {
     const navigate = useNavigate();
@@ -15,7 +15,7 @@ export const Companies = () => {
     let status = false;
 
     const checkAuthentication = async () => {
-        if (!(await authenticate(getToken()))) {
+        if (!(await authenticate(TokenManager.getToken()))) {
             console.log("Not authenticated");
             navigate("/login");
         }
@@ -56,7 +56,7 @@ export const Companies = () => {
             setConfirmLoading(false);
         }, 400);
 
-        status = createCompany(getToken(), company);
+        status = createCompany(TokenManager.getToken(), company);
         if(status) {
             success();
         }
@@ -67,7 +67,6 @@ export const Companies = () => {
     };
 
     const handleCancel = () => {
-        console.log("Clicked cancel button");
         setCompany("");
         setOpen(false);
     };

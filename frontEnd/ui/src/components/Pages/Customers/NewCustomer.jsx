@@ -13,9 +13,9 @@ import {
 import "./css/newCustomer.css";
 import "../../coreComponents/Styles/primaryStyle.css";
 import { saveCustomer } from "../../../services/api/post/authorizedPostService";
-import { getToken } from "../../../services/cookies/tokenUtils";
 import { useNavigate } from "react-router-dom";
 import { generateFormattedDateString } from "../../../services/utils/common/helpers/client/dateHelpers";
+import TokenManager from "../../../services/cookies/TokenManager";
 
 export const NewCustomer = () => {
     const emailField = document.getElementById("emailField");
@@ -88,7 +88,7 @@ export const NewCustomer = () => {
     };
 
     const saveNewCustomer = async () => {
-        const response = await saveCustomer(getCustomer(), getToken());
+        const response = await saveCustomer(getCustomer(), TokenManager.getToken());
         return response ? true : false;
     };
 

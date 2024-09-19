@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
     Col,
     Row,
@@ -21,12 +21,17 @@ import {
     authenticate,
     getAllCustomers,
 } from "../../../services/api/get/authorizedGetServices";
-import { getToken } from "../../../services/cookies/tokenUtils";
 import { mapCustomerDetails } from "../../../services/utils/common/helpers/client/customerHelpers";
+import TokenManager from "../../../services/cookies/TokenManager";
+import { Data } from "../../context/Context";
+import CustomerLocalManager from "./CustomerLocalManager";
 
 export const Customers = () => {
+
+    const customers = CustomerLocalManager.getCustomers();
+
+    const [mappedCustomers, setMappedCustomers] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [customers, setCustomers] = useState([{}]);
     const [error, setError] = useState(false);
     const navigate = useNavigate();
 
@@ -39,49 +44,35 @@ export const Customers = () => {
         return true;
     };
 
-    const fetchCustomers = async () => {
-        try {
-            const response = await getAllCustomers(getToken());
-            if (response && response.length > 0) {
-                const mappedCustomers = response.map((item) => ({
-                    key: item.id,
-                    customerNumber: item.customerNumber,
-                    customerDetails: mapCustomerDetails(
-                        {
-                            name: item.customerName,
-                            address: item.addressDto,
-                            include: [
-                                'blockNumber',
-                                'street',
-                                'area',
-                                'city',
-                                'state'
-                            ],
-                            concat: false
-                        }
-                    ),
-                    phone: item.phone,
-                    purchasedAmount: item.totalPurchaseAmount,
-                    paidAmount: item.paidAmount,
-                    pendingAmount: item.pendingAmount,
-                }));
-
-                setCustomers(mappedCustomers);
-                console.log("Mapped Products: \n" + JSON.stringify(customers));
-            } else {
-                throw new Error("Data Not Found!");
-            }
-        } catch (error) {
-            throw error;
-        }
-    };
+    const mapCustomers = () => {
+        const mappedCustomers = customers.map((item) => ({
+            key: item.id,
+            customerNumber: item.customerNumber,
+            customerDetails: mapCustomerDetails({
+                name: item.customerName,
+                address: item.addressDto,
+                include: [
+                    "blockNumber",
+                    "street",
+                    "area",
+                    "city",
+                    "state",
+                ],
+                concat: false,
+            }),
+            phone: item.phone,
+            purchasedAmount: item.totalPurchaseAmount,
+            paidAmount: item.paidAmount,
+            pendingAmount: item.pendingAmount,
+        }));
+        setMappedCustomers(mappedCustomers);
+    }
 
     useEffect(() => {
         document.title = "Customers";
-        if (checkAuthentication(getToken())) {
-            setLoading(true);
-            fetchCustomers().then(() => setLoading(false));
-        }
+        setLoading(true);
+        checkAuthentication(TokenManager.getToken()).then(() => setLoading(false));
+        mapCustomers();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -184,7 +175,7 @@ export const Customers = () => {
                             <Table
                                 bordered
                                 columns={customerColumns}
-                                dataSource={customers}
+                                dataSource={mappedCustomers}
                                 loading={loading}
                                 pagination={false}
                             ></Table>
