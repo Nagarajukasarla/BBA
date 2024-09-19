@@ -44,6 +44,8 @@ export const customerNameHelper = (customer) => {
  * @return {Array} Array of options for dropdown selection
  */
 export const getCustomerAsOptions = ({ customers, addAllOption }) => {
+    if (!customers || !(customers.length > 0)) return []; 
+     
     let options = customers.map((item) => ({
         value: item.customerNumber,
         label: customerNameHelper(item),
