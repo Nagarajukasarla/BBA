@@ -2,14 +2,14 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ClipLoader from "react-spinners/ClipLoader";
 import "./style.css";
-import { getToken } from "../../services/cookies/tokenUtils";
 
 import { apiUrl } from "../../config";
+import TokenManager from "../../services/cookies/TokenManager";
 
 export const AuthLoader = () => {
     const navigate = useNavigate();
 
-    const token = getToken();
+    const token = TokenManager.getToken();
     const authenticate = () => {
         if (token) {
             fetch(`${`${apiUrl}/api/v1/demo-controller`}`, {
