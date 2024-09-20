@@ -1,5 +1,6 @@
 import { getStatus } from "../statusUtils/responseStatus";
 import { apiUrl } from "../../../config";
+import APIResponse from "../statusUtils/APIResponse";
 
 /**
  * Create a new company using the provided token and company name.
@@ -8,7 +9,7 @@ import { apiUrl } from "../../../config";
  * @param {string} companyName - The name of the company to be created.
  * @return {Promise<boolean>} Returns true if the company is successfully created, otherwise false.
  */
-export const createCompany = async (token, companyName) => {
+export const createCompany = async (token, companyName, shopId) => {
     try {
         const response = await fetch(`${apiUrl}/api/v1/company/save`, {
             method: "POST",
@@ -18,6 +19,7 @@ export const createCompany = async (token, companyName) => {
             },
             body: JSON.stringify({
                 name: companyName,
+                shopId: shopId,
             }),
         });
 
@@ -53,7 +55,7 @@ export const createCompany = async (token, companyName) => {
  * @param {string} token - The authorization token
  * @return {boolean} Whether the product was successfully saved
  */
-export const saveProduct = async (product, token) => {
+export const saveProduct = async (product, token, shopId) => {
     try {
         const response = await fetch(`${apiUrl}/api/v1/product/save`, {
             method: "POST",
@@ -62,6 +64,8 @@ export const saveProduct = async (product, token) => {
                 Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({
+                shopId: shopId,
+                hsnNumber: product.hsnNumber,
                 name: product.name,
                 company: product.companyName,
                 quantity: product.quantity,
@@ -84,11 +88,9 @@ export const saveProduct = async (product, token) => {
                 `Server responded with an error: ${errorData.message}`
             );
             return false;
+        } else {
+            return true;
         }
-
-        const data = await response.json();
-        console.log(data);
-        return true;
     } catch (error) {
         if (error.name === "TypeError") {
             console.error("Network error or request was blocked:", error);
@@ -204,16 +206,14 @@ export const createInvoice = async (invoice, token) => {
         });
 
         if (!response.ok) {
-            const errorMessage = await getStatus(response.status);
-            console.error(`Invoice not saved: ${errorMessage}`);
-            return false;
+            return await getStatus(response.status);
         }
 
         const data = await response.json();
         return data;
     } catch (error) {
-        if (error.name === 'TypeError') {
-            console.error('Network error or request was blocked:', error);
+        if (error.name === "TypeError") {
+            console.error("Network error or request was blocked:", error);
         } else {
             console.error(`Error in saving new invoice: ${error.message}`);
         }
@@ -229,7 +229,7 @@ export const createInvoice = async (invoice, token) => {
  * @param {string} [filters.customerNumber] - The customer number to filter by.
  * @param {string} [filters.paymentMode] - The payment mode to filter by.
  * @param {string} [filters.status] - The status to filter by.
- * @param {Array} [filters.dateRange] - The date range to filter by.
+ * @param {Object} [filters.dateRange] - The date range to filter by.
  * @return {Promise<Object|boolean>} - The filtered invoice data if successful, or false if there was an error.
  */
 export const getFilteredInvoices = async (token, filters) => {
@@ -256,13 +256,54 @@ export const getFilteredInvoices = async (token, filters) => {
             // console.error(`No filtered invoices found: ${errorMessage}`);
             // return false;
         }
-
     } catch (error) {
-        if (error.name === 'TypeError') {
-            console.error('Network error or request was blocked:', error);
+        if (error.name === "TypeError") {
+            console.error(`Network error or request was blocked:`, error);
         } else {
             console.error(`Error occurred while filtering invoices: ${error.message}`);
         }
         return false;
+    }
+};
+
+export const saveInvoiceWithItems = async (shopId, token, {
+    customer,
+    paymentMode,
+    billedDate,
+    dueDate,
+    generationDate,
+    items
+}) => {
+    try {
+        const response = await fetch(`${apiUrl}/api/v1/invoice/save-with-items`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': "application/json",
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                shopId: shopId,
+                customerNumber: customer.customerNumber,
+                paymentMode: paymentMode,
+                billedDate: billedDate,
+                dueDate: dueDate,
+                generationDate: generationDate,
+                items: items
+            })
+        });
+
+        if (!response.ok) {
+            return new APIResponse(response.status, null);
+        }
+        
+        const data = response.json();
+        return new APIResponse(response.status, data);
+
+    } catch (error) {
+        if (error.name === 'TypeError') {
+            return new APIResponse(-1, null);
+        } else {
+            return new APIResponse(APIResponse.INTERNAL_SERVER_ERROR, null);
+        }
     }
 };

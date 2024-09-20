@@ -19,6 +19,7 @@ import { ServerDown } from "./components/notifiers/ServerDown";
 import { AddOrEditStock } from "./components/Pages/Stocks/AddOrEditStock";
 import Context from "./components/context/Context";
 
+
 function App() {
     return (
         <Context>
@@ -29,13 +30,11 @@ function App() {
                 <Route path="/app/*" element={<Root />}>
                     <Route path="dashboard" element={<Dashboard />} />
                     <Route path="invoice" element={<Invoice />} />
-                    <Route path="new-invoice" element={<NewInvoice />} />
+                    <Route path="invoice/new" element={<NewInvoice />} />
                     <Route path="customers" element={<Customers />} />
                     <Route path="new-customer" element={<NewCustomer />} />
-                    <Route path="stocks" element={<Stocks />}>
-                        <Route path="add" element={<AddOrEditStock />} />
-                        <Route path="edit" element={<AddOrEditStock />} />
-                    </Route>
+                    <Route path="stocks" element={<Stocks />} />
+                    <Route path="stocks/add" element={<AddOrEditStock />} />
                     <Route path="subscriptions" element={<Subscriptions />} />
                     <Route path="about" element={<About />} />
                     <Route path="settings" element={<Settings />} />

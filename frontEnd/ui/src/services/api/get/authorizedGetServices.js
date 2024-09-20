@@ -29,6 +29,7 @@ export const authenticate = async (token) => {
     }
 };
 
+
 export const getAllProducts = async (token) => {
     try {
         const response = await fetch(`${apiUrl}/api/v1/product/get-items`, {
@@ -68,10 +69,21 @@ export const getAllCustomers  = async (token) => {
             return data;
         }
         else {
-            throw new Error(getStatus(response.status));
+            if (response.status >= 500) {
+                throw new Error("Internal Sever Error");
+            }
+            else if(response.status >= 400) {
+                throw new Error("Client Error: " + response.statusText);
+            }
+            else {
+                throw new Error("Unexpected Error");
+            }
         }
     }
     catch (error) {
+        if (error.message === "Failed to fetch") {
+            throw new Error("Network Error: Unable to reach the server");
+        }
         throw error;
     }
 };
