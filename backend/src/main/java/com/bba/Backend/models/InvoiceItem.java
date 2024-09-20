@@ -1,7 +1,10 @@
 package com.bba.Backend.models;
 
+import com.bba.Backend.annotations.BigDecimalFormat;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -29,17 +32,23 @@ public class InvoiceItem {
     @Column(name = "company", nullable = false)
     private String company;
 
-    @Column(name = "rate", nullable = false)
-    private Double rate;
+    @Column(name = "rate", precision = 10, scale = 4, nullable = false)
+    @BigDecimalFormat(precision = 10, scale = 4)
+    private BigDecimal rate;
+
+    @Column(name = "price", precision = 10, scale = 4, nullable = false)
+    @BigDecimalFormat(precision = 10, scale = 4)
+    private BigDecimal price;
+
+    @Column(name = "discount", precision = 4, scale = 2, nullable = false)
+    @BigDecimalFormat(precision = 4, scale = 2)
+    private BigDecimal discount;
 
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
-    @Column(name = "discount", nullable = false)
-    private Double discount;
-
-    @Column(name = "price", nullable = false)
-    private Double price;
+    @Column(name = "shop_id")
+    private Integer shopId;
 
     @ManyToOne
     @JoinColumn(name = "invoice_number", referencedColumnName = "number", insertable = false, updatable = false)

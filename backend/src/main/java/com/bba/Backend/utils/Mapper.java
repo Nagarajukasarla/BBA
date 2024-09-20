@@ -12,6 +12,7 @@ import com.bba.Backend.utils.mappers.DtoMapper;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
 
@@ -34,7 +35,7 @@ public class Mapper implements DtoMapper {
                 .email(customer.getEmail())
                 .phone(customer.getPhone())
                 .paidAmount(customer.getPaidAmount())
-                .pendingAmount(customer.getTotalPurchaseAmount() - customer.getPaidAmount())
+                .pendingAmount(calculatePendingAmount(customer.getTotalPurchaseAmount(), customer.getPaidAmount()))
                 .createdDate(new DateTime(customer.getCreatedDate()))
                 .totalPurchaseAmount(customer.getTotalPurchaseAmount())
                 .discount(customer.getDiscount())
@@ -61,12 +62,12 @@ public class Mapper implements DtoMapper {
                 .customerNumber((Integer) customerWithAddressAndPurchaseStatus.get("customer_number"))
                 .email((String) customerWithAddressAndPurchaseStatus.get("email"))
                 .phone((String) customerWithAddressAndPurchaseStatus.get("phone"))
-                .paidAmount((Double) customerWithAddressAndPurchaseStatus.get("paid_amount"))
-                .totalPurchaseAmount((Double) customerWithAddressAndPurchaseStatus.get("total_purchase_amount"))
+                .paidAmount((BigDecimal) customerWithAddressAndPurchaseStatus.get("paid_amount"))
+                .totalPurchaseAmount((BigDecimal) customerWithAddressAndPurchaseStatus.get("total_purchase_amount"))
                 .pendingAmount(pendingAmount)
                 .createdDate(new DateTime((Date) customerWithAddressAndPurchaseStatus.get("created_date")))
                 .duePeriod((Integer) customerWithAddressAndPurchaseStatus.get("due_period"))
-                .discount((Double) customerWithAddressAndPurchaseStatus.get("discount"))
+                .discount((BigDecimal) customerWithAddressAndPurchaseStatus.get("discount"))
                 .addressDto(addressDto)
                 .build();
     }
@@ -100,6 +101,8 @@ public class Mapper implements DtoMapper {
     public ItemDto mapItemToItemDto(@NonNull Item item) {
         return ItemDto.builder()
                 .id(item.getId())
+                .hsnNumber(item.getHsnNumber())
+                .shopId(item.getShopId())
                 .name(item.getName())
                 .company(item.getCompany())
                 .quantity(item.getQuantity())
@@ -176,8 +179,13 @@ public class Mapper implements DtoMapper {
      * @param paidAmount Object
      * @return Double
      */
-    private Double calculatePendingAmount (Object totalPurchaseAmount, Object paidAmount) {
-        return (Double) totalPurchaseAmount - (Double) paidAmount;
+    private BigDecimal calculatePendingAmount (Object totalPurchaseAmount, Object paidAmount) {
+        BigDecimal total = (BigDecimal) totalPurchaseAmount;
+        BigDecimal paid = (BigDecimal) paidAmount;
+        if (total != null && paid != null) {
+            return total.subtract(paid);
+        }
+        return BigDecimal.ZERO;
     }
 
 }

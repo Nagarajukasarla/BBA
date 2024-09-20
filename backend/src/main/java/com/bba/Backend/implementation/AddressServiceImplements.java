@@ -9,9 +9,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -22,7 +19,7 @@ public class AddressServiceImplements implements AddressService {
     private final Mapper mapper;
 
     @Override
-    public Address saveAddressOfPartner(@NonNull AddressDto addressDto) {
+    public void saveAddressOfPartner(@NonNull AddressDto addressDto) {
         var address = Address.builder()
                 .blockNumber(addressDto.getBlockNumber())
                 .partnerEmail(addressDto.getPartnerEmail())
@@ -32,7 +29,7 @@ public class AddressServiceImplements implements AddressService {
                 .state(addressDto.getState())
                 .zipcode(addressDto.getZipcode())
                 .build();
-        return addressRepository.save(address);
+        addressRepository.save(address);
     }
 
     @Override
@@ -53,19 +50,6 @@ public class AddressServiceImplements implements AddressService {
     public Optional<AddressDto> getAddressOfCustomer(Integer customerNumber) {
         var address = addressRepository.findByCustomerNumber(customerNumber);
         return address.map(mapper::mapAddressToAddressDto);
-    }
-
-    @Override
-    public List<AddressDto> getAllCustomersAddress() {
-        var values = addressRepository.findAllWithNullPartnerEmail();
-        if (values.isEmpty()) {
-            return Collections.emptyList();
-        }
-        Comparator<AddressDto> customerNumberComparator = Comparator.comparing(AddressDto::getCustomerNumber);
-        return values.parallelStream()
-                .map(mapper::mapAddressToAddressDto)
-                .sorted(customerNumberComparator)
-                .toList();
     }
 
     @Override

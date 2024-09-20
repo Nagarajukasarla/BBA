@@ -51,6 +51,9 @@ public class Address {
     @JoinColumn(name = "partner_email", referencedColumnName = "email", unique = true,insertable = false, updatable = false)
     private Partner partner;
 
+    @Column(name = "shop_id")
+    private Integer shopId;
+
     @Override
     public String toString() {
         return "Address { " + "\n\t" +

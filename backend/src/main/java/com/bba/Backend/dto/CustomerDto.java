@@ -1,7 +1,12 @@
 package com.bba.Backend.dto;
+import com.bba.Backend.annotations.BigDecimalFormat;
+import com.bba.Backend.utils.BigDecimalDeserializer;
 import com.bba.Backend.utils.DateTime;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.*;
 import org.springframework.lang.NonNull;
+
+import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -20,17 +25,25 @@ public class CustomerDto {
 
     public String phone;
 
-    public Double paidAmount;
+    @BigDecimalFormat(precision = 10, scale = 4)
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
+    public BigDecimal paidAmount;
 
-    public Double pendingAmount;
+    @BigDecimalFormat(precision = 10, scale = 4)
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
+    public BigDecimal pendingAmount;
+
+    @BigDecimalFormat(precision = 10, scale = 4)
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
+    public BigDecimal totalPurchaseAmount;
+
+    @BigDecimalFormat(precision = 4, scale = 2)
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
+    public BigDecimal discount;
 
     public DateTime createdDate;
 
     public AddressDto addressDto;
-
-    public Double totalPurchaseAmount;
-
-    public Double discount;
 
     public Integer duePeriod;
 

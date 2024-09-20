@@ -19,9 +19,13 @@ public class CompanyController {
         return companyService.saveCompany(companyDto);
     }
 
-    @GetMapping(path = "/get")
-    public ResponseEntity<CompanyDto> getCompany (@RequestBody String name) {
-        return companyService.getCompany(name);
+    @PostMapping(path = "/get")
+    public ResponseEntity<?> getCompany (@RequestBody CompanyDto companyDto) {
+        return companyService.getCompany(companyDto);
     }
 
+    @GetMapping(path = "/get-all")
+    public ResponseEntity<?> getCompanies() {
+        return companyService.getCompanies();
+    }
 }

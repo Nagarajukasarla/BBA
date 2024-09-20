@@ -20,6 +20,10 @@ public class Token {
     @Column(name = "token", length = 266, nullable = false)
     private String token;
 
+    @Column(name = "shop_id")
+    private Integer shopId;
+
     private Boolean expired;
+
     private Boolean revoked;
 }

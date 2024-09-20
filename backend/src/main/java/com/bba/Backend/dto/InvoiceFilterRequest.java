@@ -12,8 +12,11 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 public class InvoiceFilterRequest {
+
     private Integer customerNumber;
+
     private String paymentMode;
+
     private String status;
 
     private DateTime startDate;

@@ -21,4 +21,7 @@ public class Company {
     @Column(name = "name", length = 256, nullable = false)
     private String name;
 
+    @Column(name = "shop_id", nullable = false)
+    private Integer shopId;
+
 }

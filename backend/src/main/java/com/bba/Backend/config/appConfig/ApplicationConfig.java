@@ -3,6 +3,7 @@ package com.bba.Backend.config.appConfig;
 import com.bba.Backend.dto.AddressDto;
 import com.bba.Backend.models.util.Address;
 import com.bba.Backend.repositories.PartnerRepository;
+import com.bba.Backend.repositories.ShopRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
@@ -20,7 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @RequiredArgsConstructor
 public class ApplicationConfig {
 
-    private final PartnerRepository partnerRepository;
+    private final ShopRepository shopRepository;
 
     @Bean
     public ModelMapper modelWrapper() {
@@ -37,8 +38,8 @@ public class ApplicationConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> partnerRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User Not Found !"));
+        return username -> shopRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User Not Found!"));
     }
 
     @Bean

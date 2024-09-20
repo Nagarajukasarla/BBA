@@ -10,10 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Data
 @Builder
 @AllArgsConstructor
+@RequiredArgsConstructor
 @ToString
 public class PartnerDto {
 
-    @Autowired
     private ModelMapper modelMapper;
 
     public PartnerDto (Partner partner, Address address) {
@@ -25,11 +25,10 @@ public class PartnerDto {
         setAddressDto(modelMapper.map(address, AddressDto.class));
         setMobile(partner.getMobile());
         setGender(partner.getGender());
+        setShopId(partner.getShopId());
     }
 
     private Integer id;
-
-    private Boolean isOwner;
 
     private String firstName;
 
@@ -44,4 +43,6 @@ public class PartnerDto {
     private String mobile;
 
     private String gender;
+
+    private Integer shopId;
 }

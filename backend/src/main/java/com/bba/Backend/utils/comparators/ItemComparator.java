@@ -13,6 +13,8 @@ import java.util.Set;
 public class ItemComparator {
     private static @NonNull Map<String, Boolean> generateEqualityStatusMap (@NonNull Item item, @NonNull ItemDto itemDto) {
         Map<String, Boolean> equalityStatusMap = new HashMap<>();
+        equalityStatusMap.put("shopId", Objects.equals(item.getShopId(), itemDto.getShopId()));
+        equalityStatusMap.put("hsnNumber", Objects.equals(item.getHsnNumber(), itemDto.getHsnNumber()));
         equalityStatusMap.put("name", Objects.equals(item.getName(), itemDto.getName()));
         equalityStatusMap.put("company", Objects.equals(item.getCompany(), itemDto.getCompany()));
         equalityStatusMap.put("packingType", Objects.equals(item.getPackingType(), itemDto.getPackingType()));

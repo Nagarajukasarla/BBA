@@ -9,6 +9,6 @@ import lombok.*;
 @Builder
 @ToString
 public class CompanyDto {
-
+    public Integer shopId;
     public String name;
 }

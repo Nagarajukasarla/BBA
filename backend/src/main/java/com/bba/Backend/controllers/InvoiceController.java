@@ -3,6 +3,7 @@ package com.bba.Backend.controllers;
 
 import com.bba.Backend.dto.InvoiceFilterRequest;
 import com.bba.Backend.requestModels.InvoiceRequest;
+import com.bba.Backend.requestModels.InvoiceWithItemsRequest;
 import com.bba.Backend.services.InvoiceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -32,5 +33,10 @@ public class InvoiceController {
     @PostMapping(path = "/get-filtered")
     public ResponseEntity<?> getFilteredInvoices(@RequestBody InvoiceFilterRequest invoiceFilterRequest) {
         return invoiceService.getFilteredInvoices(invoiceFilterRequest);
+    }
+
+    @PostMapping(path = "/save-invoice-with-items")
+    public ResponseEntity<?> saveInvoiceWithItems(@RequestBody InvoiceWithItemsRequest invoiceWithItemsRequest) {
+        return invoiceService.saveInvoiceWithItems(invoiceWithItemsRequest);
     }
 }

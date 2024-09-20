@@ -1,5 +1,6 @@
 package com.bba.Backend.models;
 
+import com.bba.Backend.annotations.BigDecimalFormat;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -7,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Builder;
 
+import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.Date;
 
 @Getter
@@ -32,23 +35,33 @@ public class Customer {
     @Column(name = "email", length = 256)
     private String email;
 
-    @Column(name = "phone", length = 256, nullable = false)
+    @Column(name = "phone", length = 256)
     private String phone;
 
-    @Column(name = "paid_amount")
-    private Double paidAmount;
+    @Column(name = "paid_amount", precision = 10, scale = 4)
+    @BigDecimalFormat(precision = 10, scale = 4)
+    private BigDecimal paidAmount;
 
-    @Column(name = "created_date", length = 256)
+    @Column(name = "total_purchase_amount", precision = 10, scale = 4)
+    @BigDecimalFormat(precision = 10, scale = 4)
+    private BigDecimal totalPurchaseAmount;
+
+    @Column(name = "created_date")
     private Date createdDate;
 
-    @Column(name = "total_purchase_amount")
-    private Double totalPurchaseAmount;
-
-    @Column(name = "discount")
-    private Double discount;
+    @Column(name = "discount", precision = 4, scale = 2)
+    @BigDecimalFormat(precision = 4, scale = 2)
+    private BigDecimal discount;
 
     @Column(name = "due_period")
     private Integer duePeriod;
+
+    @Column(name = "total_sold_amount", precision = 10, scale = 4)
+    @BigDecimalFormat(precision = 10, scale = 4)
+    private BigDecimal totalSoldAmount;
+
+    @Column(name = "shop_id", nullable = false)
+    private Integer shopId;
 
     @Override
     public String toString() {

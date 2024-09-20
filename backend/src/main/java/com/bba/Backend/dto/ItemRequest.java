@@ -9,4 +9,5 @@ import lombok.*;
 @Builder
 public class ItemRequest {
     public String name;
+    public Integer shopId;
 }

@@ -1,7 +1,13 @@
 package com.bba.Backend.dto;
 
 
+import com.bba.Backend.annotations.BigDecimalFormat;
+import com.bba.Backend.utils.BigDecimalDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.deser.std.DelegatingDeserializer;
 import lombok.*;
+
+import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -21,11 +27,18 @@ public class InvoiceItemDto {
 
     public String itemBatchNumber;
 
-    public Double rate;
+    @BigDecimalFormat(precision = 10, scale = 4)
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
+    public BigDecimal rate;
+
+    @BigDecimalFormat(precision = 4, scale = 2)
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
+    public BigDecimal discount;
+
+    @BigDecimalFormat(precision = 10, scale = 4)
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
+    public BigDecimal price;
 
     public Integer quantity;
 
-    public Double discount;
-
-    public Double price;
 }

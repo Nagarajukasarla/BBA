@@ -1,8 +1,10 @@
 package com.bba.Backend.models;
 
+import com.bba.Backend.annotations.BigDecimalFormat;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -30,11 +32,27 @@ public class Invoice {
     @Column(name = "generation_date", nullable = false)
     private Date generationDate;
 
+    @Column(name = "billed_date")
+    private Date billedDate;
+
+    @Column(name = "due_date")
+    private Date dueDate;
+
     @Column(name = "payment_mode", nullable = false)
     private String paymentMode;
 
-    @Column(name = "amount", nullable = false)
-    private Double amount;
+    @Column(name = "amount", precision = 10, scale = 4, nullable = false)
+    @BigDecimalFormat(precision = 10, scale = 4)
+    private BigDecimal amount;
+
+    @Column(name = "type", nullable = false)
+    private String type;
+
+    @Column(name = "status", nullable = false)
+    private String status;
+
+    @Column(name = "shop_id", nullable = false)
+    private Integer shopId;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "customer_number", referencedColumnName = "customer_number", unique = true, insertable = false, updatable = false)

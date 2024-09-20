@@ -2,9 +2,9 @@ package com.bba.Backend.implementation;
 
 import com.bba.Backend.dto.PartnerDto;
 import com.bba.Backend.models.Partner;
-import com.bba.Backend.models.util.Role;
 import com.bba.Backend.repositories.PartnerRepository;
 import com.bba.Backend.services.PartnerService;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +19,7 @@ public class UserServiceImplements implements PartnerService {
     private final AddressServiceImplements addressService;
 
     @Override
-    public ResponseEntity<PartnerDto> addPartner (PartnerDto partnerDto) {
+    public ResponseEntity<PartnerDto> savePartner(@NonNull PartnerDto partnerDto) {
         var newPartner = Partner.builder()
                 .firstName(partnerDto.getFirstName())
                 .lastName(partnerDto.getLastName())
@@ -27,17 +27,20 @@ public class UserServiceImplements implements PartnerService {
                 .password(partnerDto.getPassword())
                 .gender(partnerDto.getGender())
                 .mobile(partnerDto.getMobile())
-                .role(Role.USER)
+                .shopId(partnerDto.getShopId())
                 .build();
 
+        partnerRepository.save(newPartner);
         addressService.saveAddressOfPartner(partnerDto.getAddressDto());
-        return ResponseEntity.ok(modelMapper.map(newPartner, PartnerDto.class));
+        return ResponseEntity.ok(modelMapper.map(partnerRepository.save(newPartner), PartnerDto.class));
     }
 
-    public ResponseEntity<?> findPartner(String email, String password) {
+    public ResponseEntity<?> getPartner(String email, String password) {
         var partner = partnerRepository.findByEmail(email);
         var partnerAddress = addressService.getAddressOfPartner(email);
         assert partner.orElse(null) != null;
         return ResponseEntity.ok(new PartnerDto(partner.orElse(null), partnerAddress));
     }
 }
+
+

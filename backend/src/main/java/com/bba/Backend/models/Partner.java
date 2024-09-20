@@ -1,15 +1,8 @@
 package com.bba.Backend.models;
 
 import com.bba.Backend.models.util.Address;
-import com.bba.Backend.models.util.Role;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.Collection;
-import java.util.List;
 
 @Data
 @Builder
@@ -18,15 +11,12 @@ import java.util.List;
 @Entity
 @ToString
 @Table(name = "_partner")
-public class Partner implements UserDetails {
+public class Partner {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "_partner_id_seq")
     @SequenceGenerator(name = "_partner_id_seq", sequenceName = "_partner_id_seq", allocationSize = 1)
     private Integer id;
-
-    @Column(name = "owner", length = 256, nullable = false)
-    private Boolean isOwner;
 
     @Column(name = "first_name", length = 256, nullable = false)
     private String firstName;
@@ -46,45 +36,11 @@ public class Partner implements UserDetails {
     @Column(name = "mobile", length = 128, nullable = false)
     private String mobile;
 
-    @Enumerated(EnumType.STRING)
-    Role role;
+    @Column(name = "shop_id")
+    private Integer shopId;
 
     @OneToOne(mappedBy = "partner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "email", referencedColumnName = "email")
     private Address address;
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public String getUsername() {
-        return email;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
 }

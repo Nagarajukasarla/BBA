@@ -1,12 +1,13 @@
 package com.bba.Backend.dto;
 
+import com.bba.Backend.annotations.BigDecimalFormat;
+import com.bba.Backend.utils.BigDecimalDeserializer;
 import com.bba.Backend.utils.DateTime;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.*;
 import org.springframework.lang.NonNull;
 
-import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
+import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -27,13 +28,25 @@ public class ItemDto {
 
     private String batchNumber;
 
-    private Double rate;
+    @BigDecimalFormat(precision = 10, scale = 4)
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
+    private BigDecimal rate;
 
-    private Integer sGstInPercent;
+    @BigDecimalFormat(precision = 10, scale = 4)
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
+    private BigDecimal mrp;
 
-    private Integer cGstInPercent;
+    @BigDecimalFormat(precision = 4, scale = 2)
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
+    private BigDecimal sGstInPercent;
 
-    private Integer iGstInPercent;
+    @BigDecimalFormat(precision = 4, scale = 2)
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
+    private BigDecimal cGstInPercent;
+
+    @BigDecimalFormat(precision = 4, scale = 2)
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
+    private BigDecimal iGstInPercent;
 
     private DateTime manufacturingDate;
 
@@ -41,7 +54,11 @@ public class ItemDto {
 
     private Boolean isFastMoving;
 
-    private Double mrp;
+    private Integer shopId;
+
+    private String hsnNumber;
+
+    private String invoiceNumber;
 
     public void setManufacturingDate(@NonNull String formattedDate) {
         this.manufacturingDate = new DateTime(formattedDate);
@@ -62,7 +79,9 @@ public class ItemDto {
     @Override
     public String toString() {
         return "ItemDto { " + "\n\t" +
-                "id= " + id + ",\n\t" +
+                "shopId=" + id + ",\n\t" +
+                "id= " + shopId + ",\n\t" +
+                "hsnNumber= " + hsnNumber + ",\n\t" +
                 "name= " + name + ",\n\t" +
                 "company= " + company + ",\n\t" +
                 "quantity= " + quantity + ",\n\t" +
