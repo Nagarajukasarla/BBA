@@ -7,5 +7,7 @@ import org.springframework.http.ResponseEntity;
 public interface CompanyService {
     ResponseEntity<CompanyDto> saveCompany (CompanyDto companyDto);
 
-    ResponseEntity<CompanyDto> getCompany (String name);
+    ResponseEntity<?> getCompany (CompanyDto companyDto);
+
+    ResponseEntity<?> getCompanies();
 }

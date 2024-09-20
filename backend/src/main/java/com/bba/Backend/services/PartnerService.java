@@ -5,6 +5,6 @@ import com.bba.Backend.dto.PartnerDto;
 import org.springframework.http.ResponseEntity;
 
 public interface PartnerService {
-    ResponseEntity<PartnerDto> addPartner (PartnerDto partnerDto);
-    ResponseEntity<?> findPartner (String email, String password);
+    ResponseEntity<PartnerDto> savePartner (PartnerDto partnerDto);
+    ResponseEntity<?> getPartner (String email, String password);
 }
