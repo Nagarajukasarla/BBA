@@ -16,7 +16,7 @@
 }
 
 .primary-save-button-style:active {
-    background-color: rgb(5, 122, 15);
+    background-color: #156ae2;
     transform: scale(0.90);
 }
 

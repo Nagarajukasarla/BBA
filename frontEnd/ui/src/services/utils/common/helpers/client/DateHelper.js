@@ -17,7 +17,14 @@ class DateHelper {
      */
     static getCurrentFormattedDateString() {
         const currentDate = new Date();
-        return currentDate.toISOString().substring(0, 19);
+        console.log("Current date: " + currentDate);
+        const year = currentDate.getFullYear();
+        const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+        const day = String(currentDate.getDate()).padStart(2, "0");
+        const hours = String(currentDate.getHours()).padStart(2, "0");
+        const minutes = String(currentDate.getMinutes()).padStart(2, "0");
+        const seconds = String(currentDate.getSeconds()).padStart(2, "0");
+        return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
     }
 
     /**
@@ -40,7 +47,9 @@ class DateHelper {
         const [month, year] = monthYear.split("/");
         const day = "01";
         const time = "00:00:00";
-        return `20${year}-${month.length < 2 ? '0' + month : month}-${day}T${time}`;
+        return `20${year}-${
+            month.length < 2 ? "0" + month : month
+        }-${day}T${time}`;
     }
 
     /**
@@ -232,7 +241,7 @@ class DateHelper {
         const startDateObj = new Date(startDate);
         const endDateObj = new Date(endDate);
         return startDateObj < endDateObj;
-    };
+    }
 }
 
 export default DateHelper;

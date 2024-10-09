@@ -25,11 +25,18 @@ class APIResponse {
         }
     }
 
-    static NOT_FOUND = 404;
-    static INTERNAL_SERVER_ERROR = 500;
+    static NETWORK_ERROR = -1;
+
     static SUCCESS = 200;
     static CREATED = 201;
-    static NETWORK_ERROR = -1;
+    static PARTIAL_CONTENT = 206;
+
+    static UNAUTHORIZED = 401;
+    static FORBIDDEN = 403;
+    static NOT_FOUND = 404;
+    static REQUEST_TIMEOUT = 408;
+    static CONFLICT = 409;
+    static INTERNAL_SERVER_ERROR = 500;
 
     setNotFoundResponse() {
         this.type = 'Not Found';

@@ -4,7 +4,6 @@ export const onSelectedPaymentMode = (event, { datePickerRef }) => {
     }
 };
 
-
 export const onSelectBilledDate = (event, { hsnNumberRef }) => {
     if (event.key === 'Enter' && hsnNumberRef.current) {
         hsnNumberRef.current.focus();

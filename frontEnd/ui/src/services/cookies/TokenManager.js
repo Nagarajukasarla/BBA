@@ -20,7 +20,7 @@ class TokenManager {
     static getToken() {
         const a = localStorage.getItem("a");
         if (!a) return "";
-        
+
         const b = localStorage.getItem("b");
         const c = localStorage.getItem("c");
         const res = TokenManager.decode(a) + "." + b + "." + TokenManager.decode(c);

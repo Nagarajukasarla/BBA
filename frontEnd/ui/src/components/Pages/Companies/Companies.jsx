@@ -1,10 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { Col, Row, Typography, Space, Button, Modal, Input, message } from "antd";
+import {
+    Col,
+    Row,
+    Typography,
+    Space,
+    Button,
+    Modal,
+    Input,
+    message,
+} from "antd";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import { createCompany } from "../../../services/api/post/authorizedPostService";
 import { useNavigate } from "react-router-dom";
 import { authenticate } from "../../../services/api/get/authorizedGetServices";
 import TokenManager from "../../../services/cookies/TokenManager";
+import APIResponse from "../../../services/api/statusUtils/APIResponse";
 
 export const Companies = () => {
     const navigate = useNavigate();
@@ -26,44 +36,50 @@ export const Companies = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const success = () => {
+    const result = (type) => {
         messageApi.open({
-            type: `success`,
-            content : `${"Saved successfully"}`,
+            type: `${type}`,
+            content:
+                type === "success" ? "Saved successfully" : "Failed to Save",
         });
+
     };
 
-    const error = () => {
+    const success = (type) => {
         messageApi.open({
-            type: "error",
-            content : `${"Company not saved"}`,
+            type: `${type}`,
+            content: "Saved successfully"
         });
     };
-
     const showModal = () => {
         setOpen(true);
     };
 
     const onClickAddNewCompany = () => {
-        showModal();
+       showModal();
     };
 
     const handleOk = () => {
+        let resultMessage = '';
+        checkAuthentication();
         setConfirmLoading(true);
-        setTimeout(() => {
-            setOpen(false);
-            checkAuthentication();
-            setConfirmLoading(false);
-        }, 400);
-
-        status = createCompany(TokenManager.getToken(), company);
-        if(status) {
-            success();
-        }
-        else {
-            error();
-        }
+        // createCompany(company)
+        //     .then((response) => {
+        //         if (response.status === APIResponse.SUCCESS) {
+        //             resultMessage = "success";
+        //         }
+        //         else if (response.status === APIResponse.CONFLICT) {
+        //             resultMessage = "failed";
+        //         }
+        //         else {
+        //             resultMessage = "failed";
+        //         }
+        //         setConfirmLoading(false);
+        //     })
+        setOpen(false);
+        setConfirmLoading(false);
         setCompany("");
+        success('success');
     };
 
     const handleCancel = () => {
@@ -120,7 +136,9 @@ export const Companies = () => {
                                 style={{ width: "250px" }}
                                 value={company}
                                 onChange={onNameChanges}
-                                onKeyUp={(event) => { event.key === 'Enter' && handleOk() }}
+                                onKeyUp={(event) => {
+                                    event.key === "Enter" && handleOk();
+                                }}
                             ></Input>
                         </Space>
                     </Space>

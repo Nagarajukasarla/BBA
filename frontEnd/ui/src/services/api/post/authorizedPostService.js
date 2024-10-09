@@ -1,6 +1,7 @@
 import { getStatus } from "../statusUtils/responseStatus";
 import { apiUrl } from "../../../config";
 import APIResponse from "../statusUtils/APIResponse";
+import TokenManager from "../../cookies/TokenManager";
 
 /**
  * Create a new company using the provided token and company name.
@@ -9,7 +10,9 @@ import APIResponse from "../statusUtils/APIResponse";
  * @param {string} companyName - The name of the company to be created.
  * @return {Promise<boolean>} Returns true if the company is successfully created, otherwise false.
  */
-export const createCompany = async (token, companyName, shopId) => {
+export const createCompany = async (companyName) => {
+    const token = TokenManager.getToken();
+    const shopId = TokenManager.getShopId();
     try {
         const response = await fetch(`${apiUrl}/api/v1/company/save`, {
             method: "POST",
@@ -24,27 +27,17 @@ export const createCompany = async (token, companyName, shopId) => {
         });
 
         if (!response.ok) {
-            const errorData = await response.json();
-            console.error(
-                `Server responded with an error: ${errorData.message}`
-            );
-            return false;
+            return new APIResponse(response.status, null);
         }
 
         const data = await response.json();
-        console.log(data);
-        return true;
+        return new APIResponse(response.status, data);
     } catch (error) {
-        if (error.name === "TypeError") {
-            console.error(
-                "Network error or resource unavailable. Please check your internet connection."
-            );
+        if (error.name === 'TypeError') {
+            return new APIResponse(-1, null);
         } else {
-            console.error(
-                `Unexpected error while saving new company: ${error}`
-            );
+            return new APIResponse(APIResponse.INTERNAL_SERVER_ERROR, null);
         }
-        return false;
     }
 };
 
@@ -267,6 +260,7 @@ export const getFilteredInvoices = async (token, filters) => {
 };
 
 export const saveInvoiceWithItems = async (shopId, token, {
+    invoiceNumber,
     customer,
     paymentMode,
     billedDate,
@@ -275,7 +269,7 @@ export const saveInvoiceWithItems = async (shopId, token, {
     items
 }) => {
     try {
-        const response = await fetch(`${apiUrl}/api/v1/invoice/save-with-items`, {
+        const response = await fetch(`${apiUrl}/api/v1/invoice/save-invoice-with-items`, {
             method: 'POST',
             headers: {
                 'Content-Type': "application/json",
@@ -283,6 +277,7 @@ export const saveInvoiceWithItems = async (shopId, token, {
             },
             body: JSON.stringify({
                 shopId: shopId,
+                invoiceNumber: invoiceNumber,
                 customerNumber: customer.customerNumber,
                 paymentMode: paymentMode,
                 billedDate: billedDate,

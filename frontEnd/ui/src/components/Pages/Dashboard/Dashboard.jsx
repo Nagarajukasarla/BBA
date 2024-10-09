@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
     Col,
@@ -117,19 +117,19 @@ export const Dashboard = () => {
         },
         {
             name: "Group C",
-            value: 1398,
+            value: 0,
         },
         {
             name: "Group D",
-            value: 9800,
+            value: 0,
         },
         {
             name: "Group E",
-            value: 3908,
+            value: 0,
         },
         {
             name: "Group F",
-            value: 4800,
+            value: 0,
         },
         {
             name: "Group G",

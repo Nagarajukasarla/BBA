@@ -15,6 +15,7 @@ import {
     Radio,
     DatePicker,
     Modal,
+    Button,
 } from "antd";
 import { DeleteOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import "../../coreComponents/Styles/primaryStyle.css";
@@ -86,6 +87,7 @@ export const AddOrEditStock = () => {
     const packingTypeRef = useRef(null);
 
     const [serialNumber, setSerialNumber] = useState(0);
+    const [invoiceNumber, setInvoiceNumber] = useState("");
     const [customer, setCustomer] = useState(null);
     const [paymentMode, setPaymentMode] = useState("");
     const [billedDate, setBilledDate] = useState("");
@@ -107,6 +109,8 @@ export const AddOrEditStock = () => {
     const [mrp, setMrp] = useState("");
     const [items, setItems] = useState([]);
 
+    const [invoiceNumberFieldStatus, setInvoiceNumberFieldStatus] =
+        useState(false);
     const [hsnNumberFieldStatus, setHsnNumberFieldStatus] = useState(false);
     const [productNameFieldStatus, setProductNameFieldStatus] = useState(false);
     const [batchNumberFieldStatus, setBatchNumberFieldStatus] = useState(false);
@@ -135,6 +139,7 @@ export const AddOrEditStock = () => {
     const [open, setOpen] = useState(false);
 
     const fields = [
+        invoiceNumber,
         hsnNumber,
         productName,
         batchNumber,
@@ -173,6 +178,12 @@ export const AddOrEditStock = () => {
     }, [items]); // This will log the updated items after each change
 
     useEffect(() => {
+        if (invoiceNumber && invoiceNumber !== "") {
+            setInvoiceNumberFieldStatus(false);
+        }
+    }, [invoiceNumber]);
+
+    useEffect(() => {
         if (customer) {
             setCustomerFieldStatus(false);
         }
@@ -187,12 +198,14 @@ export const AddOrEditStock = () => {
     useEffect(() => {
         if (billedDate) {
             setBilledDateFieldStatus(false);
+            setDueDateFieldStatus(false);
         }
     }, [billedDate]);
 
     useEffect(() => {
         if (dueDate) {
             setDueDateFieldStatus(false);
+            setBilledDateFieldStatus(false);
         }
     }, [dueDate]);
 
@@ -300,11 +313,12 @@ export const AddOrEditStock = () => {
 
     const submitInvoice = async () => {
         await saveInvoiceWithItems(shopId, token, {
+            invoiceNumber: invoiceNumber,
             customer: customer,
             paymentMode: paymentMode,
             billedDate: billedDateString,
             dueDate: dueDateString,
-            generationDate: generateFormattedDateString(),
+            generationDate: DateHelper.getCurrentFormattedDateString(),
             items: items,
         })
             .then((response) => {
@@ -323,21 +337,66 @@ export const AddOrEditStock = () => {
     const onClickSaveButton = () => {
         if (
             validate([
+                invoiceNumber,
                 customer,
                 paymentMode,
                 billedDateString,
                 dueDateString,
                 shopId,
                 token,
-            ])
+            ]) &&
+            validateDatesRanges([billedDate, dueDate]) &&
+            serialNumber >= 1
         ) {
             submitInvoice();
         } else {
-            notifyInvalidFields();
+            notifyInvalidInvoiceFields();
+            return;
         }
     };
 
-    const notifyInvalidFields = () => {
+    const notifyInvalidInvoiceFields = () => {
+        if (
+            dueDateString === "" ||
+            dueDateString === undefined ||
+            dueDateString === null
+        ) {
+            setDueDateFieldStatus(true);
+        }
+        if (
+            billedDateString === "" ||
+            billedDateString === undefined ||
+            billedDateString === null
+        ) {
+            setBilledDateFieldStatus(true);
+        }
+        if (!validateDatesRanges([billedDateString, dueDateString])) {
+            setBilledDateFieldStatus(true);
+            setDueDateFieldStatus(true);
+        } else {
+            setBilledDateFieldStatus(false);
+            setDueDateFieldStatus(false);
+        }
+        if (
+            paymentMode === "" ||
+            paymentMode === undefined ||
+            paymentMode === null
+        ) {
+            setPaymentModeFieldStatus(true);
+        }
+        if (
+            invoiceNumber === "" ||
+            invoiceNumber === undefined ||
+            invoiceNumber === null
+        ) {
+            setInvoiceNumberFieldStatus(true);
+        }
+        if (customer === null || customer === undefined || customer === "") {
+            setCustomerFieldStatus(true);
+        }
+    };
+
+    const notifyInvalidProductFields = () => {
         if (mrp === "" || mrp === undefined || mrp === null) {
             setMrpFieldStatus(true);
             mrpRef.current.focus();
@@ -396,8 +455,7 @@ export const AddOrEditStock = () => {
             setManufacturingDateFieldStatus(true);
             setExpiryDateFieldStatus(true);
             manufacturingDateRef.current.focus();
-        }
-        else {
+        } else {
             setManufacturingDateFieldStatus(false);
             setExpiryDateFieldStatus(false);
         }
@@ -441,34 +499,6 @@ export const AddOrEditStock = () => {
             setHsnNumberFieldStatus(true);
             hsnNumberRef.current.focus();
         }
-        if (dueDate === "" || dueDate === undefined || dueDate === null) {
-            setDueDateFieldStatus(true);
-        }
-        if (
-            billedDate === "" ||
-            billedDate === undefined ||
-            billedDate === null
-        ) {
-            setBilledDateFieldStatus(true);
-        }
-        if (!validateDatesRanges([billedDateString, dueDateString])) {
-            setBilledDateFieldStatus(true);
-            setDueDateFieldStatus(true);
-        }
-        else{
-            setBilledDateFieldStatus(true);
-            setDueDateFieldStatus(true);
-        }
-        if (
-            paymentMode === "" ||
-            paymentMode === undefined ||
-            paymentMode === null
-        ) {
-            setPaymentModeFieldStatus(true);
-        }
-        if (customer === null || customer === undefined || customer === "") {
-            setCustomerFieldStatus(true);
-        }
     };
 
     const handleNumericInputChange = (setter) => (event) => {
@@ -505,13 +535,12 @@ export const AddOrEditStock = () => {
     const addProduct = () => {
         if (
             validate(fields) &&
-            vaidateMonthYearDateFields([manufacturingDate, expiryDate]) &&
-            validateDatesRanges([billedDateString, dueDateString])
+            vaidateMonthYearDateFields([manufacturingDate, expiryDate])
         ) {
             const product = {
                 key: serialNumber,
                 hsnNumber: hsnNumber,
-                product: productName,
+                name: productName,
                 batchNumber: batchNumber,
                 company: companyName,
                 packingType: packingType,
@@ -529,7 +558,8 @@ export const AddOrEditStock = () => {
             clearProduct();
             hsnNumberRef.current.focus();
         } else {
-            notifyInvalidFields();
+            notifyInvalidProductFields();
+            return;
         }
     };
 
@@ -543,12 +573,16 @@ export const AddOrEditStock = () => {
 
     const onChangeBilledDate = (date, dateString) => {
         setBilledDate(date);
-        setBilledDateString(DateHelper.parseDayMonthYearToFormattedString(dateString));
+        setBilledDateString(
+            DateHelper.parseDayMonthYearToFormattedString(dateString)
+        );
     };
 
     const onChangeDueDate = (date, dateString) => {
         setDueDate(date);
-        setDueDateString(DateHelper.parseDayMonthYearToFormattedString(dateString));
+        setDueDateString(
+            DateHelper.parseDayMonthYearToFormattedString(dateString)
+        );
     };
 
     const invalidStyle = {
@@ -567,9 +601,9 @@ export const AddOrEditStock = () => {
             width: "5%",
         },
         {
-            key: "product",
+            key: "name",
             title: "Product",
-            dataIndex: "product",
+            dataIndex: "name",
             width: "7%",
         },
         {
@@ -711,7 +745,7 @@ export const AddOrEditStock = () => {
                             >
                                 <Select
                                     style={{
-                                        width: 380,
+                                        width: 350,
                                         ...(customerFieldStatus &&
                                             invalidStyle),
                                     }}
@@ -737,7 +771,30 @@ export const AddOrEditStock = () => {
                             direction="vertical"
                             style={{
                                 textAlign: "start",
-                                marginLeft: "70px",
+                                marginLeft: "30px",
+                            }}
+                        >
+                            <Typography.Text className="primary-input-field-header-style">
+                                Invoice Number
+                            </Typography.Text>
+                            <Input
+                                style={{
+                                    width: "130px",
+                                    padding: "4px 3px 4px 6px",
+                                    ...(invoiceNumberFieldStatus &&
+                                        invalidStyle),
+                                }}
+                                value={invoiceNumber}
+                                onChange={(event) =>
+                                    setInvoiceNumber(event.target.value)
+                                }
+                            ></Input>
+                        </Space>
+                        <Space
+                            direction="vertical"
+                            style={{
+                                textAlign: "start",
+                                marginLeft: "50px",
                             }}
                         >
                             <Typography.Text className="primary-input-field-header-style">
@@ -745,8 +802,6 @@ export const AddOrEditStock = () => {
                             </Typography.Text>
                             <Radio.Group
                                 style={{
-                                    width: "220px",
-                                    padding: "4px 3px 4px 6px",
                                     ...(paymentModeFieldStatus && invalidStyle),
                                 }}
                                 value={paymentMode}
@@ -770,7 +825,7 @@ export const AddOrEditStock = () => {
                             </Typography.Text>
                             <DatePicker
                                 style={{
-                                    width: "200px",
+                                    width: "150px",
                                     padding: "4px 3px 4px 6px",
                                     ...(billedDateFieldStatus && invalidStyle),
                                 }}
@@ -790,7 +845,7 @@ export const AddOrEditStock = () => {
                             </Typography.Text>
                             <DatePicker
                                 style={{
-                                    width: "200px",
+                                    width: "150px",
                                     padding: "4px 3px 4px 6px",
                                     ...(dueDateFieldStatus && invalidStyle),
                                 }}
@@ -801,7 +856,7 @@ export const AddOrEditStock = () => {
                     </Row>
                     <Row
                         style={{
-                            marginTop: "40px",
+                            marginTop: "25px",
                         }}
                     >
                         <Space
@@ -1190,6 +1245,19 @@ export const AddOrEditStock = () => {
                         columns={columns}
                         dataSource={items}
                     />
+                    <Row
+                        style={{
+                            marginTop: "20px",
+                        }}
+                        justify={"end"}
+                    >
+                        <button
+                            className="primary-save-button-style"
+                            onClick={onClickSaveButton}
+                        >
+                            Save
+                        </button>
+                    </Row>
                 </Col>
             </Card>
             <Modal
