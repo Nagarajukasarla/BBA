@@ -39,4 +39,5 @@ public class InvoiceController {
     public ResponseEntity<?> saveInvoiceWithItems(@RequestBody InvoiceWithItemsRequest invoiceWithItemsRequest) {
         return invoiceService.saveInvoiceWithItems(invoiceWithItemsRequest);
     }
+
 }

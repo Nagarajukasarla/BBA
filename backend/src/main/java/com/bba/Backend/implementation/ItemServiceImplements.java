@@ -14,7 +14,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -75,6 +78,76 @@ public class ItemServiceImplements implements ItemService {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Item not found");
     }
 
+    @Override
+    public ResponseEntity<?> updateItems(List<ItemDto> items) {
+        try {
+            boolean allItemsUpdated = true;
+            List<String> failedItems = new ArrayList<>();
+
+            for (ItemDto item : items) {
+                Optional<Item> itemOptional = itemRepository.findByIdAndShopId(item.getId(), item.getShopId());
+                if (itemOptional.isPresent()) {
+                    if (item.getHsnNumber() != null) {
+                        itemOptional.get().setHsnNumber(item.getHsnNumber());
+                    }
+                    if (item.getName() != null) {
+                        itemOptional.get().setName(item.getName());
+                    }
+                    if (item.getBatchNumber() != null) {
+                        itemOptional.get().setBatchNumber(item.getBatchNumber());
+                    }
+                    if (item.getQuantity() != null) {
+                        itemOptional.get().setQuantity(item.getQuantity());
+                    }
+                    if (item.getCompany() != null) {
+                        itemOptional.get().setCompany(item.getCompany());
+                    }
+                    if (item.getManufacturingDate() != null) {
+                        itemOptional.get().setManufacturingDate(DateTime.formatDate(item.getManufacturingDate()));
+                    }
+                    if (item.getExpiryDate() != null) {
+                        itemOptional.get().setExpiryDate(DateTime.formatDate(item.getExpiryDate()));
+                    }
+                    if (item.getMrp() != null) {
+                        itemOptional.get().setMrp(item.getMrp());
+                    }
+                    if (item.getRate() != null) {
+                        itemOptional.get().setRate(item.getRate());
+                    }
+                    if (item.getCGstInPercent() != null) {
+                        itemOptional.get().setCGstInPercent(item.getCGstInPercent());
+                    }
+                    if (item.getSGstInPercent() != null) {
+                        itemOptional.get().setCGstInPercent(item.getSGstInPercent());
+                    }
+                    if (item.getIGstInPercent() != null) {
+                        itemOptional.get().setCGstInPercent(item.getIGstInPercent());
+                    }
+                    if (item.getPackingType() != null) {
+                        itemOptional.get().setPackingType(item.getPackingType());
+                    }
+                    itemRepository.save(itemOptional.get());
+                }
+                else {
+                    allItemsUpdated = false;
+                    failedItems.add(item.getId().toString());
+                }
+            }
+
+            if (!allItemsUpdated) {
+                return ResponseEntity
+                        .status(HttpStatus.PARTIAL_CONTENT)
+                        .body("Some items failed to update: " + String.join(", ", failedItems));
+            }
+            return ResponseEntity.ok("All items saved successfully");
+        }
+        catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An error occurred while updating items");
+        }
+    }
+
     /**
      * This method saves items. If the item is already present, it compares all fields.
      * If they match, the quantity is incremented; otherwise, it's saved as a new item.
@@ -82,7 +155,10 @@ public class ItemServiceImplements implements ItemService {
      * @param itemDto should not be null
      * @return ResponseEntity representing the status of operation
      */
-
+    @Deprecated
+    /*
+    * About to remove, saving item based on invoice is already implemented
+    */
     @Override
     public ResponseEntity<String> saveItem (@NonNull ItemDto itemDto) {
         var item = itemRepository.findItemByCompanyAndBatchNumber(itemDto.getCompany(), itemDto.getBatchNumber());

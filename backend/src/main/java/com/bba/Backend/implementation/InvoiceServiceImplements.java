@@ -13,9 +13,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.stereotype.Service;
 
 import java.util.logging.Logger;
@@ -31,6 +31,11 @@ public class InvoiceServiceImplements implements InvoiceService {
     private final Mapper mapper;
     private final Logger logger = Logger.getLogger(InvoiceServiceImplements.class.getName());
 
+    @Deprecated
+    /*
+     * About to remove while working on invoices and invoice generation
+     * To be modified as `generateInvoice`
+     */
     @Override
     public ResponseEntity<?> saveInvoice(@NonNull InvoiceRequest invoiceRequest) {
         var newInvoiceNumber = invoiceRepository.getNextInvoiceNumber() + "";
@@ -57,6 +62,11 @@ public class InvoiceServiceImplements implements InvoiceService {
                 .map(mapper::mapInvoiceProjectionToInvoiceDto));
     }
 
+    @Deprecated
+    /*
+    * Should be removed when working on invoices and invoice generation
+    *
+    */
     @Override
     public ResponseEntity<?> getFilteredInvoices(InvoiceFilterRequest invoiceFilterRequest) {
         var filteredInvoices = invoiceRepository.getFilteredInvoices(
@@ -73,11 +83,7 @@ public class InvoiceServiceImplements implements InvoiceService {
 
     @Override
     public ResponseEntity<?> saveInvoiceWithItems(@NonNull InvoiceWithItemsRequest invoiceWithItemsRequest) {
-        logger.info("InvoiceItems: " + invoiceWithItemsRequest.getItems());
-        logger.info("==============");
-
         try {
-
             ObjectMapper objectMapper = new ObjectMapper();
             String jsonStr = objectMapper.writeValueAsString(invoiceWithItemsRequest.getItems());
 
@@ -102,12 +108,23 @@ public class InvoiceServiceImplements implements InvoiceService {
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Unable to process data");
         }
-        catch (Exception e) {
-            logger.info("Exception raised: " + e.getMessage());
+        catch (JpaSystemException exception) {
+            if (exception.getMessage().contains("already exists")) {
+                return ResponseEntity
+                        .status(HttpStatus.CONFLICT)
+                        .body("Invoice already exists");
+            }
+        }
+        catch (Exception exception) {
+            Throwable rootCause = exception.getCause();
+            logger.info(exception.getMessage());
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error saving: " + e.getMessage());
+                    .body("Error in saving");
         }
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Unknown Error");
     }
 }
 

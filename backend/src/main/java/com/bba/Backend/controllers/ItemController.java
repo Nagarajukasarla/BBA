@@ -8,6 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.w3c.dom.stylesheets.LinkStyle;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/product")
@@ -31,5 +34,10 @@ public class ItemController {
         return itemService.getItems().isEmpty()
                 ? ResponseEntity.status(HttpStatus.NOT_FOUND).body("No items found!")
                 : ResponseEntity.ok(itemService.getItems());
+    }
+
+    @PatchMapping(path = "/update-items")
+    public ResponseEntity<?> updateMultipleItems (@RequestBody List<ItemDto> items) {
+        return itemService.updateItems(items);
     }
 }

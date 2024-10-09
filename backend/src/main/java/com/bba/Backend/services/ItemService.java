@@ -14,4 +14,6 @@ public interface ItemService {
     ResponseEntity<String> saveItem(ItemDto itemDto);
 
     List<ItemDto> getItems();
+
+    ResponseEntity<?> updateItems(List<ItemDto> items);
 }
