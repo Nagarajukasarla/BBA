@@ -41,58 +41,6 @@ export const createCompany = async (companyName) => {
     }
 };
 
-/**
- * Saves a product using the provided product data and authorization token.
- *
- * @param {object} product - The product data to be saved
- * @param {string} token - The authorization token
- * @return {boolean} Whether the product was successfully saved
- */
-export const saveProduct = async (product, token, shopId) => {
-    try {
-        const response = await fetch(`${apiUrl}/api/v1/product/save`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-                shopId: shopId,
-                hsnNumber: product.hsnNumber,
-                name: product.name,
-                company: product.companyName,
-                quantity: product.quantity,
-                packingType: product.packingType,
-                batchNumber: product.batchNumber,
-                manufacturingDate: product.manufacturingDate,
-                expiryDate: product.expiryDate,
-                sGstInPercent: product.sGst,
-                cGstInPercent: product.cGst,
-                iGstInPercent: product.iGst,
-                rate: product.rate,
-                mrp: product.mrp,
-                isFastMoving: false,
-            }),
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            console.error(
-                `Server responded with an error: ${errorData.message}`
-            );
-            return false;
-        } else {
-            return true;
-        }
-    } catch (error) {
-        if (error.name === "TypeError") {
-            console.error("Network error or request was blocked:", error);
-        } else {
-            console.error(`Error in saving product: ${error}`);
-        }
-        return false;
-    }
-};
 
 /**
  * Retrieves a product from the API using the provided product name and token.
@@ -258,6 +206,7 @@ export const getFilteredInvoices = async (token, filters) => {
         return false;
     }
 };
+
 
 export const saveInvoiceWithItems = async (shopId, token, {
     invoiceNumber,
