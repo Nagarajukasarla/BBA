@@ -11,9 +11,7 @@ import java.util.Optional;
 public interface ItemService {
     ResponseEntity<?> getItem(ItemRequest itemRequest);
 
-    ResponseEntity<String> saveItem(ItemDto itemDto);
-
     List<ItemDto> getItems();
 
-    ResponseEntity<?> updateItems(List<ItemDto> items);
+    ResponseEntity<?> updateItem(ItemDto item);
 }

@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.w3c.dom.stylesheets.LinkStyle;
 
 import java.util.List;
 
@@ -24,11 +23,6 @@ public class ItemController {
         return itemService.getItem(request);
     }
 
-    @PostMapping(path = "/save")
-    public ResponseEntity<String> saveProduct (@RequestBody ItemDto itemDto) {
-        return itemService.saveItem(itemDto);
-    }
-
     @GetMapping(path = "/get-items")
     public ResponseEntity<?> getAllProducts () {
         return itemService.getItems().isEmpty()
@@ -36,8 +30,8 @@ public class ItemController {
                 : ResponseEntity.ok(itemService.getItems());
     }
 
-    @PatchMapping(path = "/update-items")
-    public ResponseEntity<?> updateMultipleItems (@RequestBody List<ItemDto> items) {
-        return itemService.updateItems(items);
+    @PatchMapping(path = "/update-item")
+    public ResponseEntity<?> updateMultipleItems (@RequestBody ItemDto item) {
+        return itemService.updateItem(item);
     }
 }

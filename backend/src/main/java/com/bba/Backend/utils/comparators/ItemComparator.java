@@ -20,7 +20,6 @@ public class ItemComparator {
         equalityStatusMap.put("packingType", Objects.equals(item.getPackingType(), itemDto.getPackingType()));
         equalityStatusMap.put("quantity", Objects.equals(item.getQuantity(), itemDto.getQuantity()));
         equalityStatusMap.put("batchNumber", Objects.equals(item.getBatchNumber(), itemDto.getBatchNumber()));
-        equalityStatusMap.put("rate", Objects.equals(item.getRate(), itemDto.getRate()));
         equalityStatusMap.put("cGstInPercent", Objects.equals(item.getCGstInPercent(), itemDto.getCGstInPercent()));
         equalityStatusMap.put("sGstInPercent", Objects.equals(item.getSGstInPercent(), itemDto.getSGstInPercent()));
         equalityStatusMap.put("iGstInPercent", Objects.equals(item.getIGstInPercent(), itemDto.getIGstInPercent()));

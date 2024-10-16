@@ -16,21 +16,31 @@ import java.math.BigDecimal;
 @Builder
 public class ItemDto {
 
-    private Integer id;
+    private Long id;
 
     private String name;
 
     private String company;
 
-    private Integer quantity;
+    @BigDecimalFormat(precision = 10, scale = 4)
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
+    private BigDecimal quantity;
 
-    private Integer packingType;
+    @BigDecimalFormat(precision = 10, scale = 4)
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
+    private BigDecimal freeQuantity;
+
+    private String packingType;
 
     private String batchNumber;
 
     @BigDecimalFormat(precision = 10, scale = 4)
     @JsonDeserialize(using = BigDecimalDeserializer.class)
-    private BigDecimal rate;
+    private BigDecimal costPrice;
+
+    @BigDecimalFormat(precision = 10, scale = 4)
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
+    private BigDecimal sellingPrice;
 
     @BigDecimalFormat(precision = 10, scale = 4)
     @JsonDeserialize(using = BigDecimalDeserializer.class)
@@ -54,48 +64,83 @@ public class ItemDto {
 
     private Boolean isFastMoving;
 
-    private Integer shopId;
+    private Long shopId;
 
     private String hsnNumber;
 
     private String invoiceNumber;
 
-    public void setManufacturingDate(@NonNull String formattedDate) {
-        this.manufacturingDate = new DateTime(formattedDate);
+    @BigDecimalFormat(precision = 4, scale = 2)
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
+    private BigDecimal margin;
+
+    private String scheme;
+
+    @BigDecimalFormat(precision = 13, scale = 4)
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
+    private BigDecimal costWorth;
+
+    @BigDecimalFormat(precision = 13, scale = 4)
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
+    private BigDecimal salesWorth;
+
+    @BigDecimalFormat(precision = 10, scale = 4)
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
+    private BigDecimal profit;
+
+    public void setManufacturingDate(String formattedDate) {
+        if (formattedDate != null) {
+            this.manufacturingDate = new DateTime(formattedDate);
+        }
     }
 
     public String getManufacturingDate() {
-        return this.manufacturingDate.getFormattedStringForDateGeneration();
+        if (this.manufacturingDate != null) {
+            return this.manufacturingDate.getFormattedStringForDateGeneration();
+        }
+        return null;
     }
 
-    public void setExpiryDate(@NonNull String formattedDate) {
-        this.expiryDate = new DateTime(formattedDate);
+    public void setExpiryDate(String formattedDate) {
+        if (formattedDate != null) {
+            this.expiryDate = new DateTime(formattedDate);
+        }
     }
 
     public String getExpiryDate() {
-        return this.expiryDate.getFormattedStringForDateGeneration();
+        if (this.expiryDate != null) {
+            return this.expiryDate.getFormattedStringForDateGeneration();
+        }
+        return null;
     }
 
     @Override
     public String toString() {
         return "ItemDto { " + "\n\t" +
-                "shopId=" + id + ",\n\t" +
-                "id= " + shopId + ",\n\t" +
-                "hsnNumber= " + hsnNumber + ",\n\t" +
-                "name= " + name + ",\n\t" +
-                "company= " + company + ",\n\t" +
-                "quantity= " + quantity + ",\n\t" +
-                "packingType= " + packingType + ",\n\t" +
-                "batchNumber= " + batchNumber + ",\n\t" +
-                "rate= " + rate + ",\n\t" +
-                "sGstInPercent= " + sGstInPercent + ",\n\t" +
-                "cGstInPercent= " + cGstInPercent + ",\n\t" +
-                "isGstInPercent= " + iGstInPercent + ",\n\t" +
-                "manufacturingDate= " + manufacturingDate + ",\n\t" +
-                "expiryDate= " + expiryDate + ",\n\t" +
-                "isFastMoving= " + isFastMoving + ",\n\t" +
-                "mrp= " + mrp + ",\n" +
-                "}";
-
+                "id=" + id + ",\n\t" +
+                "name=" + name + ",\n\t" +
+                "company=" + company + ",\n\t" +
+                "quantity=" + quantity + ",\n\t" +
+                "freeQuantity=" + freeQuantity + ",\n\t" +
+                "packingType=" + packingType + ",\n\t" +
+                "batchNumber=" + batchNumber + ",\n\t" +
+                "costPrice=" + costPrice + ",\n\t" +
+                "sellingPrice=" + sellingPrice + ",\n\t" +
+                "mrp=" + mrp + ",\n\t" +
+                "sGstInPercent=" + sGstInPercent + ",\n\t" +
+                "cGstInPercent=" + cGstInPercent + ",\n\t" +
+                "iGstInPercent=" + iGstInPercent + ",\n\t" +
+                "manufacturingDate=" + manufacturingDate + ",\n\t" +
+                "expiryDate=" + expiryDate + ",\n\t" +
+                "isFastMoving=" + isFastMoving + ",\n\t" +
+                "shopId=" + shopId + ",\n\t" +
+                "hsnNumber=" + hsnNumber + ",\n\t" +
+                "invoiceNumber=" + invoiceNumber + ",\n\t" +
+                "margin=" + margin + ",\n\t" +
+                "scheme=" + scheme + ",\n\t" +
+                "costWorth=" + costWorth + ",\n\t" +
+                "salesWorth=" + salesWorth + ",\n\t" +
+                "profit=" + profit + "\n" +
+                '}';
     }
 }

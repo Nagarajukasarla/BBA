@@ -1,9 +1,12 @@
 package com.bba.Backend.projections;
 
+import com.bba.Backend.utils.BigDecimalDeserializer;
+
+import java.math.BigDecimal;
 import java.util.Date;
 
 public interface InvoiceProjection {
-     Integer getId();
+     Long getId();
 
      String getInvoice_number();
 
@@ -17,7 +20,7 @@ public interface InvoiceProjection {
 
      String getState();
 
-     Double getAmount();
+     BigDecimal getAmount();
 
      Date getGeneration_date();
 

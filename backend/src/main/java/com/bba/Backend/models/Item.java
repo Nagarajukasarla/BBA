@@ -19,7 +19,7 @@ public class Item {
     @Id
     @SequenceGenerator(name = "_item_id_seq", sequenceName = "_item_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "_item_id_seq")
-    private Integer id;
+    private Long id;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -28,17 +28,26 @@ public class Item {
     private String company;
 
     @Column(name = "packing_type")
-    private Integer packingType;
+    private String packingType;
 
-    @Column(name = "quantity", nullable = false)
-    private Integer quantity;
+    @Column(name = "quantity", precision = 10, scale = 2, nullable = false)
+    @BigDecimalFormat(precision = 10, scale = 2)
+    private BigDecimal quantity;
+
+    @Column(name = "free_quantity", precision = 10, scale = 2, nullable = false)
+    @BigDecimalFormat(precision = 10, scale = 2)
+    private BigDecimal freeQuantity;
 
     @Column(name = "batch_number", nullable = false)
     private String batchNumber;
 
-    @Column(name = "rate", precision = 10, scale = 4, nullable = false)
+    @Column(name = "cost_price", precision = 10, scale = 4)
     @BigDecimalFormat(precision = 10, scale = 4)
-    private BigDecimal rate;
+    private BigDecimal costPrice;
+
+    @Column(name = "selling_price", precision = 10, scale = 4)
+    @BigDecimalFormat(precision = 10, scale = 4)
+    private BigDecimal sellingPrice;
 
     @Column(name = "mrp", precision = 10, scale = 4, nullable = false)
     @BigDecimalFormat(precision = 10, scale = 4)
@@ -66,11 +75,35 @@ public class Item {
     private Boolean isFastMoving;
 
     @Column(name = "shop_id", nullable = false)
-    private Integer shopId;
+    private Long shopId;
 
     @Column(name = "hsn_number")
     private String hsnNumber;
 
     @Column(name = "invoice_number")
     private String invoiceNumber;
+
+    @Column(name = "margin", precision = 10, scale = 2)
+    @BigDecimalFormat(precision = 10, scale = 2)
+    private BigDecimal margin;
+
+    @Column(name = "net_worth", precision = 13, scale = 4)
+    @BigDecimalFormat(precision = 13, scale = 4)
+    private BigDecimal netWorth;
+
+    @Column(name = "scheme")
+    private String scheme;
+
+    @Column(name = "sales_worth", precision = 13, scale = 4)
+    @BigDecimalFormat(precision = 13, scale = 4)
+    private BigDecimal salesWorth;
+
+    @Column(name = "cost_worth", precision = 13, scale = 4)
+    @BigDecimalFormat(precision = 13, scale = 4)
+    private BigDecimal costWorth;
+
+    @Column(name = "profit", precision = 10, scale = 4)
+    @BigDecimalFormat(precision = 10, scale = 4)
+    private BigDecimal profit;
+
 }

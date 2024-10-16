@@ -108,7 +108,6 @@ public class Mapper implements DtoMapper {
                 .quantity(item.getQuantity())
                 .packingType(item.getPackingType())
                 .batchNumber(item.getBatchNumber())
-                .rate(item.getRate())
                 .sGstInPercent(item.getSGstInPercent())
                 .cGstInPercent(item.getCGstInPercent())
                 .iGstInPercent(item.getIGstInPercent())

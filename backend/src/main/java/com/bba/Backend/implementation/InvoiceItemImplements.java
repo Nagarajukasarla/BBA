@@ -44,7 +44,6 @@ public class InvoiceItemImplements implements InvoiceItemService {
                 .invoiceNumber(invoiceNumber)
                 .itemBatchNumber(invoiceItemDto.itemBatchNumber)
                 .quantity(invoiceItemDto.quantity)
-                .rate(invoiceItemDto.rate)
                 .discount(invoiceItemDto.discount)
                 .price(invoiceItemDto.price)
                 .build();
@@ -53,7 +52,7 @@ public class InvoiceItemImplements implements InvoiceItemService {
 
         var item = itemRepository.findItemByCompanyAndBatchNumber(invoiceItemDto.company, invoiceItemDto.itemBatchNumber);
         if (item.isPresent()) {
-            item.ifPresent(value -> value.setQuantity(value.getQuantity() - invoiceItemDto.quantity));
+            item.ifPresent(value -> value.setQuantity(value.getQuantity().subtract(invoiceItemDto.quantity)));
             itemRepository.save(item.get());
         }
     }

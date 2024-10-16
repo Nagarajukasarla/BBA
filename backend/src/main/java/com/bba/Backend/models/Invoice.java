@@ -21,7 +21,7 @@ public class Invoice {
     @Id
     @SequenceGenerator(name = "_invoice_id_seq", sequenceName = "_invoice_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "_invoice_id_seq")
-    private Integer id;
+    private Long id;
 
     @Column(name = "number", nullable = false, unique = true)
     private String number;
@@ -41,8 +41,8 @@ public class Invoice {
     @Column(name = "payment_mode", nullable = false)
     private String paymentMode;
 
-    @Column(name = "amount", precision = 10, scale = 4, nullable = false)
-    @BigDecimalFormat(precision = 10, scale = 4)
+    @Column(name = "amount", precision = 13, scale = 4, nullable = false)
+    @BigDecimalFormat(precision = 13, scale = 4)
     private BigDecimal amount;
 
     @Column(name = "type", nullable = false)

@@ -44,11 +44,12 @@ public class InvoiceItem {
     @BigDecimalFormat(precision = 4, scale = 2)
     private BigDecimal discount;
 
-    @Column(name = "quantity", nullable = false)
-    private Integer quantity;
+    @Column(name = "quantity", precision = 10, scale = 2, nullable = false)
+    @BigDecimalFormat(precision = 10, scale = 2)
+    private BigDecimal quantity;
 
     @Column(name = "shop_id")
-    private Integer shopId;
+    private Long shopId;
 
     @ManyToOne
     @JoinColumn(name = "invoice_number", referencedColumnName = "number", insertable = false, updatable = false)

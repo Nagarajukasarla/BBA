@@ -100,6 +100,7 @@ public class DateTime {
      * @return Date
      */
     public static Date formatDate (String formattedDate) {
+        if (formattedDate == null) return null;
         Logger logger = Logger.getLogger(DateTime.class.getName());
         SimpleDateFormat formatter = new SimpleDateFormat(DateFormat.YEAR_MONTH_DAY_HH_MM_SS.getFormat());
         try {

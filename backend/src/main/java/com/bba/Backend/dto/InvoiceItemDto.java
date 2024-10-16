@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 @Builder
 public class InvoiceItemDto {
 
-    public Integer id;
+    public Long id;
 
     public String itemName;
 
@@ -27,18 +27,16 @@ public class InvoiceItemDto {
 
     public String itemBatchNumber;
 
-    @BigDecimalFormat(precision = 10, scale = 4)
-    @JsonDeserialize(using = BigDecimalDeserializer.class)
-    public BigDecimal rate;
-
     @BigDecimalFormat(precision = 4, scale = 2)
     @JsonDeserialize(using = BigDecimalDeserializer.class)
     public BigDecimal discount;
 
-    @BigDecimalFormat(precision = 10, scale = 4)
+    @BigDecimalFormat(precision = 13, scale = 4)
     @JsonDeserialize(using = BigDecimalDeserializer.class)
     public BigDecimal price;
 
-    public Integer quantity;
+    @BigDecimalFormat(precision = 10, scale = 2)
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
+    public BigDecimal quantity;
 
 }
