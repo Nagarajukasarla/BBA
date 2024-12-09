@@ -57,4 +57,9 @@ public class AddressServiceImplements implements AddressService {
         var partnerAddress = addressRepository.findByPartnerEmail(email);
         return partnerAddress.orElse(null);
     }
+
+    @Override
+    public void deleteAddressOfPartner(Integer customerNumber) {
+        
+    }
 }

@@ -10,4 +10,5 @@ public interface AddressService {
     Address saveAddressOfCustomer (AddressDto addressDto);
     Optional<AddressDto> getAddressOfCustomer (Integer customerNumber);
     Address getAddressOfPartner (String email);
+    void deleteAddressOfPartner(Integer customerNumber);
 }
