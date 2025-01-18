@@ -1,9 +1,7 @@
-
-**/node_modules/
-
 #dependencies
 frontend/ui/node_modules/
-/ui/node_modules/
+client/node_modules
+
 
 frontend/ui/.pnp
 frontend/ui/.pnp.js
@@ -11,11 +9,11 @@ ui/.pnp.js
 
 
 #testing
-ui/coverage
+client/coverage
 
 #production
 frontend/ui/build
-ui/build
+client/build
 
 #misc
 frontend/ui/.DS_Store
