@@ -1,14 +1,18 @@
 package com.bba.Backend.dto;
 
-import com.bba.Backend.models.Partner;
-
-import java.util.List;
-
 public class ShopDto {
-    private String gstInNumber;
+    private Integer id;
+    private String gstin;
+    private String drugLicenseNumber;
     private String name;
-    private List<Partner> partners;
-    private long budget;
-    private long profit;
-    private long loss;
+    private String email;
+    private String mobile;
+    private String budget;
+    private String profit;
+    private String loss;
+    private String type;
+    private Boolean isEmailVerified;
+    private Boolean isMobileVerified;
+    private String role;
 }
+

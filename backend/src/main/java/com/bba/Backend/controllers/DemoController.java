@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = "api/v1")
 public class DemoController {
 
-    @GetMapping(path = "/demo-controller")
+    @GetMapping(path = "/authenticate")
     public ResponseEntity<String> sayHello () {
         return ResponseEntity.ok("Hello from secured end point!");
     }

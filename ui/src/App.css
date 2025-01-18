@@ -1,0 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  /* box-sizing: border-box; */
+}
+
+body {
+  font-family: 'Nunito Sans', sans-serif;
+}
+
+/* Sider */
+.sider {
+  height: calc(100vh - 64px);
+  background-color: #f2f2f2;
+  border-right: 1px solid #E0E0E0;
+}
+
+/* Header */
+:where(.css-dev-only-do-not-override-142vneq).ant-layout-header {
+  padding: 0;
+  border-bottom: 1px solid #E0E0E0;
+  background-color: #f2f2f2;
+}

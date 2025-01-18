@@ -61,7 +61,7 @@ export const Dashboard = () => {
 
     useEffect(() => {
         document.title = "Dashboard";
-        fetchCustomers().then(() => setLoading(false));
+        //fetchCustomers().then(() => setLoading(false));
     }, []);
 
     const DashboardCard = ({ icon, title, value, margin }) => {

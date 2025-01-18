@@ -10,6 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 
@@ -24,16 +25,13 @@ public class Shop implements UserDetails {
     @Id
     @SequenceGenerator(name = "_shop_id_seq", sequenceName = "_shop_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "_shop_id_seq")
-    private Integer id;
-
-    @Column(name = "gstin", length = 256, nullable = false)
-    private String gstin;
+    private Long id;
 
     @Column(name = "name", length = 256, nullable = false)
     private String name;
 
-    @Column(name = "number")
-    private Integer number;
+    @Column(name = "gstin", length = 256, nullable = false)
+    private String gstin;
 
     @Column(name = "drug_license_number", nullable = false)
     private String drugLicenseNumber;
@@ -47,9 +45,6 @@ public class Shop implements UserDetails {
     @Column(name ="mobile")
     private String mobile;
 
-    @Column(name = "type")
-    private String type;
-
     @Column(name = "budget")
     private Long budget;
 
@@ -61,6 +56,12 @@ public class Shop implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     Role role;
+
+    @Column(name = "is_email_verified")
+    private Boolean isEmailVerified;
+
+    @Column(name = "is_mobile_verified")
+    private Boolean isMobileVerified;
 
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
