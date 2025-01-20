@@ -17,49 +17,49 @@ const RouteGuard: React.FC<RouteGuardProps> = ({
     const [isLoading, setIsLoading] = useState(true);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    useEffect(() => {
-        const checkAuth = async () => {
-            const token = TokenManager.getToken();
-            console.log("Token: ", token);
+    // useEffect(() => {
+    //     const checkAuth = async () => {
+    //         const token = TokenManager.getToken();
+    //         console.log("Token: ", token);
 
-            if (!token) {
-                if (!isAuthPage) {
-                    navigate("/login", { replace: true });
-                }
-                setIsLoading(false);
-                return;
-            }
+    //         if (!token) {
+    //             if (!isAuthPage) {
+    //                 navigate("/login", { replace: true });
+    //             }
+    //             setIsLoading(false);
+    //             return;
+    //         }
 
-            try {
-                const authenticated = await authenticate();
-                setIsAuthenticated(authenticated);
+    //         try {
+    //             const authenticated = await authenticate();
+    //             setIsAuthenticated(authenticated);
 
-                if (authenticated && isAuthPage) {
-                    navigate("/dashboard", { replace: true });
-                } else if (!authenticated && !isAuthPage) {
-                    navigate("/login", { replace: true });
-                }
-            } catch (error) {
-                console.error("Auth check failed:", error);
-                if (!isAuthPage) {
-                    navigate("/login", { replace: true });
-                }
-            } finally {
-                setIsLoading(false);
-            }
-        };
+    //             if (authenticated && isAuthPage) {
+    //                 navigate("/dashboard", { replace: true });
+    //             } else if (!authenticated && !isAuthPage) {
+    //                 navigate("/login", { replace: true });
+    //             }
+    //         } catch (error) {
+    //             console.error("Auth check failed:", error);
+    //             if (!isAuthPage) {
+    //                 navigate("/login", { replace: true });
+    //             }
+    //         } finally {
+    //             setIsLoading(false);
+    //         }
+    //     };
 
-        checkAuth();
-    }, [navigate, isAuthPage]);
+    //     checkAuth();
+    // }, [navigate, isAuthPage]);
 
-    if (isLoading) {
-        return <Spinner />;
-    }
+    // if (isLoading) {
+    //     return <Spinner />;
+    // }
 
-    // Only render children if authenticated or it's an auth page
-    if (!isAuthPage && !isAuthenticated) {
-        return null;
-    }
+    // // Only render children if authenticated or it's an auth page
+    // if (!isAuthPage && !isAuthenticated) {
+    //     return null;
+    // }
 
     return <>{children}</>;
 };

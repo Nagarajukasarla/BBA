@@ -19,26 +19,26 @@ export const Header = () => {
     const logoutHandler = () => {
         logout();
     }
-    
+
     return (
         <div className='header'>
             <div className="titleContinaer">
                 <p className="appTitle">Billing App</p>
             </div>
             <div className='profileContainer'>
-                <img className='userImage' src={pic} alt=''/>
+                <img className='userImage' src={pic} alt='' />
                 <div className='username'>
-                    <p>Nagaraju Kasarla</p>
+                    <p>Sri Venkateshwara Pharma Distributors</p>
                 </div>
             </div>
             <div className='helpContainer'>
-            <Button 
-                style={{
-                    background: "rgb(235,238,242)",
-                    width: "40px",
-                    height: "40px"
-                }}
-                onClick={logoutHandler} icon={<LogoutOutlined className='helpIcon' />}/>
+                <Button
+                    style={{
+                        background: "rgb(235,238,242)",
+                        width: "40px",
+                        height: "40px"
+                    }}
+                    onClick={logoutHandler} icon={<LogoutOutlined className='helpIcon' />} />
             </div>
         </div>
     );

@@ -18,5 +18,5 @@ body {
 
 .ant-typography {
   font-family: 'Nunito Sans', sans-serif !important;
-  font-size: 17px;
+  color: inherit;
 }

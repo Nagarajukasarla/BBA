@@ -1,44 +1,63 @@
 import React from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import Spinner from "../components/common/Spinner";
-// import Dashboard from "../pages/Dashboard";
-import Stocks from "../pages/Stocks";
+import AppLayout from "../components/layout/AppLayout";
 import RouteGuard from "./RouteGuard";
 
-const Login = React.lazy(() => import("../pages/auth/Login"));
-const Register = React.lazy(() => import("../pages/auth/Register"));
-const ForgotPassword = React.lazy(() => import("../pages/auth/ForgotPassword"));
-const ResetPassword = React.lazy(() => import("../pages/auth/ResetPassword"));
+const Login = React.lazy(() => import("../pages/Login"));
+const Register = React.lazy(() => import("../pages/Register"));
+const ForgotPassword = React.lazy(() => import("../components/feature/ForgotPassword"));
+const ResetPassword = React.lazy(() => import("../components/feature/ResetPassword"));
+
+const Dashboard = React.lazy(() => import("../pages/Dashboard"));
+const Invoice = React.lazy(() => import("../pages/Invoice"));
+const Stocks = React.lazy(() => import("../pages/Stocks"));
+const Customers = React.lazy(() => import("../pages/Customers"));
+const Subscriptions = React.lazy(() => import("../pages/Subscriptions"));
+const About = React.lazy(() => import("../pages/About"));
+const Settings = React.lazy(() => import("../pages/Settings"));
+
+const NotFound = React.lazy(() => import("../pages/NotFound"));
 
 const AppRoutes: React.FC = () => (
-    <BrowserRouter>
-        <React.Suspense fallback={<Spinner />} >
-            <Routes>
-                <Route path="/login" element={
-                    <RouteGuard isAuthPage={true}>
-                        <Login />
-                    </RouteGuard>
-                } />
-                <Route path="/register" element={
-                    <RouteGuard isAuthPage={true}>
-                        <Register />
-                    </RouteGuard>
-                } />
-                <Route path="/e" element={<ForgotPassword />} />
-                <Route path="/reset-password" element={<ResetPassword />} />
-                {/* <Route path="/" element={
-                    <RouteGuard>
-                        <Dashboard />
-                    </RouteGuard>
-                } /> */}
-                <Route path="/stocks" element={
-                    <RouteGuard>
-                        <Stocks />
-                    </RouteGuard>
-                } />
-            </Routes>
-        </React.Suspense>
-    </BrowserRouter>
+    <React.Suspense fallback={<Spinner />} >
+        <Routes>
+            {/* Auth routes - No Layout */}
+            <Route path="/login" element={
+                <RouteGuard isAuthPage={true}>
+                    <Login />
+                </RouteGuard>
+            } />
+            <Route path="/register" element={
+                <RouteGuard isAuthPage={true}>
+                    <Register />
+                </RouteGuard>
+            } />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+
+            {/* App Routes - With AppLayout */}
+            <Route element={
+                <RouteGuard>
+                    <AppLayout />
+                </RouteGuard>
+            }>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/app">
+                    <Route path="dashboard" element={<Dashboard />} />
+                    <Route path="invoice" element={<Invoice />} />
+                    <Route path="stocks" element={<Stocks />} />
+                    <Route path="customers" element={<Customers />} />
+                    <Route path="subscriptions" element={<Subscriptions />} />
+                    <Route path="about" element={<About />} />
+                    <Route path="settings" element={<Settings />} />
+                </Route>
+            </Route>
+
+            {/* 404 Route */}
+            <Route path="*" element={<NotFound />} />
+        </Routes>
+    </React.Suspense>
 );
 
 export default AppRoutes;

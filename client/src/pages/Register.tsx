@@ -8,7 +8,7 @@ import {
     FormInstance,
     message,
 } from "antd";
-import OTPVerification from "./OTPVerification";
+import OTPVerification from "../components/feature/OTPVerification";
 const { Title, Text, Link } = Typography;
 
 // Define interface for form values
