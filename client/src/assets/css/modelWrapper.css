@@ -1,6 +1,18 @@
 .model-wrapper {
-    /* box-shadow: "0 4px 10px rgba(0, 0, 0, 0.9)"; */
+    background-color: #FFFFFF;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     border-radius: 10px;
     transition: all 0.4s ease-in-out;
+    z-index: 100;
+    padding: 15px 10px;
+}
+
+.close-icon {
+    margin-right: 5px;
+    font-size: var(--icon-size-default);
+    cursor: pointer;
+}
+
+.close-icon:hover {
+    color: rgba(0, 0, 0, 0.6);
 }

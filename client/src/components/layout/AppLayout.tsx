@@ -4,7 +4,6 @@ import { Outlet } from "react-router-dom";
 import SideBar from "./SideBar";
 import AppHeader from "./Header";
 
-
 const { Header, Sider, Content } = Layout;
 
 const AppLayout: React.FC = () => {

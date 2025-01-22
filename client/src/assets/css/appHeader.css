@@ -2,7 +2,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 50px;
+    padding: 15px 50px 15px 80px;
     height: 100%;
 }
 
@@ -15,10 +15,9 @@
     width: 45px;
     height: 45px;
     border-radius: 50px;
-
 }
 
-.mini-profile {
+.mini-profile-bubble {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -29,6 +28,10 @@
     cursor: pointer;
 }
 
-.mini-profile:hover {
+.mini-profile-bubble:hover {
     color: #044fb9;
+}
+
+.profile-icon {
+    font-size: var(--icon-size-default);
 }

@@ -2,17 +2,13 @@ import { UserOutlined } from "@ant-design/icons";
 import { Card } from "antd";
 import '../../assets/css/appHeader.css';
 import logo from "../../assets/img/logo.jpg";
-import { IconSize } from "../../constants/styles";
 import { useState, useRef } from 'react';
 import ModelWrapper from '../common/ModelWrapper';
+import MiniProfileView from "../feature/MiniProfileView";
 
 const AppHeader: React.FC = () => {
     const [showProfile, setShowProfile] = useState(false);
     const profileIconRef = useRef<HTMLDivElement>(null);
-
-    const profileStyles = {
-        fontSize: IconSize.DEFAULT,
-    }
 
     return (
         <div className="app-header">
@@ -21,12 +17,12 @@ const AppHeader: React.FC = () => {
             </div>
             <div className="functional">
                 <Card
-                    className="mini-profile"
+                    className="mini-profile-bubble"
                     bordered={false}
                     ref={profileIconRef}
                     onClick={() => setShowProfile(!showProfile)}
                 >
-                    <UserOutlined style={profileStyles} />
+                    <UserOutlined className="profile-icon"/>
                 </Card>
                 {showProfile && (
                     <ModelWrapper
@@ -37,7 +33,7 @@ const AppHeader: React.FC = () => {
                         onClose={() => setShowProfile(false)}
                     >
                         {/* Your profile modal content */}
-                        <h3>Profile Content</h3>
+                        <MiniProfileView />
                     </ModelWrapper>
                 )}
             </div>

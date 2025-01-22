@@ -1,9 +1,10 @@
+import { Typography } from "antd";
 import React from "react";
 
 const Dashboard: React.FC = () => {
     return (
         <div>
-            <p>Dashboard</p>
+            <Typography.Text>Dashboard</Typography.Text>
         </div>
     );
 };

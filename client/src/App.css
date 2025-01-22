@@ -22,11 +22,11 @@ body {
   display: flex;
   padding: 24px 20px;
   margin-bottom: 15px;
-  color: #031d44 !important;
+  color: #031D44 !important;
 }
 
 .ant-menu-item-selected {
-  color: #044fb9 !important;
+  color: #044FB9 !important;
   background-color: #C2D6E6 !important;
   font-weight: 600;
 }

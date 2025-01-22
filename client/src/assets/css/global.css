@@ -1,0 +1,19 @@
+:root {
+    --primary-font: "Nunito Sans";
+    --secondary-font: "sans-serif";
+
+    --primary-text-color: #031d44;
+    --primary-icon-color: #044fb9;
+    --primary-border-color: #044fb9;
+
+    --font-size-small: 14px;
+    --font-size-normal: 16px;
+    --font-size-medium: 18px;
+    --font-size-large: 20px;
+
+    --icon-size-small: 18px;
+    --icon-size-default: 22px;
+    --icon-size-normal: 25px;
+    --icon-size-medium: 30px;
+    --icon-size-large: 35px;
+}

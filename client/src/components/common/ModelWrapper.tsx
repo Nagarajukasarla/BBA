@@ -1,8 +1,7 @@
 import { CloseCircleOutlined } from '@ant-design/icons';
-import { Card, Col, Row } from 'antd';
+import { Col, Row } from 'antd';
 import React, { useEffect } from 'react';
 import "../../assets/css/modelWrapper.css";
-import { IconSize } from '../../constants/styles';
 
 interface ModelWrapperProps {
     children?: React.ReactNode;
@@ -62,20 +61,15 @@ const ModelWrapper: React.FC<ModelWrapperProps> = (props) => {
         zIndex: 1000,
     };
 
-    const closeIconSytles: React.CSSProperties = {
-        fontSize: IconSize.DEFAULT,
-        cursor: "pointer",
-    };
-
     return (
-        <Card className="model-wrapper" style={modelStyles} ref={wrapperRef}>
+        <div className="model-wrapper" style={modelStyles} ref={wrapperRef}>
             <Col>
                 <Row justify="end">
-                    <CloseCircleOutlined style={closeIconSytles} onClick={onClose} />
+                    <CloseCircleOutlined className="close-icon"  onClick={onClose} />
                 </Row>
                 {children ?? <h2>Failed to Load.. Dev only</h2>}
             </Col>
-        </Card>
+        </div>
     );
 };
 
