@@ -1,6 +1,9 @@
 // import API_ROUTES from "../../constants/apiRoutes";
 // import axiosInstance from "./axiosInstance";
 
+// Every api here should be wrapped in APIResponse
+// Every api should have not more than two lines of code
+
 import { LiteShop } from "../../types/model";
 
 /**
@@ -25,11 +28,14 @@ export const authenticate = async (): Promise<boolean> => {
 
 /**
  * Unimplemented login method
- * @param email 
- * @param otp 
+ * @param email
+ * @param otp
  * @returns true for now
  */
-export const loginWithOtp = async (email: string, otp: string): Promise<boolean> => {
+export const loginWithOtp = async (
+    email: string,
+    otp: string
+): Promise<boolean> => {
     // TODO: Replace with actual login API call
     // Wrap in APIResponse
     console.log("email, otp: ", email, otp);
@@ -48,11 +54,14 @@ export const loginWithOtp = async (email: string, otp: string): Promise<boolean>
 
 /**
  * Unimplemented login method
- * @param email 
- * @param password 
+ * @param email
+ * @param password
  * @returns true for now
  */
-export const loginWithPassword = async (email: string, password: string): Promise<boolean> => {
+export const loginWithPassword = async (
+    email: string,
+    password: string
+): Promise<boolean> => {
     // TODO: Replace with actual login API call
     // Wrap in APIResponse
     console.log("email, password: ", email, password);
@@ -83,12 +92,11 @@ export const fetchLiteShop = async (): Promise<LiteShop> => {
                 resolve({
                     id: 1,
                     email: "srivenkateshwara@gmail.com",
-                    name: "Sri Venkateshwara Medicals"
+                    name: "Sri Venkateshwara Pharmaceuticals",
                 });
             });
         });
-    }
-    catch (error) {
+    } catch (error) {
         console.error("Error fetching lite shop:", error);
         throw error;
     }
@@ -99,7 +107,9 @@ export const fetchLiteShop = async (): Promise<LiteShop> => {
  * @param shop Partial<LiteShop> object containing fields to update
  * @returns Promise<LiteShop> Updated LiteShop object
  */
-export const updateShop = async (shop: Partial<LiteShop>): Promise<LiteShop> => {
+export const updateShop = async (
+    shop: Partial<LiteShop>
+): Promise<LiteShop> => {
     // TODO: Replace with actual API call
     // Wrap in APIResponse
     try {
@@ -110,7 +120,7 @@ export const updateShop = async (shop: Partial<LiteShop>): Promise<LiteShop> => 
                     id: 1,
                     email: shop.email || "srivenkateshwara@gmail.com",
                     name: shop.name || "Sri Venkateshwara Medicals",
-                    image: shop.image
+                    image: shop.image,
                 };
                 resolve(updatedShop);
             }, 1000);
