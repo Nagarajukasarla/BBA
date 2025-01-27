@@ -32,7 +32,7 @@ export const Companies = () => {
     };
 
     useEffect(() => {
-        checkAuthentication();
+        //checkAuthentication();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 

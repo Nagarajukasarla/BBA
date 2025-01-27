@@ -18,7 +18,7 @@ export const Settings = () => {
                 navigate("/login");
             }
         };
-        checkAuthentication();
+        //checkAuthentication();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 

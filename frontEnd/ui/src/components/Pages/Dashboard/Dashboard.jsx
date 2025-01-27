@@ -164,17 +164,12 @@ export const Dashboard = () => {
             value: 8900,
         },
     ];
-
     const DashboardPieChart = ({ pieData }) => {
         return (
             <>
                 <PieChart width={400} height={300}>
-                    <Tooltip />
+                    <Tooltip className="chartTooltip" />
                     <Pie
-                        onMouseEnter={(data, index) => {
-                            const value = data.payload.name;
-                            <Card>{value}</Card>;
-                        }}
                         data={pieData}
                         dataKey={"value"}
                         cx="45%"
@@ -320,22 +315,22 @@ export const Dashboard = () => {
                     </Row>
                     <Row style={{ padding: "0 20px" }}>
                         <Space size={"large"}>
-                            <DashboardCard
-                                icon={
-                                    <ShoppingCartOutlined
-                                        style={{
-                                            fontSize: "24px",
-                                            color: "rgb(68, 141, 2029)",
-                                            backgroundColor:
-                                                "rgb(156, 232, 241)",
-                                            borderRadius: "50px",
-                                            padding: "5px",
-                                        }}
-                                    />
-                                }
-                                title={"Orders"}
-                                value={"1,234"}
-                            />
+                        <DashboardCard
+                            icon={
+                                <ShoppingCartOutlined
+                                    style={{
+                                        fontSize: "24px",
+                                        color: "rgb(68, 141, 2029)",
+                                        backgroundColor:
+                                            "rgb(156, 232, 241)",
+                                        borderRadius: "50px",
+                                        padding: "5px",
+                                    }}
+                                />
+                            }
+                            title={"Orders"}
+                            value={"1,234"}
+                        />
                             <DashboardCard
                                 icon={
                                     <CheckCircleOutlined

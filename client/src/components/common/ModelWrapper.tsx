@@ -18,7 +18,23 @@ const ModelWrapper: React.FC<ModelWrapperProps> = (props) => {
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
-            if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node) && onClose) {
+            const target = event.target as HTMLElement;
+            
+            // Check if the click is within any of these Ant Design components
+            const isModalClick = target.closest('.ant-modal, .ant-modal-root');
+            const isImagePreviewClick = target.closest(
+                '.ant-image-preview-root, ' + 
+                '.ant-image-preview-wrap, ' + 
+                '.ant-image-preview-mask, ' +
+                '.ant-image-preview-close, ' +
+                '.ant-image-preview-operations'
+            );
+            
+            if (wrapperRef.current && 
+                !wrapperRef.current.contains(event.target as Node) && 
+                !isModalClick &&
+                !isImagePreviewClick && 
+                onClose) {
                 onClose();
             }
         };

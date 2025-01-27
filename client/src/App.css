@@ -1,39 +1,50 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap");
 
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
-  font-family: 'Nunito Sans', sans-serif;
+    font-family: "Nunito Sans", sans-serif;
 }
 
 /* Sider */
 .sider {
-  height: calc(100vh - 64px);
-  background-color: #F2F2F2;
-  border-right: 1px solid #E0E0E0;
+    height: calc(100vh - 64px);
+    background-color: #f2f2f2;
+    border-right: 1px solid #e0e0e0;
+    box-shadow: 2px 0 6px rgba(64, 64, 64, 0.1);
+}
+
+.content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: calc(100vh - 64px);
+    overflow-y: scroll;
+    padding: 160px 24px 20px 24px;
 }
 
 /* Sider ->  Menu */
 .ant-menu-item {
-  display: flex;
-  padding: 24px 20px;
-  margin-bottom: 15px;
-  color: #031D44 !important;
+    display: flex;
+    padding: 24px 20px;
+    margin-bottom: 15px;
+    color: #031d44 !important;
 }
 
 .ant-menu-item-selected {
-  color: #044FB9 !important;
-  background-color: #C2D6E6 !important;
-  font-weight: 600;
+    color: #044fb9 !important;
+    background-color: #c2d6e6 !important;
+    font-weight: 600;
 }
 
 /* Header */
 :where(.css-dev-only-do-not-override-142vneq).ant-layout-header {
-  padding: 0;
-  border-bottom: 1px solid #E0E0E0;
-  background-color: #F2F2F2;
+    padding: 0;
+    border-bottom: 1px solid #e0e0e0;
+    background-color: #f2f2f2;
 }
