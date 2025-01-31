@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { authenticate } from "../../services/api";
 import Spinner from "../../components/common/Spinner";
@@ -14,14 +13,14 @@ export const Authentication = () => {
         setIsLoading(true);
         try {
             const response = await authenticate();
-            console.log(response);
+            console.log(`Authentication response: ${response}`);
         } catch (error) {
             console.error("Error authenticating:", error);
         } finally {
             setIsLoading(false);
         }
-    }
-    
+    };
+
     return (
         <>
             {isLoading && <Spinner />}

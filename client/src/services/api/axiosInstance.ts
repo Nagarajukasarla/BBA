@@ -11,10 +11,6 @@ axiosInstance.defaults.withCredentials = true;
 
 axiosInstance.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem("token");
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
         return config;
     },
     (error) => {
@@ -23,7 +19,9 @@ axiosInstance.interceptors.request.use(
 );
 
 axiosInstance.interceptors.response.use(
-    (response) => response,
+    (response) => {
+        return response
+    },
     (error) => {
         if (error.response?.status === 401) {
             console.log("Unauthorized, Redirecting...");

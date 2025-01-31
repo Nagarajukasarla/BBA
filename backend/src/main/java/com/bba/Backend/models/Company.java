@@ -1,5 +1,6 @@
 package com.bba.Backend.models;
 
+import com.bba.Backend.annotations.BigDecimalFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

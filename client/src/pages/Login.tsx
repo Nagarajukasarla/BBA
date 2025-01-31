@@ -1,10 +1,27 @@
 import React from "react";
 import { Card, Form, Input, Button, Typography } from "antd";
+import { loginWithPassword } from "../services/api";
+import useShopState from "../states/useUserState";
 const { Title, Text, Link } = Typography;
 
 const Login: React.FC = () => {
+    const shop = useShopState();
+
     const onFinish = (values: { email: string; password: string }) => {
         console.log(`Values: ${values}`);
+        handleLogin(values.email, values.password);
+    };
+
+    const handleLogin = (email: string, password: string) => {
+        loginWithPassword(email, password)
+            .then((res) => {
+                if (res.code === 200) {
+                    shop.persistLiteShop(res.data!);
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     };
 
     return (
@@ -107,8 +124,8 @@ const Login: React.FC = () => {
                 </Form>
 
                 <div style={{ textAlign: "center", marginTop: 16 }}>
-                    <Text>New to LinkedIn? </Text>
-                    <Link href="/register">Join now</Link>
+                    <Text>New to BBA? </Text>
+                    <Link href="/register">Register Account</Link>
                 </div>
             </Card>
         </div>

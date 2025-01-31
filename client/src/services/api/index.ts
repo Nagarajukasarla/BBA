@@ -1,28 +1,29 @@
-// import API_ROUTES from "../../constants/apiRoutes";
+import APIResponse from "../../classes/APIResponse";
+import API_ROUTES from "../../constants/apiRoutes";
 // import axiosInstance from "./axiosInstance";
 
 // Every api here should be wrapped in APIResponse
 // Every api should have not more than two lines of code
 
 import { LiteShop } from "../../types/model";
+import axiosInstance from "./axiosInstance";
 
 /**
  * Unimplemented authentication method.
  * @returns Always returns false
  */
-export const authenticate = async (): Promise<boolean> => {
+export const authenticate = async (): Promise<APIResponse<string>> => {
     // TODO: Replace with actual authentication API call
     // Wrap in APIResponse
     try {
         // For testing, using setTimeout with Promise
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                resolve(false); // This will always return false
-            }, 1000);
-        });
+        const response = await axiosInstance.get<string>(
+            API_ROUTES.AUTHENTICATE
+        );
+        return new APIResponse<string>(response.status, response.data);
     } catch (error) {
         console.error("Error authenticating:", error);
-        return false;
+        return new APIResponse<string>(-1, null);
     }
 };
 
@@ -53,29 +54,24 @@ export const loginWithOtp = async (
 };
 
 /**
- * Unimplemented login method
+ * Validate login credentials
  * @param email
  * @param password
- * @returns true for now
+ * @returns `APIResponse` containing LiteShop object on success
  */
 export const loginWithPassword = async (
     email: string,
     password: string
-): Promise<boolean> => {
-    // TODO: Replace with actual login API call
-    // Wrap in APIResponse
+): Promise<APIResponse<LiteShop>> => {
     console.log("email, password: ", email, password);
-    try {
-        // For testing, using setTimeout with Promise
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                resolve(true); // This will keep user authenticated
-            }, 1000);
-        });
-    } catch (error) {
-        console.error("Error logging in:", error);
-        return false;
-    }
+
+    // Need to simplyfy more, somewhat like this in future
+    // return new APIResponse<LiteShop>(200, await axiosInstance.post(API_ROUTES.LOGIN, { email, password }))
+    const response = await axiosInstance.post<LiteShop>(API_ROUTES.LOGIN, {
+        email,
+        password,
+    });
+    return new APIResponse<LiteShop>(response.status, response.data);
 };
 
 /**
@@ -100,6 +96,19 @@ export const fetchLiteShop = async (): Promise<LiteShop> => {
         console.error("Error fetching lite shop:", error);
         throw error;
     }
+
+    // try {
+    //     const response = await axiosInstance.get<LiteShop>(
+    //         API_ROUTES.FETCH_LITE_SHOP
+    //     );
+    //     if (!response.data) {
+    //         // return new APIResponse<LiteShop>(response.status, null);
+    //     }
+    //     // return new APIResponse<LiteShop>(response.status, response.data);
+    // } catch (error) {
+    //     console.error("Error fetching lite shop:", error);
+    //     throw error;
+    // }
 };
 
 /**

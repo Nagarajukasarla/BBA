@@ -5,12 +5,13 @@ import { fetchLiteShop, updateShop } from "../services/api";
 const useShopState = () => {
     const [liteShop, setLiteShop] = useState<LiteShop | null>(null);
 
+    // Here need to make sure that even if shop is present in local storage,
+    // You need to call API with for token validation which is in http only cookies
     useEffect(() => {
         const storedShop = localStorage.getItem("shop");
         if (storedShop) {
             setLiteShop(JSON.parse(storedShop));
-        }
-        else {
+        } else {
             fetchShop();
         }
     }, []);
@@ -21,10 +22,10 @@ const useShopState = () => {
         persistLiteShop(shop);
     };
 
+    // Need to hanlde this error properly
+    // First decided who and when user can update the shop details
     const updateLiteShop = async (shop: Partial<LiteShop>) => {
-        // Update shop in API using APIResponse wrapper class
-        const updatedShop = await updateShop(shop);
-        persistLiteShop(updatedShop);
+        // persistLiteShop(updatedShop);
     };
 
     const persistLiteShop = (shop: LiteShop) => {
@@ -37,12 +38,15 @@ const useShopState = () => {
         localStorage.removeItem("shop");
     };
 
+    // const verifyToken = ()
+
     return {
         liteShop,
         fetchShop,
         updateLiteShop,
-        clearLiteShop
-    }
-}
+        clearLiteShop,
+        persistLiteShop,
+    };
+};
 
 export default useShopState;

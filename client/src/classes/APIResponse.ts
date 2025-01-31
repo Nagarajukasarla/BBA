@@ -17,11 +17,11 @@ class APIResponse<T = any> {
     static readonly CONFLICT = 409;
     static readonly INTERNAL_SERVER_ERROR = 500;
 
-    constructor(code: number, data: T) {
+    constructor(code: number, data: T | null) {
         this.code = code;
         this.data = data;
-        this.type = "";
-        this.description = "";
+        this.type = this.getTypeFromCode(code);
+        this.description = this.getDescriptionFromCode(code);
 
         switch(code) {
             case APIResponse.SUCCESS:
@@ -70,6 +70,36 @@ class APIResponse<T = any> {
         this.type = "Unknown";
         this.description = "Unknown error occurred";
         this.data = null;
+    }
+
+    private getTypeFromCode(code: number): string {
+        switch (code) {
+            case APIResponse.SUCCESS: return "Success";
+            case APIResponse.CREATED: return "Created";
+            case APIResponse.UNAUTHORIZED: return "Unauthorized";
+            case APIResponse.FORBIDDEN: return "Forbidden";
+            case APIResponse.NOT_FOUND: return "Not Found";
+            case APIResponse.REQUEST_TIMEOUT: return "Request Timeout";
+            case APIResponse.CONFLICT: return "Conflict";
+            case APIResponse.INTERNAL_SERVER_ERROR: return "Internal Server Error";
+            case APIResponse.NETWORK_ERROR: return "Network Error";
+            default: return "Unknown";
+        }
+    }
+
+    private getDescriptionFromCode(code: number): string {
+        switch (code) {
+            case APIResponse.SUCCESS: return "Request successful";
+            case APIResponse.NOT_FOUND: return "Resource not found";
+            case APIResponse.NETWORK_ERROR: return "Network error";
+            case APIResponse.INTERNAL_SERVER_ERROR: return "Internal server error";
+            case APIResponse.UNAUTHORIZED: return "Unauthorized";
+            case APIResponse.FORBIDDEN: return "Forbidden";
+            case APIResponse.REQUEST_TIMEOUT: return "Request timeout";
+            case APIResponse.CONFLICT: return "Conflict";
+            case APIResponse.NETWORK_ERROR: return "Network error";
+            default: return "An unknown error occurred";
+        }
     }
 }
 

@@ -1,13 +1,12 @@
 package com.bba.Backend.config.jwtConfig;
 
-import com.bba.Backend.controllers.DemoController;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 
 @Component
@@ -26,7 +26,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
-    private final DemoController demoController;
+
+    private static final Logger logger = Logger.getLogger(JwtAuthenticationFilter.class.getName());
 
     @Override
     protected void doFilterInternal (
@@ -34,6 +35,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
+//        final String token = request.getCookies();
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String userEmail;
@@ -46,7 +48,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         logger.info("Authorization Header: " + authHeader);
 
         try {
-            jwt = authHeader.substring(7);
+            jwt = extractToken(request);
+            logger.info("====JWT Token: " + jwt);
+//            jwt = authHeader.substring(7);
             userEmail = jwtService.extractUsername(jwt);
 
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -75,5 +79,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
         filterChain.doFilter(request, response);
+    }
+
+    private String extractToken (HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie: cookies) {
+                if (cookie.getName().equals("auth_token")) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
     }
 }

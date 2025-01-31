@@ -5,6 +5,8 @@ import com.bba.Backend.implementation.OTPVerificationImplements;
 import com.bba.Backend.models.Shop;
 import com.bba.Backend.models.util.Role;
 import com.bba.Backend.repositories.ShopRepository;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,7 +57,7 @@ public class AuthenticationService {
         }
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+    public AuthenticationResponse authenticate(AuthenticationRequest request, HttpServletResponse response) {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -76,6 +78,15 @@ public class AuthenticationService {
             logger.info(String.valueOf(new Date(System.currentTimeMillis())));
             logger.info(String.valueOf(jwtService.getTokenExpirationDate(jwtToken)));
 
+            // Create http-only cookie and attach to response
+            Cookie cookie = new Cookie("auth_token", jwtToken);
+            cookie.setPath("/");
+            cookie.setHttpOnly(true);
+            cookie.setSecure(false);
+            cookie.setMaxAge(60 * 2);
+            //cookie.setAttribute("Same-site", "true");
+
+            response.addCookie(cookie);
             return AuthenticationResponse.builder()
                     .token(jwtToken)
                     .shopId(shop.getId().toString())

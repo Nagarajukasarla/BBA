@@ -1,6 +1,7 @@
 package com.bba.Backend.auth;
 
 import com.bba.Backend.services.OTPVerificationService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,8 +23,10 @@ public class AuthenticationController {
     }
 
     @PostMapping("/sign-in")
-    public ResponseEntity<AuthenticationResponse> authenticate (@RequestBody AuthenticationRequest request) {
-        return ResponseEntity.ok(authenticationService.authenticate(request));
+    public ResponseEntity<AuthenticationResponse> authenticate (
+            @RequestBody AuthenticationRequest request,
+            HttpServletResponse response) {
+        return ResponseEntity.ok(authenticationService.authenticate(request, response));
     }
 
     @PostMapping("/verify-otp")
