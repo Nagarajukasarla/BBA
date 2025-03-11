@@ -2,6 +2,7 @@ import React from "react";
 import { Card, Form, Input, Button, Typography } from "antd";
 import { loginWithPassword } from "../services/api";
 import useShopState from "../states/useUserState";
+import { authService } from "../services/api/authService";
 const { Title, Text, Link } = Typography;
 
 const Login: React.FC = () => {
@@ -22,6 +23,12 @@ const Login: React.FC = () => {
             .catch((error) => {
                 console.log(error);
             });
+    };
+
+    const authenticate = () => {
+        authService.authenticate().then((res) => {
+            console.log(res);
+        });
     };
 
     return (
@@ -121,6 +128,7 @@ const Login: React.FC = () => {
                             SUBMIT
                         </Text>
                     </Button>
+                    <Button onClick={authenticate}>Authenticate</Button>
                 </Form>
 
                 <div style={{ textAlign: "center", marginTop: 16 }}>

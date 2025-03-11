@@ -1,10 +1,11 @@
 package com.bba.Backend.auth;
 
 import com.bba.Backend.config.jwtConfig.JwtService;
-import com.bba.Backend.implementation.OTPVerificationImplements;
+import com.bba.Backend.implementation.OtpServiceImplements;
 import com.bba.Backend.models.Shop;
 import com.bba.Backend.models.util.Role;
 import com.bba.Backend.repositories.ShopRepository;
+import com.bba.Backend.services.EmailService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -31,7 +32,8 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-    private final OTPVerificationImplements otpVerificationService;
+    private final OtpServiceImplements otpService;
+    private final EmailService emailService;
 
     public ResponseEntity<String> register(RegisterRequest request) {
         try {
@@ -45,7 +47,8 @@ public class AuthenticationService {
                     .role(Role.USER)
                     .build();
             var result = shopRepository.save(shop);
-            return otpVerificationService.generateOTP(result.getEmail());
+            emailService.sendOtpEmail(request.getEmail(), otpService.generateOTP(request.getEmail()));
+            return ResponseEntity.ok("OTP sent successfully");
         } catch (DataIntegrityViolationException e) {
             return ResponseEntity
                     .status(HttpStatus.CONFLICT)
@@ -84,7 +87,7 @@ public class AuthenticationService {
             cookie.setHttpOnly(true);
             cookie.setSecure(false);
             cookie.setMaxAge(60 * 2);
-            //cookie.setAttribute("Same-site", "true");
+            cookie.setAttribute("Same-site", "None");
 
             response.addCookie(cookie);
             return AuthenticationResponse.builder()

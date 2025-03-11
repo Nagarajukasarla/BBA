@@ -1,6 +1,6 @@
 package com.bba.Backend.auth;
 
-import com.bba.Backend.services.OTPVerificationService;
+import com.bba.Backend.services.OtpService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
-    private final OTPVerificationService otpVerificationService;
+    private final OtpService otpService;
 
     @PostMapping("/register")
     public ResponseEntity<String> register (@RequestBody RegisterRequest request)  {
@@ -31,6 +31,6 @@ public class AuthenticationController {
 
     @PostMapping("/verify-otp")
     public ResponseEntity<Boolean> verifyOtp(@RequestBody OTPVerificationRequest request) {
-        return otpVerificationService.verifyOTP(request.otp, request.email);
+        return otpService.verifyOTP(request.otp, request.email);
     }
 }

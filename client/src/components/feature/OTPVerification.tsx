@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Card, Button, Typography, Input, Flex, InputRef } from "antd";
-import { primaryButtonColor } from "../../themes";
-
 const { Title, Text, Link } = Typography;
 
 interface OTPVerificationProps {
@@ -157,7 +155,8 @@ const OTPVerification: React.FC<OTPVerificationProps> = ({
                     <Link onClick={handleResend}>Resend verification code</Link>
                 ) : (
                     <Text>
-                        Next code available in <Text style={{ color: primaryButtonColor }}>{timer}s</Text>
+                        {/* TODO: Replace color to constant */}
+                        Next code available in <Text style={{ color: '#044fb9' }}>{timer}s</Text>
                     </Text>
                 )}
             </Text>

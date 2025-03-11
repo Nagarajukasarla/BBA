@@ -2,7 +2,6 @@ package com.bba.Backend.config.appConfig;
 
 import com.bba.Backend.dto.AddressDto;
 import com.bba.Backend.models.util.Address;
-import com.bba.Backend.repositories.PartnerRepository;
 import com.bba.Backend.repositories.ShopRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { LiteShop } from "../types/model";
-import { fetchLiteShop, updateShop } from "../services/api";
+import { fetchLiteShop } from "../services/api";
 
 const useShopState = () => {
     const [liteShop, setLiteShop] = useState<LiteShop | null>(null);

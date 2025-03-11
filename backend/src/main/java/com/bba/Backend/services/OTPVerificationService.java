@@ -2,8 +2,8 @@ package com.bba.Backend.services;
 
 import org.springframework.http.ResponseEntity;
 
-public interface OTPVerificationService {
+public interface OtpService {
     ResponseEntity<Boolean> verifyOTP(String otp, String email);
-    ResponseEntity<String> generateOTP(String email);
+    String generateOTP(String email);
 }
 

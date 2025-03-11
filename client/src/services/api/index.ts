@@ -12,7 +12,7 @@ import axiosInstance from "./axiosInstance";
  * Unimplemented authentication method.
  * @returns Always returns false
  */
-export const authenticate = async (): Promise<APIResponse<string>> => {
+export const authenticate = async (): Promise<string> => {
     // TODO: Replace with actual authentication API call
     // Wrap in APIResponse
     try {
@@ -20,10 +20,10 @@ export const authenticate = async (): Promise<APIResponse<string>> => {
         const response = await axiosInstance.get<string>(
             API_ROUTES.AUTHENTICATE
         );
-        return new APIResponse<string>(response.status, response.data);
+        return Promise.resolve(response.data);
     } catch (error) {
         console.error("Error authenticating:", error);
-        return new APIResponse<string>(-1, null);
+        return Promise.reject(error);
     }
 };
 

@@ -83,6 +83,7 @@ const Register: React.FC = () => {
 
             // TODO: Replace with actual API call
             await new Promise((resolve) => setTimeout(resolve, 2000));
+            
 
             // Simulate API call
             console.log("Registration data:", registrationData);

@@ -36,16 +36,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
 //        final String token = request.getCookies();
-        final String authHeader = request.getHeader("Authorization");
+//        final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String userEmail;
-
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
+        String requestPath = request.getServletPath();
+        if (requestPath.startsWith("/api/v1/auth/")) {
+            filterChain.doFilter(request, response); // Skip JWT filter for authentication paths
             return;
         }
+//        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+//            filterChain.doFilter(request, response);
+//            return;
+//        }
 
-        logger.info("Authorization Header: " + authHeader);
+//        logger.info("Authorization Header: " + authHeader);
 
         try {
             jwt = extractToken(request);
@@ -81,13 +85,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private String extractToken (HttpServletRequest request) {
+    private String extractToken(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie: cookies) {
-                if (cookie.getName().equals("auth_token")) {
-                    return cookie.getValue();
-                }
+        if (cookies == null) {
+            logger.info("No cookies found in the request.");
+            return null;
+        }
+        for (Cookie cookie : cookies) {
+            logger.info("Found cookie: " + cookie.getName() + " = " + cookie.getValue());
+            if (cookie.getName().equals("auth_token")) {
+                return cookie.getValue();
             }
         }
         return null;
