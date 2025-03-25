@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { authenticate } from "../../services/api";
-import Spinner from "../../components/common/Spinner";
+import Spinner from "../common/Spinner";
 
 export const Authentication = () => {
     const [isLoading, setIsLoading] = useState(false);

@@ -24,8 +24,9 @@ public class Otp {
     @Column(name = "otp", nullable = false)
     private String otp;
 
-    @Column(name = "created_at", insertable = false, updatable = false)
+    @Column(name = "created_at", columnDefinition = "TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP", insertable = false, updatable = false)
     private Date createdAt;
+
 
     @Column(name = "expires_at", insertable = false, updatable = false)
     private Date expiresAt;

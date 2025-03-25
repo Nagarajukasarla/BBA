@@ -14,3 +14,23 @@ export type Shop = {
     drugLicenseNumber: string;
     gstin: string;
 };
+
+export type Invoice = {
+    id: number;
+    invoiceNumber: string;
+    generationDate: Date;
+    amount: number;
+    paymentMode: string;
+    customerDetails: LiteCustomer;
+    status: string;
+    type: string;
+    dueDate: Date;
+};
+
+export type LiteCustomer = {
+    id: number;
+    number: string;
+    name: string;
+    address: string;
+};
+

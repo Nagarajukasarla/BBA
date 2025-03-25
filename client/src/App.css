@@ -10,25 +10,12 @@ body {
     font-family: "Nunito Sans", sans-serif;
 }
 
-/* Sider */
-.sider {
-    height: calc(100vh - 64px);
-    background-color: #f2f2f2;
-    border-right: 1px solid #e0e0e0;
-    box-shadow: 2px 0 6px rgba(64, 64, 64, 0.1);
+.ant-layout-sider {
+    width: 250px !important;
+    max-width: 250px !important;
+    min-width: 250px !important;
 }
 
-.content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: calc(100vh - 64px);
-    overflow-y: scroll;
-    padding: 160px 24px 20px 24px;
-}
-
-/* Sider ->  Menu */
 .ant-menu-item {
     display: flex;
     padding: 24px 20px;
@@ -42,9 +29,13 @@ body {
     font-weight: 600;
 }
 
-/* Header */
 :where(.css-dev-only-do-not-override-cdzvx5).ant-layout-header {
     padding: 0;
     border-bottom: 1px solid #e0e0e0;
-    background-color: #f2f2f2;
+    background-color: #f2f2f2 !important;
 }
+
+/* Add deafult font styles all typography to Nunito Sans*/
+/* .ant-typography {
+    font-family: "Nunito Sans", sans-serif !important;
+} */

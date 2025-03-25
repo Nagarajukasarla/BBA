@@ -1,7 +1,7 @@
 import { CloseCircleOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
 import React, { useEffect } from 'react';
-import "../../assets/css/modelWrapper.css";
+import "../../assets/styles/modelWrapper.css";
 
 interface ModelWrapperProps {
     children?: React.ReactNode;

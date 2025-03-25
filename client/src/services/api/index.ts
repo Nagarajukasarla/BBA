@@ -64,9 +64,6 @@ export const loginWithPassword = async (
     password: string
 ): Promise<APIResponse<LiteShop>> => {
     console.log("email, password: ", email, password);
-
-    // Need to simplyfy more, somewhat like this in future
-    // return new APIResponse<LiteShop>(200, await axiosInstance.post(API_ROUTES.LOGIN, { email, password }))
     const response = await axiosInstance.post<LiteShop>(API_ROUTES.LOGIN, {
         email,
         password,

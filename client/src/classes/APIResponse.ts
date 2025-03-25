@@ -31,6 +31,9 @@ class APIResponse<T = any> {
             case APIResponse.NOT_FOUND:
                 this.setNotFoundResponse();
                 break;
+            case APIResponse.CONFLICT:
+                this.setConflictResponse();
+                break;
             case APIResponse.INTERNAL_SERVER_ERROR:
                 this.setInternalServerErrorResponse();
                 break;
@@ -52,6 +55,12 @@ class APIResponse<T = any> {
     private setSuccessResponse(): void {
         this.type = "Success";
         this.description = "Request was successful";
+    }
+
+    private setConflictResponse(): void {
+        this.type = "Conflict";
+        this.description = "The request could not be completed due to a conflict";
+        this.data = null;
     }
 
     private setInternalServerErrorResponse(): void {

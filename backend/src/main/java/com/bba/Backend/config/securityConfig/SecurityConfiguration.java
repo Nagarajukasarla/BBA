@@ -3,7 +3,6 @@ package com.bba.Backend.config.securityConfig;
 
 import com.bba.Backend.config.jwtConfig.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
-import org.checkerframework.checker.index.qual.PolyUpperBound;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;

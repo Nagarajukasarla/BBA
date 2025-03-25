@@ -6,12 +6,14 @@ interface OTPVerificationProps {
     email: string;
     onVerify: (otp: string) => void;
     resendOTP: () => void;
+    loading: boolean;
 }
 
 const OTPVerification: React.FC<OTPVerificationProps> = ({
     email,
     onVerify,
     resendOTP,
+    loading,
 }) => {
     const [otp, setOtp] = useState(["", "", "", ""]);
     const [timer, setTimer] = useState(30);
@@ -21,7 +23,7 @@ const OTPVerification: React.FC<OTPVerificationProps> = ({
     useEffect(() => {
         if (timer > 0) {
             const interval = setInterval(() => {
-                setTimer((prev) => prev - 1);
+                setTimer(prev => prev - 1);
             }, 1000);
             return () => clearInterval(interval);
         } else {
@@ -63,7 +65,12 @@ const OTPVerification: React.FC<OTPVerificationProps> = ({
         e: React.KeyboardEvent<HTMLInputElement>,
         index: number
     ) => {
-        if (e.key === "Backspace" && !otp[index] && index > 0 && inputRefs.current[index - 1]) {
+        if (
+            e.key === "Backspace" &&
+            !otp[index] &&
+            index > 0 &&
+            inputRefs.current[index - 1]
+        ) {
             // Move focus to previous input on backspace
             inputRefs.current[index - 1]?.focus();
         }
@@ -110,7 +117,7 @@ const OTPVerification: React.FC<OTPVerificationProps> = ({
                     textAlign: "left",
                 }}
             >
-                Please enter the verification code we sent {" "}
+                Please enter the verification code we sent{" "}
                 <Text style={{ fontWeight: 600 }}>{email}</Text>
             </Text>
 
@@ -118,13 +125,13 @@ const OTPVerification: React.FC<OTPVerificationProps> = ({
                 {otp.map((digit, index) => (
                     <Input
                         key={index}
-                        ref={(el) => {
+                        ref={el => {
                             inputRefs.current[index] = el;
                         }}
                         value={digit}
-                        onChange={(e) => handleChange(e.target.value, index)}
-                        onKeyDown={(e) => handleKeyDown(e, index)}
-                        onPaste={(e) => {
+                        onChange={e => handleChange(e.target.value, index)}
+                        onKeyDown={e => handleKeyDown(e, index)}
+                        onPaste={e => {
                             e.preventDefault();
                             const pastedData = e.clipboardData.getData("text");
                             handleChange(pastedData, 0);
@@ -156,7 +163,8 @@ const OTPVerification: React.FC<OTPVerificationProps> = ({
                 ) : (
                     <Text>
                         {/* TODO: Replace color to constant */}
-                        Next code available in <Text style={{ color: '#044fb9' }}>{timer}s</Text>
+                        Next code available in{" "}
+                        <Text style={{ color: "#044fb9" }}>{timer}s</Text>
                     </Text>
                 )}
             </Text>
@@ -171,6 +179,7 @@ const OTPVerification: React.FC<OTPVerificationProps> = ({
                     padding: "14px 12px",
                     borderRadius: 50,
                 }}
+                loading={loading}
             >
                 <Text
                     style={{

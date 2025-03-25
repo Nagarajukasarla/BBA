@@ -5,15 +5,7 @@ import {
     RiseOutlined,
     ShoppingCartOutlined,
 } from "@ant-design/icons";
-import {
-    Card,
-    Col,
-    Row,
-    Select,
-    Space,
-    Statistic,
-    Typography
-} from "antd";
+import { Card, Col, Row, Select, Space, Statistic, Typography } from "antd";
 import { DefaultOptionType } from "antd/es/select";
 import React, { useEffect, useState } from "react";
 import {
@@ -28,8 +20,8 @@ import {
     XAxis,
     YAxis,
 } from "recharts";
-import "../assets/css/dashboard.css";
-import monthImg from "../assets/img/monthly.png";
+import "../assets/styles/dashboard.css";
+import monthImg from "../assets/images/monthly.png";
 import {
     ChartData,
     ChartDataProps,
@@ -61,7 +53,9 @@ const Dashboard: React.FC = () => {
     const [companyAnalytics, setCompanyAnalytics] = useState<ChartData[]>([]);
     const [productAnalytics, setProductAnalytics] = useState<ChartData[]>([]);
     const [revenueAnalytics, setRevenueAnalytics] = useState<ChartData[]>([]);
-    const [selectedPeriod, setSelectedPeriod] = useState<string>(items[0]?.value as string);
+    const [selectedPeriod, setSelectedPeriod] = useState<string>(
+        items[0]?.value as string
+    );
 
     const handlePeriodChange = (value: string) => {
         setSelectedPeriod(value);
@@ -116,7 +110,13 @@ const Dashboard: React.FC = () => {
     };
 
     return (
-        <div>
+        <div
+            style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+            }}
+        >
             <Col>
                 <Space direction="vertical" size={"large"}>
                     <Row gutter={6}>

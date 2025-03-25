@@ -24,11 +24,7 @@ const ForgotPassword: React.FC = () => {
                 }}
             >
                 <div style={{ textAlign: "center", marginBottom: 24 }}>
-                    <Image 
-                        src={logo}
-                        width={100}
-                        height={100}
-                    />
+                    <Image src={logo} width={100} height={100} />
                     {/* <div
                         style={{
                             width: 40,
