@@ -1,8 +1,8 @@
-import APIResponse from "../../classes/APIResponse";
-import API_ROUTES from "../../constants/apiRoutes";
-import { RegisterRequest, VerifyOTPRequest } from "../../types/api";
-import { LiteShop } from "../../types/model";
-import BaseService from "./baseService";
+import APIResponse from "@/classes/APIResponse";
+import API_ROUTES from "@/constants/apiRoutes";
+import { RegisterRequest, VerifyOTPRequest } from "@/types/api";
+import { LiteShop } from "@/types/model";
+import BaseService from "@/services/api/baseService";
 
 class AuthService extends BaseService {
     /**

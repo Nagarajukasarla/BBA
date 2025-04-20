@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import Spinner from "../components/common/Spinner";
 import AppLayout from "../components/layouts/AppLayout";
 import RouteGuard from "./RouteGuard";
+import { NewInvoice } from "@/pages/NewInvoice";
 
 const Login = React.lazy(() => import("../pages/Login"));
 const Register = React.lazy(() => import("../pages/Register"));
@@ -58,6 +59,7 @@ const AppRoutes: React.FC = () => (
                 <Route path="/app">
                     <Route path="dashboard" element={<Dashboard />} />
                     <Route path="invoice" element={<Invoice />} />
+                    <Route path="new-invoice" element={<NewInvoice />} />
                     <Route path="stocks" element={<Stocks />} />
                     <Route path="customers" element={<Customers />} />
                     <Route path="subscriptions" element={<Subscriptions />} />

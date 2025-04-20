@@ -1,22 +1,42 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
 import {
-    Col,
-    Row,
-    Typography,
-    Space,
-    Card,
-    Select,
-    Radio,
-    Input,
     Button,
-    Table,
+    Card,
+    Col,
     ConfigProvider,
+    Input,
     message,
+    Radio,
+    Row,
+    Select,
+    Space,
+    Table,
     Tooltip,
+    Typography,
 } from "antd";
+import React, { useEffect, useRef, useState } from "react";
 
-import "./utils/css/newInvoice.css";
+import { DeleteOutlined } from "@ant-design/icons";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import { useNavigate } from "react-router-dom";
+import {
+    authenticate,
+    getAllProducts,
+} from "../../../services/api/get/authorizedGetServices";
+import { createInvoice } from "../../../services/api/post/authorizedPostService";
+import TokenManager from "../../../services/cookies/TokenManager";
+import {
+    customerNameHelper,
+    getCustomerAsOptions,
+} from "../../../services/utils/common/helpers/client/customerHelpers";
+import {
+    generateFormattedDateString,
+    getMonthYearFormat,
+} from "../../../services/utils/common/helpers/client/dateHelpers";
+import { validate } from "../../../services/utils/common/validation/validate";
 import "../../coreComponents/Styles/primaryStyle.css";
+import PDFFileCreator from "../../utilComponents/PDFFileCreator";
+import CustomerLocalManager from "../Customers/CustomerLocalManager";
+import "./utils/css/newInvoice.css";
 import {
     onPressedCGSTHandler,
     onPressedCompanyHandler,
@@ -29,28 +49,7 @@ import {
     onPressedQuantityHandler,
     onPressedSGSTHandler,
 } from "./utils/events/KeyboardEvents";
-import {
-    authenticate,
-    getAllProducts,
-} from "../../../services/api/get/authorizedGetServices";
-import { useNavigate } from "react-router-dom";
-import {
-    generateFormattedDateString,
-    getMonthYearFormat,
-} from "../../../services/utils/common/helpers/client/dateHelpers";
-import { DeleteOutlined } from "@ant-design/icons";
 import { getInvoiceRequestObj } from "./utils/helpers/invoiceHelpers";
-import {
-    getCustomerAsOptions,
-    customerNameHelper,
-} from "../../../services/utils/common/helpers/client/customerHelpers";
-import { createInvoice } from "../../../services/api/post/authorizedPostService";
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import PDFFileCreator from "../../utilComponents/PDFFileCreator";
-import { validate } from "../../../services/utils/common/validation/validate";
-import { Data } from "../../context/Context";
-import TokenManager from "../../../services/cookies/TokenManager";
-import CustomerLocalManager from "../Customers/CustomerLocalManager";
 
 export const NewInvoice = () => {
     const productSearchDropdown = document.getElementById("productSearch");

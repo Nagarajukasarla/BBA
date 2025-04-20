@@ -9,7 +9,7 @@ import {
 } from "@ant-design/icons";
 import { Menu, Typography } from "antd";
 import { useNavigate } from "react-router-dom";
-import '../../assets/styles/sideBar.css';
+import '@/assets/styles/sideBar.css';
 
 const SideBar: React.FC = () => {
 

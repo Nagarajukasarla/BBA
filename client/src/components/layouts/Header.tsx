@@ -1,10 +1,10 @@
 import { UserOutlined } from '@ant-design/icons'
 import { Card } from 'antd'
-import '../../assets/styles/appHeader.css'
-import logo from '../../assets/images/logo.jpg'
+import '@/assets/styles/appHeader.css'
+import logo from '@/assets/images/logo.jpg'
 import { useState, useRef } from 'react'
-import ModelWrapper from '../common/ModelWrapper'
-import MiniProfileView from '../features/MiniProfileView'
+import ModelWrapper from '@/components/common/ModelWrapper'
+import MiniProfileView from '@/components/features/MiniProfileView'
 
 const AppHeader: React.FC = () => {
     const [showProfile, setShowProfile] = useState(false)

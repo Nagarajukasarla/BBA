@@ -1,9 +1,14 @@
+// Import types if needed in the future
+// import { LiteCustomer } from "../../types/model";
+
 interface Address {
     [key: string]: string | null | undefined;
     city?: string;
 }
 
-interface Customer {
+// This interface is used for internal mapping
+interface CustomerFormatted {
+    id?: number;
     customerNumber?: string;
     customerName?: string;
     addressDto?: Address;
@@ -11,7 +16,7 @@ interface Customer {
 }
 
 interface CustomerOptionsParams {
-    customers: Customer[];
+    customers: CustomerFormatted[];
     addAllOption?: boolean;
 }
 
@@ -33,7 +38,12 @@ class CustomerHelper {
      * @param {boolean} param0.concat - Whether to concatenate the details or not
      * @return {string|Array} The mapped customer details based on the provided options
      */
-    static mapCustomerDetails({ name, address, include = [], concat }: MapCustomerParams): string | [string, string] {
+    static mapCustomerDetails({
+        name,
+        address,
+        include = [],
+        concat,
+    }: MapCustomerParams): string | [string, string] {
         let details = "";
 
         for (const field of include) {
@@ -47,18 +57,19 @@ class CustomerHelper {
         return concat ? `${name}, ${details}` : [name, details];
     }
 
-    /**
+    /**CustomerFormatted
      * Generates a formatted string representing the customer's information including customer number, name, and city.
      *
      * @param {object} customer - the customer object
      * @return {string} formatted customer information
      */
-    static customerNameHelper(customer: Customer | null): string {
+    static customerNameHelper(customer: CustomerFormatted | null): string {
         if (!customer) {
             return "";
         }
-        return `${customer?.customerNumber ?? ""} - ${customer?.customerName ?? ""
-            }, ${customer?.addressDto?.city ?? ""}`;
+        return `${customer?.customerNumber ?? ""} - ${
+            customer?.customerName ?? ""
+        }, ${customer?.addressDto?.city ?? ""}`;
     }
 
     /**
@@ -67,17 +78,32 @@ class CustomerHelper {
      * @param {Object} param0 - Object containing customers array and addAllOption boolean
      * @return {Array} Array of options for dropdown selection
      */
-    static getCustomerAsOptions({ customers, addAllOption }: CustomerOptionsParams): { value: string; label: string; customValue: Customer | null }[] {
+    static getCustomerAsOptions({
+        customers,
+        addAllOption,
+    }: CustomerOptionsParams): {
+        value: string;
+        label: string;
+        customValue: CustomerFormatted | null;
+    }[] {
         if (!customers || customers.length === 0) return [];
 
-        const options = customers.map((item) => ({
+        const options: Array<{
+            value: string;
+            label: string;
+            customValue: CustomerFormatted | null;
+        }> = customers.map(item => ({
             value: item.customerNumber ?? "",
             label: this.customerNameHelper(item),
             customValue: item,
         }));
 
         if (addAllOption) {
-            options.unshift({ value: "All", label: "--All--", customValue: null });
+            options.unshift({
+                value: "All",
+                label: "--All--",
+                customValue: null,
+            });
         }
 
         return options;

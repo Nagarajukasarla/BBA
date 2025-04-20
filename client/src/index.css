@@ -26,6 +26,5 @@ span {
 
 th {
     font-family: 'Nunito Sans', sans-serif !important;
-    font-weight: 700 !important;
     font-size: var(--font-size-normal);
 }

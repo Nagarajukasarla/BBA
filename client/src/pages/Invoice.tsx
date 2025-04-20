@@ -2,12 +2,14 @@ import {
     EditOutlined,
     InfoCircleTwoTone,
     PlusCircleOutlined,
+    ReloadOutlined,
+    SearchOutlined,
 } from "@ant-design/icons";
 import {
     Button,
-    Col,
     ConfigProvider,
     DatePicker,
+    Input,
     Popover,
     Row,
     Select,
@@ -21,53 +23,117 @@ import { ColumnType } from "antd/es/table";
 import type { Dayjs } from "dayjs";
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { dummyInvoices } from "../data/invoices";
-import { Filters } from "../types/component";
 
-import { Invoice, LiteCustomer } from "../types/model";
 import _Date from "@/classes/core/_Date";
+import APIResponse from "@/classes/APIResponse";
+import CustomerHelper from "@/classes/helpers/CustomerHelper";
+import useDebounce from "@/hooks/useDebounce";
+import useInvoiceFilters from "@/hooks/useInvoiceFilters";
+import customerService from "@/services/api/customerService";
+import invoiceService from "@/services/api/invoiceService";
+import { Invoice, LiteCustomer } from "@/types/model";
 
 export const Invoices: React.FC = () => {
     const [invoices, setInvoices] = useState<Invoice[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
-    const [customer, setCustomer] = useState<LiteCustomer | null>(null);
-    const [purchaseType, setPurchaseType] = useState<string>("");
-    const [invoiceStatus, setInvoiceStatus] = useState<string>("");
+
+    // Store the selected customer for display purposes
+    const [, setSelectedCustomer] = useState<LiteCustomer | null>(null);
+    // Store the selected customer number for the dropdown value
+    const [selectedCustomerNumber, setSelectedCustomerNumber] =
+        useState<string>("--All--");
     const [customersAsOptions, setCustomersAsOptions] = useState<
-        Array<{ value: string; label: string; customValue?: LiteCustomer }>
+        Array<{ value: string; label: string; customValue: any }>
     >([]);
-    const [dayWise, setDayWise] = useState<string | null>(null);
-    const [specificDate, setSpecificDate] = useState<Dayjs | null>(null);
-    const [dateRange, setDateRange] = useState<[Dayjs | null, Dayjs | null]>([
-        null,
-        null,
-    ]);
+
+    // Use our custom hooks for filter management
+    const {
+        filters,
+        getApiFilters,
+        hasActiveFilters,
+        setCustomer: setFilterCustomer,
+        setPaymentMode,
+        setStatus,
+        setDayWise,
+        setSpecificDate,
+        setDateRange,
+        setSearchQuery,
+        resetFilters,
+    } = useInvoiceFilters();
+
+    // Debounce the search query to avoid too many API calls
+    const debouncedSearchQuery = useDebounce(filters.searchQuery, 500);
 
     const navigate = useNavigate();
-    const [api, contextHolder] = notification.useNotification();
+    const [, contextHolder] = notification.useNotification();
 
     // Fetch invoices with proper typing
-    const fetchInvoices = useCallback(
-        async (filters: Filters | {}): Promise<Invoice[]> => {
-            try {
-                setLoading(true);
-                // TODO: Replace with actual API call
-                setInvoices(dummyInvoices);
-                return dummyInvoices;
-            } catch (error) {
-                console.error("Error fetching invoices:", error);
-                return [];
-            } finally {
-                setLoading(false);
-            }
-        },
-        []
-    );
+    const fetchInvoices = useCallback(async () => {
+        try {
+            setLoading(true);
+            // Get the current filters in API format
+            const apiFilters = getApiFilters();
 
+            // Debug log to see what filters are being applied
+            console.log("Applying filters:", apiFilters);
+
+            // Use the InvoiceService which will use MockDataService in development
+            // and the real API in production
+            const response = await invoiceService.fetchFilteredInvoices(
+                apiFilters
+            );
+            if (response.code === APIResponse.SUCCESS && response.data) {
+                console.log("Filtered invoices:", response.data);
+                setInvoices(response.data);
+            }
+        } catch (error) {
+            console.error("Error fetching invoices:", error);
+        } finally {
+            setLoading(false);
+        }
+    }, [getApiFilters]);
+
+    const fetchCustomers = async () => {
+        try {
+            setLoading(true);
+            // Use the CustomerService which will use MockDataService in development
+            // and the real API in production
+            const response = await customerService.fetchLiteCustomers();
+            if (response.code === APIResponse.SUCCESS && response.data) {
+                const customers = response.data.map(customer => ({
+                    id: customer.id,
+                    customerNumber: customer.number,
+                    customerName: customer.name,
+                    addressDto: { city: customer.address },
+                }));
+                setCustomersAsOptions(
+                    CustomerHelper.getCustomerAsOptions({
+                        customers,
+                        addAllOption: true,
+                    })
+                );
+            }
+        } catch (error) {
+            console.error("Error fetching customers:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Effect to fetch invoices when filters change
+    useEffect(() => {
+        fetchInvoices();
+    }, [fetchInvoices]);
+
+    // Effect to fetch invoices when debounced search query changes
+    useEffect(() => {
+        fetchInvoices();
+    }, [debouncedSearchQuery, fetchInvoices]);
+
+    // Effect to fetch initial data
     useEffect(() => {
         document.title = "Invoices";
-        fetchInvoices({});
-        // TODO: Fetch customers and set options
+        fetchCustomers();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -114,7 +180,8 @@ export const Invoices: React.FC = () => {
             title: "Generation Date",
             dataIndex: "generationDate",
             width: "6%",
-            render: (date: Date) => _Date.formatToDayMonthYear(date.toISOString()),
+            render: (date: Date) =>
+                _Date.formatToDayMonthYear(date.toISOString()),
         },
         {
             key: "status",
@@ -144,51 +211,50 @@ export const Invoices: React.FC = () => {
     };
 
     const newInvoice = () => {
-        navigate("/app/invoice/new");
+        navigate("/app/new-invoice");
     };
 
     const onSelectedCustomer = (
-        _: string,
-        option: { value: string; customValue?: LiteCustomer }
+        value: string,
+        option: { value: string; label: string; customValue: any }
     ) => {
-        setCustomer(option.customValue || null);
+        if (value === "All") {
+            setSelectedCustomer(null);
+            setSelectedCustomerNumber("--All--");
+            setFilterCustomer(null);
+        } else {
+            // The customValue already contains the customer object
+            setSelectedCustomer(option.customValue);
+            setSelectedCustomerNumber(value);
+            setFilterCustomer(option.customValue.id);
+        }
     };
 
     const onSelectPurchaseType = (value: string) => {
-        setPurchaseType(value);
+        setPaymentMode(value === "--All--" ? null : value);
     };
 
     const onSelectedInvoiceStatus = (value: string) => {
-        setInvoiceStatus(value);
+        setStatus(value === "--All--" ? null : value);
     };
 
     const onSelectedDayWise = (value: string) => {
-        setDayWise(value);
-        setSpecificDate(null);
-        setDateRange([null, null]);
+        setDayWise(value === "--All--" ? null : value);
     };
 
     const onPickSpecificDate = (value: Dayjs | null) => {
         setSpecificDate(value);
-        setDayWise(null);
-        setDateRange([null, null]);
     };
 
     const onSelectDateRange = (
-        dates: [Dayjs | null, Dayjs | null],
-        dateStrings: [string, string]
+        dates: [Dayjs | null, Dayjs | null] | null,
+        _dateStrings: [string, string]
     ) => {
-        setDateRange(dates);
-        setDayWise(null);
-        setSpecificDate(null);
-        // const formattedDates = dates.forEach((date) => date?.toDate());
-        // if (formattedDates) {
-        //     // Use the formatted dates for API calls
-        //     fetchInvoices({
-        //         ...filters,
-        //         dateRange: formattedDates
-        //     });
-        // }
+        setDateRange(dates || [null, null]);
+    };
+
+    const onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchQuery(e.target.value);
     };
 
     return (
@@ -199,7 +265,7 @@ export const Invoices: React.FC = () => {
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    border: "1px solid red",
+                    // border: "1px solid red",
                 }}
             >
                 <Space direction="vertical" size="small">
@@ -231,7 +297,7 @@ export const Invoices: React.FC = () => {
                         <FilterSection label="Customer" width={400}>
                             <Select
                                 style={{ width: "100%" }}
-                                value={customer?.name || "--All--"}
+                                value={selectedCustomerNumber}
                                 options={customersAsOptions}
                                 onSelect={onSelectedCustomer}
                             />
@@ -241,7 +307,7 @@ export const Invoices: React.FC = () => {
                         <FilterSection label="Purchase Type" width={170}>
                             <Select
                                 style={{ width: "100%" }}
-                                value={purchaseType || "--All--"}
+                                value={filters.paymentMode || "--All--"}
                                 options={purchaseTypeOptions}
                                 onSelect={onSelectPurchaseType}
                             />
@@ -251,7 +317,7 @@ export const Invoices: React.FC = () => {
                         <FilterSection label="Status" width={170}>
                             <Select
                                 style={{ width: "100%" }}
-                                value={invoiceStatus || "--All--"}
+                                value={filters.status || "--All--"}
                                 options={invoiceStatusOptions}
                                 onSelect={onSelectedInvoiceStatus}
                             />
@@ -261,7 +327,7 @@ export const Invoices: React.FC = () => {
                         <FilterSection label="Day Wise" width={200}>
                             <Select
                                 style={{ width: "100%" }}
-                                value={dayWise || "--All--"}
+                                value={filters.dayWise || "--All--"}
                                 options={dayWiseOptions}
                                 onSelect={onSelectedDayWise}
                             />
@@ -271,24 +337,50 @@ export const Invoices: React.FC = () => {
                         <FilterSection label="Pick a Date" width={200}>
                             <DatePicker
                                 style={{ width: "100%" }}
-                                value={specificDate}
+                                value={filters.specificDate}
                                 onChange={onPickSpecificDate}
                             />
                         </FilterSection>
 
                         {/* Date Range Filter */}
-                        <FilterSection
-                            label="Date Range"
-                            width={300}
-                        >
+                        <FilterSection label="Date Range" width={300}>
                             <DatePicker.RangePicker
                                 style={{ width: "100%" }}
-                                value={dateRange}
+                                value={filters.dateRange}
                                 onChange={onSelectDateRange}
                                 format="DD-MM-YYYY"
                                 allowClear={true}
-                                placeholder={['Start Date', 'End Date']}
+                                placeholder={["Start Date", "End Date"]}
                             />
+                        </FilterSection>
+
+                        {/* Search Filter */}
+                        <FilterSection label="Search" width={350}>
+                            <Input
+                                type="text"
+                                value={filters.searchQuery}
+                                onChange={onSearchChange}
+                                placeholder="Invoices number, customer name, amount etc..."
+                                className="primary-input-field"
+                                suffix={<SearchOutlined />}
+                            />
+                        </FilterSection>
+
+                        {/* Reset Filters Button */}
+                        <FilterSection label="Reset Filters" width={150}>
+                            <Button
+                                onClick={() => {
+                                    resetFilters();
+                                    setSelectedCustomer(null);
+                                    setSelectedCustomerNumber("--All--");
+                                }}
+                                type="primary"
+                                icon={<ReloadOutlined />}
+                                style={{ width: "100%" }}
+                                disabled={!hasActiveFilters()}
+                            >
+                                Reset Filters
+                            </Button>
                         </FilterSection>
                     </Row>
 
@@ -309,7 +401,38 @@ export const Invoices: React.FC = () => {
                             showSizeChanger: true,
                             showTotal: total => `Total ${total} items`,
                         }}
+                        locale={{
+                            emptyText:
+                                "No invoices found. Try adjusting your filters.",
+                        }}
                     />
+
+                    {/* Show a message when filters are applied but no results */}
+                    {!loading &&
+                        invoices.length === 0 &&
+                        hasActiveFilters() && (
+                            <div style={{ textAlign: "center", marginTop: 20 }}>
+                                <Typography.Text type="secondary">
+                                    No invoices match your current filters. Try
+                                    adjusting or
+                                    <Button
+                                        type="primary"
+                                        size="small"
+                                        icon={<ReloadOutlined />}
+                                        onClick={() => {
+                                            resetFilters();
+                                            setSelectedCustomer(null);
+                                            setSelectedCustomerNumber(
+                                                "--All--"
+                                            );
+                                        }}
+                                        style={{ marginLeft: 5 }}
+                                    >
+                                        Reset Filters
+                                    </Button>
+                                </Typography.Text>
+                            </div>
+                        )}
                 </Space>
             </div>
         </>
@@ -332,9 +455,18 @@ const FilterSection: React.FC<FilterSectionProps> = ({
         style={{
             textAlign: "start",
             paddingRight: "10px",
+            marginBottom: "16px", // Add bottom margin for wrapping
+            minHeight: "80px", // Ensure consistent height
+            display: "inline-flex",
+            verticalAlign: "top",
         }}
     >
-        <Typography.Text className="primary-input-field-header-style">
+        <Typography.Text
+            className="primary-input-field-header-style"
+            style={{
+                display: "block",
+            }}
+        >
             {label}
         </Typography.Text>
         <ConfigProvider
