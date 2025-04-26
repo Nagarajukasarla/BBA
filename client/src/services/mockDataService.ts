@@ -23,7 +23,7 @@ class MockDataService {
      */
     async get<T>(route: string): Promise<APIResponse<T>> {
         // Simulate network delay
-        await this.delay(300);
+        await this.delay(1000);
 
         // Parse route to extract parameters if any
         const { basePath, params, queryParams } = this.parseRoute(route);

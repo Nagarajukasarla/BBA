@@ -3,7 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import Spinner from "../components/common/Spinner";
 import AppLayout from "../components/layouts/AppLayout";
 import RouteGuard from "./RouteGuard";
-import { NewInvoice } from "@/pages/NewInvoice";
+import { NewInvoice } from "@/pages/newInvoice/NewInvoice";
 
 const Login = React.lazy(() => import("../pages/Login"));
 const Register = React.lazy(() => import("../pages/Register"));

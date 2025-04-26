@@ -15,52 +15,51 @@ import React, { useEffect, useRef, useState } from "react";
 
 import {
     DeleteOutlined,
+    EditOutlined,
     FileAddOutlined,
     MailOutlined,
     ReloadOutlined,
     SaveOutlined,
     PlusCircleOutlined,
 } from "@ant-design/icons";
-
-// import {
-//     customerNameHelper,
-//     getCustomerAsOptions,
-// } from "../../../services/utils/common/helpers/client/customerHelpers";
-// import { validate } from "../../../services/utils/common/validation/validate";
-
-import { InvoiceData, ProductData } from "@/types/component";
-import { Customer, InvoiceItem } from "@/types/model";
-import { NoticeType } from "antd/es/message/interface";
+import { InvoiceData, ProductData, InvoiceItem as ComponentInvoiceItem } from "@/types/component";
+import { Customer, Product } from "@/types/model";
 import { ColumnType } from "antd/es/table";
+import type { NoticeType } from 'antd/es/message/interface';
 
 import { InvoiceInput, InvoiceSelect } from "@/components/InvoiceFormFields";
 import customerService from "@/services/api/customerService";
 import productService from "@/services/api/productService";
 import APIResponse from "@/classes/APIResponse";
 import CustomerHelper from "@/classes/helpers/CustomerHelper";
+import ProductSelectionModal from "@/components/features/ProductSelectionModal";
+import { handleFieldNavigation } from "@/utils/newInvoiceKeyboardEvents";
+
+// Import from split files
+import { invoiceItemsColumns, paymentModes } from './constants';
+import { 
+    validateCustomerSelection, 
+    validatePaymentModeSelection, 
+    validateProductFields 
+} from './validators';
+import { 
+    handleProductSelect, 
+    handleFinalProductSelection, 
+    findSimilarProducts,
+    getProductsAsOptions
+} from './handlers';
+import { 
+    calculateAmount, 
+    generateInvoiceItem 
+} from './billGenerationHelpers';
 
 interface ProductOption {
     value: string;
     label: string;
-    customValue: ProductData; // Replace 'any' with your actual product type
+    customValue: ProductData;
 }
 
 export const NewInvoice: React.FC = () => {
-    // Reference to DOM elements
-    const productSearchDropdown = document.getElementById("productSearch");
-
-    const quantityField = document.getElementById("quantityField");
-    const packingTypeField = document.getElementById("packingTypeField");
-    const manufacturingDateField = document.getElementById(
-        "manufacturingDateField"
-    );
-    const expiryDateField = document.getElementById("expiryDateField");
-    const sGstField = document.getElementById("sGstField");
-    const cGstField = document.getElementById("cGstField");
-    const iGstField = document.getElementById("iGstField");
-    const discountField = document.getElementById("discountField");
-    const rateField = document.getElementById("rateField");
-    const mrpField = document.getElementById("mrpField");
     const quantityRef = useRef(null);
     const discountRef = useRef(null);
 
@@ -85,17 +84,9 @@ export const NewInvoice: React.FC = () => {
         []
     );
 
-    // const [productName, setProductName] = useState<string>("");
-    // const [company, setCompany] = useState<Company | null>(null);
-    // const [packingType, setPackingType] = useState<string>("");
-    // const [quantity, setQuantity] = useState<number>(0);
-    // const [manufacturingDate, setManufacturingDate] = useState<Date | null>(null);
-    // const [expiryDate, setExpiryDate] = useState<Date | null>(null);
-    // const [sGst, setSGst] = useState<number>(0);
-    // const [cGst, setCGst] = useState<number>(0);
-    // const [iGst, setIGst] = useState<number>(0);
-    // const [rate, setRate] = useState<number>(0);
-    // const [mrp, setMrp] = useState<number>(0);
+    // Modal state
+    const [modalVisible, setModalVisible] = useState<boolean>(false);
+    const [similarProducts, setSimilarProducts] = useState<Product[]>([]);
 
     const [discount, setDiscount] = useState<number>(0);
 
@@ -109,6 +100,15 @@ export const NewInvoice: React.FC = () => {
     // Message API
     const [messageApi, contextHolder] = message.useMessage();
 
+    // Show message helper
+    const showMessage = (type: NoticeType, content: string) => {
+        messageApi.open({
+            type,
+            content,
+        });
+    };
+
+    // Fetch customers from API
     const fetchCustomers = async () => {
         try {
             // Use the CustomerService which will use MockDataService in development
@@ -139,6 +139,7 @@ export const NewInvoice: React.FC = () => {
         }
     };
 
+    // Fetch selected customer by ID
     const fetchSelectedCustomer = async (value: number) => {
         try {
             const response = await customerService.fetchCustomerById(value);
@@ -150,13 +151,15 @@ export const NewInvoice: React.FC = () => {
         }
     };
 
+    // Update invoice data when selected customer changes
     useEffect(() => {
         setInvoiceData({
             ...invoiceData,
-            customer: selectedCustomer, // Currently we are storing the entire customer object in furture we can store only the id
+            customer: selectedCustomer, // Currently we are storing the entire customer object in future we can store only the id
         });
     }, [selectedCustomer]);
 
+    // Fetch products from API
     const fetchProducts = async () => {
         try {
             const response = await productService.fetchProducts();
@@ -179,315 +182,26 @@ export const NewInvoice: React.FC = () => {
         }
     };
 
-    const productNameHelper = (product: any) => {
-        if (!product) {
-            return "";
-        }
-        // Format the expiry date to show month and year
-        const expiryDate = product.expiryDate
-            ? new Date(product.expiryDate)
-            : null;
-        const expiryDateStr = expiryDate
-            ? `${expiryDate.getMonth() + 1}/${expiryDate.getFullYear()}`
-            : "";
-
-        return `${product.name} - ${expiryDateStr}`;
-    };
-
-    const getProductsAsOptions = (products: any[]) => {
-        return products.map(product => ({
-            value: product.id.toString(),
-            label: productNameHelper(product),
-            customValue: product,
-        }));
-    };
-
-    // To delete item from invoice
-    // const deleteItem = (product) => {
-    //     const updatedItems = invoiceData?.filter(
-    //         (item) => item?.serialNumber !== product?.serialNumber
-    //     );
-    //     setInvoiceData([...updatedItems]);
-    // };
-
-    // Payment modes
-    const paymentModes = [
-        {
-            value: "cash",
-            label: "Cash",
-            key: "1",
-        },
-        {
-            value: "credit",
-            label: "Credit",
-            key: "2",
-        },
-        {
-            value: "digital",
-            label: "Digital",
-            key: "3",
-        },
-    ];
-
-    // Invoice columns
-    const invoiceItemsColumns: ColumnType<InvoiceItem>[] = [
-        {
-            key: "2",
-            title: "PRODUCT",
-            dataIndex: "name",
-            width: "13%",
-        },
-        {
-            key: "3",
-            title: "COMPANY",
-            dataIndex: "company",
-            width: "10%",
-        },
-        {
-            key: "4",
-            title: "QUAN",
-            dataIndex: "quantity",
-            width: "6%",
-        },
-        {
-            key: "5",
-            title: "FREE",
-            dataIndex: "freeQuantity",
-            width: "5%",
-        },
-        {
-            key: "6",
-            title: "PACK",
-            dataIndex: "packingType",
-            width: "5%",
-        },
-        {
-            key: "7",
-            title: "MFD",
-            dataIndex: "manufacturingDate",
-            width: "5%",
-        },
-        {
-            key: "8",
-            title: "EXP",
-            dataIndex: "expiryDate",
-            width: "5%",
-        },
-        {
-            key: "9",
-            title: "SGST",
-            dataIndex: "sGst",
-            width: "5%",
-        },
-        {
-            key: "10",
-            title: "CGST",
-            dataIndex: "cGst",
-            width: "5%",
-        },
-        {
-            key: "11",
-            title: "IGST",
-            dataIndex: "iGst",
-            width: "5%",
-        },
-        {
-            key: "12",
-            title: "RATE",
-            dataIndex: "rate",
-            width: "7%",
-        },
-        {
-            key: "13",
-            title: "MRP",
-            dataIndex: "mrp",
-            width: "6%",
-        },
-        {
-            key: "14",
-            title: "DISC",
-            dataIndex: "discount",
-            width: "5%",
-        },
-        {
-            key: "15",
-            title: "PRICE",
-            dataIndex: "price",
-            width: "7%",
-        },
-        {
-            key: "16",
-            title: "ACTION",
-            dataIndex: "action",
-            width: "6.15%",
-            render: (_, item) => (
-                <Tooltip title="Delete">
-                    <DeleteOutlined
-                        // onClick={() => {Pass delete method with item}}
-                        style={{
-                            color: "red",
-                            fontSize: "18px",
-                            cursor: "pointer",
-                        }}
-                    />
-                </Tooltip>
-            ),
-        },
-    ];
-
-    /**
-     * Updates the selected product's quantity in the products array.
-     */
-    // const updateSelectedProduct = () => {
-    //     const index = products.findIndex((item) => item.id === product.id);
-    //     if (index !== -1) {
-    //         products[index].quantity -= parseInt(quantity);
-    //     }
-    // };
-
-    const onKeyupRateField = (event: React.KeyboardEvent) => {
-        /*
-            --Validate all fields--
-        */
-        if (event.key === "Enter") {
-            onClickAddButton();
-        }
-    };
-
-    /**
-     * Resets the product by setting all related state variables to null or empty strings.
-     */
+    // Reset product data
     const resetProduct = () => {
         setProductData(null);
         setDiscount(invoiceData?.customer?.defaultDiscount ?? 0);
-
-        // setProduct(null);
-        // setCompany("");
-        // setQuantity("");
-        // setPackingType("");
-        // setManufacturingDate("");
-        // setExpiryDate("");
-        // setDiscount(customer?.discount ?? "");
-        // setSGst("");
-        // setCGst("");
-        // setIGst("");
-        // setRate("");
-        // setMrp("");
     };
 
-    /**
-     * An onClick event handler for adding a new item to the invoice.
-     *
-     * @return {void}
-     */
-    const onClickAddButton = () => {
-        if (invoiceData?.items?.length === 0) {
-            showMessage("warning", "Items are not sufficient");
-            return;
-        }
-        invoiceData.serialNumber = serialNumber + 1;
-
-        // Here we have validate method which is defined somewhere
-        // If not you can use antd field validations which can pause click on AddButton
-
-        // if (validate(productData)) {
-        // }
-
-        setInvoiceData({
-            ...invoiceData,
-            items: [...invoiceData.items, productData],
-        });
-        setSerialNumber(serialNumber + 1);
-        resetProduct();
-        productSearchDropdown?.focus();
-    };
-
-    /**
-     * Resets the invoice by setting the customer to null, clearing the invoice data, resetting the serial number,
-     * clearing the payment mode value, and removing the invoice from local storage.
-     *
-     * @param {}- No parameters
-     * @return {void} No return value
-     */
+    // Reset invoice data
     const resetInvoiceData = () => {
         setInvoiceData({
+            invoiceNumber: "",
             customer: null,
             paymentModeValue: "",
             items: [],
         });
 
-        // Use useInvoiceState to handle this
+        // Clear local storage
         localStorage.removeItem("invoice");
     };
 
-    const showMessage = (type: NoticeType, message: string) => {
-        messageApi.open({
-            type: `${type}`,
-            content: `${message}`,
-        });
-    };
-
-    /**
-     * Asynchronously saves a new invoice if invoiceData is not empty.
-     *
-     * @return {Promise} a Promise that resolves to the created invoice
-     */
-    // const saveNewInvoice = async () => {
-    //     if (invoiceData.length > 0) {
-    //         let obj = getInvoiceRequestObj(
-    //             customer?.customerNumber,
-    //             paymentModeValue,
-    //             invoiceData,
-    //             generateFormattedDateString()
-    //         );
-    //         console.log(obj);
-    //         return createInvoice(obj, TokenManager.getToken());
-    //     }
-    // };
-
-    // const onPressedSaveButtonHandler = () => {
-    //     saveNewInvoice().then((response) => {
-    //         if (response) {
-    //             showMessage("success", "Successfully Saved!");
-    //             resetInvoice();
-    //         } else {
-    //             showMessage("error", "Failed to Save!");
-    //         }
-    //     });
-    // };
-
-    // const onPressedGenerateHandler = () => {
-    //     saveNewInvoice().then((response) => {
-    //         if (response) {
-    //             showMessage("success", "Successfully Saved!");
-    //             setInvoiceNumber(response);
-    //             setIsInvoiceReady(true);
-    //         } else {
-    //             showMessage("error", "Failed to Save!");
-    //         }
-    //     });
-    // };
-
-    // const onPressedPrintHandler = () => {
-    //     resetInvoice();
-    // };
-
-    // const onPressedEmailHandler = () => {
-    //     saveNewInvoice().then((response) => {
-    //         if (response) {
-    //             showMessage("success", "Successfully Saved!");
-    //             resetInvoice();
-    //         } else {
-    //             showMessage("error", "Failed to Save!");
-    //         }
-    //     });
-    // };
-
-    const styles1 = {
-        margin: "8px 5px 8px 5px",
-        // border: "1px solid black",
-    };
-
+    // Check if buttons should be disabled
     const checkDisability = () => {
         if (invoiceData?.items?.length < 1) {
             return true;
@@ -495,23 +209,142 @@ export const NewInvoice: React.FC = () => {
         return false;
     };
 
-    /**
-     * Check if there are no invoices, no customer, and no payment mode value.
-     *
-     * @return {boolean} true if there are no invoices, no customer, and no payment mode value; false otherwise
-     */
+    // Check if reset button should be disabled
     const checkDisabilityForReset = () => {
         if (
-            invoiceData?.items?.length < 1 &&
-            invoiceData?.customer === null &&
-            (invoiceData?.paymentModeValue === undefined ||
-                invoiceData?.paymentModeValue === "")
+            !invoiceData?.customer &&
+            !invoiceData?.paymentModeValue &&
+            (!invoiceData?.items || invoiceData?.items?.length === 0)
         ) {
             return true;
         }
         return false;
     };
 
+    // Handle product selection with validation
+    const handleProductSelectWithValidation = (selectedOption: ProductOption) => {
+        if (!selectedOption?.customValue) return;
+        
+        // Validate customer selection first
+        const customerValidation = validateCustomerSelection(invoiceData.customer);
+        if (!customerValidation.isValid) {
+            showMessage("warning", customerValidation.errorMessage || "");
+            return;
+        }
+        
+        // Validate payment mode selection
+        const paymentValidation = validatePaymentModeSelection(invoiceData.paymentModeValue);
+        if (!paymentValidation.isValid) {
+            showMessage("warning", paymentValidation.errorMessage || "");
+            return;
+        }
+
+        const selectedProduct = selectedOption.customValue;
+        const allProducts = productsAsOptions.map(option => option.customValue);
+
+        // Find products with the same name
+        const similar = findSimilarProducts(selectedProduct.name, allProducts);
+
+        // Always show modal, even for a single product
+        if (similar.length >= 1) {
+            setSimilarProducts(similar);
+            setModalVisible(true);
+        } else {
+            // Fallback in case no similar products found (shouldn't happen)
+            handleFinalProductSelectionWithState(selectedProduct);
+        }
+    };
+
+    // Handle final product selection with state updates
+    const handleFinalProductSelectionWithState = (product: any) => {
+        // First close the modal to prevent focus issues
+        setModalVisible(false);
+        
+        // Create a variable to track if we need to focus
+        const needToFocus = !productData || productData.id !== product.id;
+        
+        // Then update the product data with cleared quantity
+        setProductData({
+            ...product,
+            quantity: 0, // Clear quantity for user input
+        });
+        
+        // Only focus if this is a new product selection
+        if (needToFocus) {
+            // Use a longer timeout to ensure DOM updates are complete
+            setTimeout(() => {
+                const quantityField = document.getElementById("quantityField");
+                if (quantityField) {
+                    // Focus and select the quantity field
+                    (quantityField as HTMLInputElement).focus();
+                    (quantityField as HTMLInputElement).select();
+                    
+                    // Create a more robust focus management approach
+                    // Set up multiple attempts to ensure focus stays on quantity field
+                    const focusAttempts = [100, 300, 600, 1000];
+                    
+                    focusAttempts.forEach(delay => {
+                        setTimeout(() => {
+                            if (document.activeElement !== quantityField) {
+                                (quantityField as HTMLInputElement).focus();
+                                (quantityField as HTMLInputElement).select();
+                            }
+                        }, delay);
+                    });
+                }
+            }, 200);
+        }
+    };
+
+    // Add button click handler with validation
+    const onClickAddButton = (): void => {
+        // Validate customer selection first
+        const customerValidation = validateCustomerSelection(invoiceData.customer);
+        if (!customerValidation.isValid) {
+            showMessage("warning", customerValidation.errorMessage || "");
+            return;
+        }
+        
+        // Validate payment mode selection
+        const paymentValidation = validatePaymentModeSelection(invoiceData.paymentModeValue);
+        if (!paymentValidation.isValid) {
+            showMessage("warning", paymentValidation.errorMessage || "");
+            return;
+        }
+        
+        // Validate product fields
+        const productValidation = validateProductFields(productData);
+        if (!productValidation.isValid) {
+            showMessage("warning", productValidation.errorMessage || "");
+            return;
+        }
+        
+        try {
+            // Generate the invoice item
+            const newItem = generateInvoiceItem(
+                productData as ProductData,
+                discount,
+                invoiceData?.items?.length
+            );
+            
+            // Add the item to the invoice
+            setInvoiceData({
+                ...invoiceData,
+                items: [...invoiceData.items, newItem],
+            });
+            
+            // Reset product data and focus on product search
+            resetProduct();
+            
+            // Focus the product search dropdown
+            const productSearchDropdown = document.getElementById("productSearch");
+            productSearchDropdown?.focus();
+        } catch (error) {
+            showMessage("error", error instanceof Error ? error.message : "Failed to generate invoice item");
+        }
+    };
+
+    // Initialize component
     useEffect(() => {
         // Initialize component by loading both customers and products
         const initializeData = async () => {
@@ -524,52 +357,35 @@ export const NewInvoice: React.FC = () => {
         //eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // useEffect(() => {
-    //     setDiscount(customer?.discount);
-    // }, [customer]);
-
-    // useEffect(() => {
-    //     setInvoiceDataToLocalStorage();
-    //     //eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, [invoiceData]);
-
-    // useEffect(() => {
-    //     setCompany(product?.company);
-    //     setQuantity(product?.quantity);
-    //     setPackingType(product?.packingType);
-    //     setManufacturingDate(getMonthYearFormat(product?.manufacturingDate));
-    //     setExpiryDate(getMonthYearFormat(product?.expiryDate));
-    //     setSGst(product?.sGstInPercent);
-    //     setCGst(product?.cGstInPercent);
-    //     setIGst(product?.iGstInPercent);
-    //     setRate(product?.rate);
-    //     setMrp(product?.mrp);
-    // }, [product]);
-
-    // useState(() => {
-    //     checkDisability();
-    // }, [serialNumber]);
-
-    // useEffect(() => {
-    //     setCustomersAsOptions(getCustomerAsOptions({ customers: customers, addAllOptions: false }));
-    // }, [customers]);
+    // Handle keyboard navigation for form fields
+    const handleKeyUp = (
+        e: React.KeyboardEvent<HTMLInputElement>,
+        fieldId: string
+    ) => {
+        handleFieldNavigation(e, fieldId);
+    };
 
     return (
         <>
             {contextHolder}
+
+            {/* Product Selection Modal */}
+            <ProductSelectionModal
+                visible={modalVisible}
+                onCancel={() => setModalVisible(false)}
+                onSelect={handleFinalProductSelectionWithState}
+                products={similarProducts}
+            />
             <div className="newInvoiceWrapper">
                 <Col span={24}>
-                    <Row style={styles1} justify="space-between" align="middle">
+                    <Row style={{ margin: "8px 5px 8px 5px" }} justify="space-between" align="middle">
                         <Typography.Title
                             level={4}
                             className="customerDropdownTitle"
-                            // style={{border: "1px solid black"}}
                         >
                             New Invoice
                         </Typography.Title>
-                        <Row
-                        // style={{ border: "1px solid black" }}
-                        >
+                        <Row>
                             <Space
                                 direction="horizontal"
                                 style={{ marginRight: "8px" }}
@@ -589,35 +405,6 @@ export const NewInvoice: React.FC = () => {
                                 >
                                     Reset
                                 </Button>
-                                {/* {isInvoiceReady && (
-                                    <PDFDownloadLink
-                                        document={
-                                            <PDFFileCreator
-                                                products={invoiceData}
-                                                customer={customer}
-                                                invoiceNumber={`INV${invoiceNumber}`}
-                                            />
-                                        }
-                                        fileName={`INV${invoiceNumber}`}
-                                    >
-                                        {({ loading }) =>
-                                            loading ? (
-                                                <button className="primaryButtonStyle">
-                                                    Loading...
-                                                </button>
-                                            ) : (
-                                                <button
-                                                    className="primaryButtonStyle"
-                                                    onClick={() => {
-                                                        onPressedPrintHandler();
-                                                    }}
-                                                >
-                                                    Print
-                                                </button>
-                                            )
-                                        }
-                                    </PDFDownloadLink>
-                                )} */}
                                 {!isInvoiceReady && (
                                     <Button
                                         type="primary"
@@ -696,7 +483,6 @@ export const NewInvoice: React.FC = () => {
                                         placeholder="Select Customer"
                                         options={customersAsOptions}
                                         filterOption={(input, option) => {
-                                            console.log("Option: ", option);
                                             return (
                                                 option?.label
                                                     ?.toString()
@@ -726,11 +512,26 @@ export const NewInvoice: React.FC = () => {
                                 <Radio.Group
                                     value={invoiceData?.paymentModeValue}
                                     onChange={event => {
+                                        // Validate customer selection first
+                                        const customerValidation = validateCustomerSelection(invoiceData.customer);
+                                        if (!customerValidation.isValid) {
+                                            showMessage(
+                                                "warning",
+                                                customerValidation.errorMessage ||
+                                                    ""
+                                            );
+                                            return;
+                                        }
                                         setInvoiceData({
                                             ...invoiceData,
                                             paymentModeValue:
                                                 event.target.value,
                                         });
+
+                                        const productSearchDropdown =
+                                            document.getElementById(
+                                                "productSearch"
+                                            );
                                         productSearchDropdown?.focus();
                                     }}
                                     options={paymentModes}
@@ -765,12 +566,49 @@ export const NewInvoice: React.FC = () => {
                                                     selectedProduct as ProductOption
                                                 )?.customValue
                                             ) {
-                                                setProductData(prev => ({
-                                                    ...prev,
-                                                    ...(
-                                                        selectedProduct as ProductOption
-                                                    ).customValue,
-                                                }));
+                                                handleProductSelectWithValidation(
+                                                    selectedProduct as ProductOption
+                                                );
+                                            }
+                                        }}
+                                        onKeyDown={e => {
+                                            // Handle Enter key press on dropdown
+                                            if (
+                                                e.key === "Enter" &&
+                                                productsAsOptions.length > 0
+                                            ) {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+
+                                                // Find the highlighted option in the dropdown
+                                                const highlightedOption =
+                                                    document.querySelector(
+                                                        ".ant-select-item-option-active, .ant-select-item-option-selected"
+                                                    ) as HTMLElement;
+
+                                                if (highlightedOption) {
+                                                    // Get the data-value attribute which contains the product ID
+                                                    const productId =
+                                                        highlightedOption.getAttribute(
+                                                            "data-value"
+                                                        );
+                                                    if (productId) {
+                                                        // Find the product option with this ID
+                                                        const selectedOption =
+                                                            productsAsOptions.find(
+                                                                option =>
+                                                                    option.value ===
+                                                                    productId
+                                                            );
+
+                                                        if (selectedOption) {
+                                                            // Manually trigger product selection
+                                                            handleProductSelectWithValidation(
+                                                                selectedOption
+                                                            );
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }}
                                         onClear={() => setProductData(null)}
@@ -799,17 +637,7 @@ export const NewInvoice: React.FC = () => {
                                     label="Company"
                                     width="110px"
                                     value={productData?.company}
-                                    onChange={event =>
-                                        setProductData(prev =>
-                                            prev === null
-                                                ? null
-                                                : {
-                                                      ...prev,
-                                                      company:
-                                                          event.target.value,
-                                                  }
-                                        )
-                                    }
+                                    disabled={true}
                                     className="invoiceInputFields"
                                 />
                             </Space>
@@ -835,6 +663,9 @@ export const NewInvoice: React.FC = () => {
                                                   }
                                         )
                                     }
+                                    onKeyUp={e =>
+                                        handleKeyUp(e, "quantityField")
+                                    }
                                     ref={quantityRef}
                                 />
                             </Space>
@@ -848,17 +679,7 @@ export const NewInvoice: React.FC = () => {
                                     label="Pack"
                                     value={productData?.packingType}
                                     id="packingTypeField"
-                                    onChange={event =>
-                                        setProductData(prev =>
-                                            prev === null
-                                                ? null
-                                                : {
-                                                      ...prev,
-                                                      packingType:
-                                                          event.target.value,
-                                                  }
-                                        )
-                                    }
+                                    disabled={true}
                                 />
                             </Space>
                             <Space
@@ -871,6 +692,7 @@ export const NewInvoice: React.FC = () => {
                                     label="Mf Date"
                                     value={productData?.manufacturingDate?.toString()}
                                     id="manufacturingDateField"
+                                    disabled={true}
                                 />
                             </Space>
                             <Space
@@ -883,6 +705,7 @@ export const NewInvoice: React.FC = () => {
                                     label="Exp Date"
                                     value={productData?.expiryDate?.toString()}
                                     id="expiryDateField"
+                                    disabled={true}
                                 />
                             </Space>
                             <Space
@@ -895,18 +718,7 @@ export const NewInvoice: React.FC = () => {
                                     label="SGST"
                                     value={productData?.sGst}
                                     id="sGstField"
-                                    onChange={event =>
-                                        setProductData(prev =>
-                                            prev === null
-                                                ? null
-                                                : {
-                                                      ...prev,
-                                                      sGst: Number(
-                                                          event.target.value
-                                                      ),
-                                                  }
-                                        )
-                                    }
+                                    disabled={true}
                                 />
                             </Space>
                             <Space
@@ -919,18 +731,7 @@ export const NewInvoice: React.FC = () => {
                                     label="CGST"
                                     value={productData?.cGst}
                                     id="cGstField"
-                                    onChange={event =>
-                                        setProductData(prev =>
-                                            prev === null
-                                                ? null
-                                                : {
-                                                      ...prev,
-                                                      cGst: Number(
-                                                          event.target.value
-                                                      ),
-                                                  }
-                                        )
-                                    }
+                                    disabled={true}
                                 />
                             </Space>
                             <Space
@@ -943,58 +744,7 @@ export const NewInvoice: React.FC = () => {
                                     label="IGST"
                                     value={productData?.iGst}
                                     id="iGstField"
-                                    onChange={event =>
-                                        setProductData(prev =>
-                                            prev === null
-                                                ? null
-                                                : {
-                                                      ...prev,
-                                                      iGst: Number(
-                                                          event.target.value
-                                                      ),
-                                                  }
-                                        )
-                                    }
-                                />
-                            </Space>
-                            <Space
-                                direction="vertical"
-                                style={{
-                                    textAlign: "start",
-                                }}
-                            >
-                                <InvoiceInput
-                                    label="Discount"
-                                    value={discount}
-                                    id="discountField"
-                                    onChange={event =>
-                                        setDiscount(Number(event.target.value))
-                                    }
-                                    ref={discountRef}
-                                />
-                            </Space>
-                            <Space
-                                direction="vertical"
-                                style={{
-                                    textAlign: "start",
-                                }}
-                            >
-                                <InvoiceInput
-                                    label="Mrp"
-                                    value={productData?.mrp}
-                                    id="mrpField"
-                                    onChange={event =>
-                                        setProductData(prev =>
-                                            prev === null
-                                                ? null
-                                                : {
-                                                      ...prev,
-                                                      mrp: Number(
-                                                          event.target.value
-                                                      ),
-                                                  }
-                                        )
-                                    }
+                                    disabled={true}
                                 />
                             </Space>
                             <Space
@@ -1020,7 +770,51 @@ export const NewInvoice: React.FC = () => {
                                                   }
                                         )
                                     }
-                                    onKeyUp={onKeyupRateField}
+                                    onKeyUp={e => handleKeyUp(e, "rateField")}
+                                />
+                            </Space>
+                            <Space
+                                direction="vertical"
+                                style={{
+                                    textAlign: "start",
+                                }}
+                            >
+                                <InvoiceInput
+                                    label="Mrp"
+                                    value={productData?.mrp}
+                                    id="mrpField"
+                                    onChange={event =>
+                                        setProductData(prev =>
+                                            prev === null
+                                                ? null
+                                                : {
+                                                      ...prev,
+                                                      mrp: Number(
+                                                          event.target.value
+                                                      ),
+                                                  }
+                                        )
+                                    }
+                                    onKeyUp={e => handleKeyUp(e, "mrpField")}
+                                />
+                            </Space>
+                            <Space
+                                direction="vertical"
+                                style={{
+                                    textAlign: "start",
+                                }}
+                            >
+                                <InvoiceInput
+                                    label="Discount"
+                                    value={discount}
+                                    id="discountField"
+                                    onChange={event =>
+                                        setDiscount(Number(event.target.value))
+                                    }
+                                    onKeyUp={e =>
+                                        handleKeyUp(e, "discountField")
+                                    }
+                                    ref={discountRef}
                                 />
                             </Space>
                             <Space

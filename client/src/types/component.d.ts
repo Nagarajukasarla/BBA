@@ -1,4 +1,4 @@
-import { Customer } from "./model";
+import { Customer, Product } from "./model";
 
 /** Dashboard Types */
 export interface DashboardCardProps {
@@ -27,15 +27,6 @@ export interface Filters {
     dateRange: [string | null, string | null];
 };
 
-// Used for addOrEdit invoice
-export interface InvoiceData {
-    invoiceNumber?: string;
-    customer: Customer | null;
-    paymentModeValue: string;
-    items: InvoiceItem[];
-    serialNumber?: number;
-};
-
 export interface ProductData {
     id: number;
     batchNumber: string;
@@ -55,3 +46,22 @@ export interface ProductData {
     discount: number;
     price: number;
 };
+
+export interface InvoiceItem extends ProductData {
+    serialNumber: number | undefined;
+    amount: number;
+};
+
+export interface InvoiceData {
+    invoiceNumber?: string;
+    customer: Customer | null;
+    paymentMode: string;
+    items: InvoiceItem[];
+};
+
+export interface ProductOption {
+    value: string;
+    label: string;
+    customValue: Product;
+}
+

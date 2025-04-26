@@ -52,9 +52,9 @@ export type Product = {
     freeQuantity?: number;
     rate: number;
     mrp: number;
-    sgst: number;
-    cgst: number;
-    igst: number;
+    sGst: number;
+    cGst: number;
+    iGst: number;
     manufacturingDate: Date;
     expiryDate: Date;
     packingType: string;
@@ -80,6 +80,7 @@ export type Invoice = {
 
 export type InvoiceItem = Product & {
     serialNumber: number | undefined;
+    amount: number;
 };
 
 export type Company =  {

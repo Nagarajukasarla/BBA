@@ -1,11 +1,19 @@
-import React, { forwardRef } from 'react';
-import { Input, Select, Space, Typography, ConfigProvider } from 'antd';
-import type { InputRef } from 'antd';
-import { SelectProps } from 'antd/lib/select';
-import { handleFieldNavigation } from '@/utils/newInvoiceKeyboardEvents';
+import React, { forwardRef } from "react";
+import { Input, Select, Space, Typography, ConfigProvider, Button } from "antd";
+import type { InputRef } from "antd";
+import { SelectProps } from "antd/lib/select";
+import { ButtonProps } from "antd/lib/button";
+import { handleFieldNavigation } from "@/utils/newInvoiceKeyboardEvents";
+
+interface InvoiceFieldContainerProps {
+    label?: string;
+    width?: string | number;
+    children: React.ReactNode;
+    style?: React.CSSProperties;
+}
 
 interface InvoiceInputProps {
-    label: string;
+    label?: string;
     value?: string | number | null;
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
     onKeyUp?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
@@ -14,57 +22,86 @@ interface InvoiceInputProps {
     className?: string;
     disabled?: boolean;
     placeholder?: string;
+    containerStyle?: React.CSSProperties;
 }
 
-interface InvoiceSelectProps extends Omit<SelectProps, 'onChange'> {
-    label: string;
+interface InvoiceSelectProps extends Omit<SelectProps, "onChange"> {
+    label?: string;
     width?: string | number;
     onSelect?: (value: string, option: any) => void;
     onChange?: (value: string) => void;
     id?: string;
+    containerStyle?: React.CSSProperties;
+    loading?: boolean;
 }
 
-// Using forwardRef to properly handle ref forwarding
-export const InvoiceInput = forwardRef<InputRef, InvoiceInputProps>(({
+interface InvoiceButtonProps extends ButtonProps {
+    label?: string;
+    containerStyle?: React.CSSProperties;
+}
+
+// Field Container Component
+export const InvoiceFieldContainer: React.FC<InvoiceFieldContainerProps> = ({
     label,
-    value,
-    onChange,
-    onKeyUp,
-    width = "50px",
-    id,
-    className = "invoiceInputFields",
-    disabled,
-    placeholder,
-}, ref) => (
+    width,
+    children,
+    style,
+}) => (
     <Space
         direction="vertical"
         style={{
             textAlign: "start",
             marginLeft: "20px",
+            ...style,
         }}
     >
-        <Typography.Text className="primary-input-field-header-style">
-            {label}
-        </Typography.Text>
-        <Input
-            style={{
-                width,
-                padding: "4px",
-            }}
-            value={value ?? ""}
-            onChange={onChange}
-            onKeyUp={(e) => {
-                handleFieldNavigation(e, id || '');
-                onKeyUp?.(e);
-            }}
-            id={id}
-            className={className}
-            ref={ref}
-            disabled={disabled}
-            placeholder={placeholder}
-        />
+        {label && (
+            <Typography.Text className="primary-input-field-header-style">
+                {label}
+            </Typography.Text>
+        )}
+        <div style={{ width }}>{children}</div>
     </Space>
-));
+);
+
+// Using forwardRef to properly handle ref forwarding
+export const InvoiceInput = forwardRef<InputRef, InvoiceInputProps>(
+    (
+        {
+            label,
+            value,
+            onChange,
+            onKeyUp,
+            width = "50px",
+            id,
+            className = "invoiceInputFields",
+            disabled,
+            placeholder,
+            containerStyle,
+        },
+        ref
+    ) => (
+        <InvoiceFieldContainer label={label} style={containerStyle}>
+            <Input
+                style={{
+                    width,
+                    padding: "4px",
+                }}
+                value={value ?? ""}
+                onChange={onChange}
+                onKeyUp={e => {
+                    handleFieldNavigation(e, id || "");
+                    onKeyUp?.(e);
+                }}
+                id={id}
+                className={className}
+                ref={ref}
+                disabled={disabled}
+                placeholder={placeholder}
+            />
+        </InvoiceFieldContainer>
+    )
+);
 
 export const InvoiceSelect: React.FC<InvoiceSelectProps> = ({
     label,
@@ -78,18 +115,11 @@ export const InvoiceSelect: React.FC<InvoiceSelectProps> = ({
     allowClear,
     disabled,
     id,
+    containerStyle,
+    loading,
     ...restProps
 }) => (
-    <Space
-        direction="vertical"
-        style={{
-            textAlign: "start",
-            marginLeft: "20px",
-        }}
-    >
-        <Typography.Text className="primary-input-field-header-style">
-            {label}
-        </Typography.Text>
+    <InvoiceFieldContainer label={label} style={containerStyle}>
         <ConfigProvider
             theme={{
                 components: {
@@ -114,9 +144,21 @@ export const InvoiceSelect: React.FC<InvoiceSelectProps> = ({
                 allowClear={allowClear}
                 disabled={disabled}
                 id={id}
+                loading={loading}
                 {...restProps}
             />
         </ConfigProvider>
-    </Space>
+    </InvoiceFieldContainer>
 );
 
+// Button component with container
+export const InvoiceButton: React.FC<InvoiceButtonProps> = ({
+    label,
+    containerStyle,
+    children,
+    ...buttonProps
+}) => (
+    <InvoiceFieldContainer label={label} style={containerStyle}>
+        <Button {...buttonProps}>{children}</Button>
+    </InvoiceFieldContainer>
+);
