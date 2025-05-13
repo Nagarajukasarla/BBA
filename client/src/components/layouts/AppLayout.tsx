@@ -22,7 +22,7 @@ const AppLayout: React.FC = () => {
             </Header>
             <Layout hasSider style={{ height: "calc(100vh - 64px)" }}>
                 <Sider
-                    width={240}
+                    width={200}
                     style={{
                         height: "100%",
                     }}

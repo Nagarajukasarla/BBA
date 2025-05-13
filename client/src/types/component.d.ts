@@ -29,27 +29,25 @@ export interface Filters {
 
 export interface ProductData {
     id: number;
-    batchNumber: string;
     invoiceNumber?: string;
+    batchNumber: string;
     name: string;
     company: string;
     quantity: number;
     freeQuantity: number;
     packingType: string;
-    manufacturingDate: Date | null;
-    expiryDate: Date | null;
+    manufacturingDate: Date;
+    expiryDate: Date;
     sGst: number;
     cGst: number;
     iGst: number;
     rate: number;
     mrp: number;
     discount: number;
-    price: number;
 };
 
 export interface InvoiceItem extends ProductData {
-    serialNumber: number | undefined;
-    amount: number;
+    price: number;
 };
 
 export interface InvoiceData {
@@ -57,11 +55,11 @@ export interface InvoiceData {
     customer: Customer | null;
     paymentMode: string;
     items: InvoiceItem[];
+    serialNumber?: number;
 };
 
 export interface ProductOption {
     value: string;
     label: string;
     customValue: Product;
-}
-
+};

@@ -11,9 +11,9 @@ body {
 }
 
 .ant-layout-sider {
-    width: 250px !important;
-    max-width: 250px !important;
-    min-width: 250px !important;
+    width: 200px !important;
+    max-width: 200px !important;
+    min-width: 200px !important;
     background-color: #ffffff !important;
 }
 

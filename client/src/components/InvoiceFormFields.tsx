@@ -1,9 +1,16 @@
-import React, { forwardRef } from "react";
-import { Input, Select, Space, Typography, ConfigProvider, Button } from "antd";
-import type { InputRef } from "antd";
-import { SelectProps } from "antd/lib/select";
-import { ButtonProps } from "antd/lib/button";
 import { handleFieldNavigation } from "@/utils/newInvoiceKeyboardEvents";
+import type { InputRef } from "antd";
+import {
+    Button,
+    ConfigProvider,
+    Input,
+    Select,
+    Space,
+    Typography
+} from "antd";
+import { ButtonProps } from "antd/lib/button";
+import { SelectProps } from "antd/lib/select";
+import React, { forwardRef } from "react";
 
 interface InvoiceFieldContainerProps {
     label?: string;
@@ -23,8 +30,8 @@ interface InvoiceInputProps {
     disabled?: boolean;
     placeholder?: string;
     containerStyle?: React.CSSProperties;
+    isError?: boolean;
 }
-
 interface InvoiceSelectProps extends Omit<SelectProps, "onChange"> {
     label?: string;
     width?: string | number;
@@ -78,6 +85,7 @@ export const InvoiceInput = forwardRef<InputRef, InvoiceInputProps>(
             disabled,
             placeholder,
             containerStyle,
+            isError,
         },
         ref
     ) => (
@@ -86,6 +94,10 @@ export const InvoiceInput = forwardRef<InputRef, InvoiceInputProps>(
                 style={{
                     width,
                     padding: "4px",
+                    ...(isError && { borderColor: "red" }),
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "flex-start",
                 }}
                 value={value ?? ""}
                 onChange={onChange}

@@ -6,21 +6,11 @@ import {
     Radio,
     Row,
     Space,
-    Spin,
     Table,
-    theme,
     Typography,
 } from "antd";
-import React, { useEffect, useRef, useState } from "react";
-
-import {
-    FileAddOutlined,
-    MailOutlined,
-    PlusCircleOutlined,
-    ReloadOutlined,
-    SaveOutlined,
-} from "@ant-design/icons";
-import type { NoticeType } from "antd/es/message/interface";
+import { observer } from "mobx-react-lite"; // Added observer for reactivity
+import React, { useEffect, useRef } from "react";
 
 import {
     InvoiceButton,
@@ -28,71 +18,34 @@ import {
     InvoiceSelect,
 } from "@/components/InvoiceFormFields";
 import { handleFieldNavigation } from "@/utils/newInvoiceKeyboardEvents";
+import {
+    FileAddOutlined,
+    MailOutlined,
+    PlusCircleOutlined,
+    ReloadOutlined,
+    SaveOutlined,
+} from "@ant-design/icons";
 import { invoiceItemsColumns, paymentModes } from "./constants";
-import { useInvoiceState } from "@/states/invoiceState";
 
-import { checkDisabilityForReset } from "./validators";
+import ProductSelectionModal from "@/components/features/ProductSelectionModal";
+import { newInvoiceStore } from "@/stores/newInvoiceStore";
+import { ProductOption } from "@/types/component";
+import { NoticeType } from "antd/es/message/interface";
+import { fetchCustomers, fetchProducts, fetchSelectedCustomer } from "./fetch";
+import {
+    handleFinalProductSelection,
+    handleProductSelect,
+    onClickAddButton,
+} from "./handlers";
+import { checkDisability, checkDisabilityForReset } from "./validators";
 
-export const NewInvoice: React.FC = () => {
-    const {
-        invoiceData,
-        setInvoiceData,
-        productData,
-        setProductData,
-        selectedCustomer,
-        customersAsOptions,
-        productsAsOptions,
-        checkDisability,
-        fetchSelectedCustomer,
-        fetchCustomers,
-        fetchProducts,
-    } = useInvoiceState();
+export const NewInvoice: React.FC = observer(() => {
+    // Wrapped in observer to make it reactive
 
     const quantityRef = useRef(null);
     const discountRef = useRef(null);
 
-    // Modal state
-    const [modalVisible, setModalVisible] = useState<boolean>(false);
-    const [isCustomersLoading, setIsCustomersLoading] =
-        useState<boolean>(false);
-    const [isProductsLoading, setIsProductsLoading] = useState<boolean>(false);
-
-    // Message API
     const [messageApi, contextHolder] = message.useMessage();
-
-    // Update invoice data when selected customer changes
-    useEffect(() => {
-        setInvoiceData({
-            ...invoiceData,
-            customer: selectedCustomer, // Currently we are storing the entire customer object in furture we can store only the id
-        });
-    }, [selectedCustomer]);
-
-    useEffect(() => {
-        setIsCustomersLoading(true);
-        fetchCustomers()
-            .then(() => setIsCustomersLoading(false))
-            .catch(message => {
-                showMessage("error", message);
-                setIsCustomersLoading(false);
-            });
-
-        setIsProductsLoading(true);
-        fetchProducts()
-            .then(() => setIsProductsLoading(false))
-            .catch(message => {
-                showMessage("error", message);
-                setIsProductsLoading(false);
-            });
-    }, []);
-
-    const resetInvoiceData = () => {
-        setInvoiceData({
-            customer: null,
-            paymentMode: "",
-            items: [],
-        });
-    };
 
     const showMessage = (type: NoticeType, message: string) => {
         messageApi.open({
@@ -101,7 +54,22 @@ export const NewInvoice: React.FC = () => {
         });
     };
 
-    // Handle keyboard navigation for form fields
+    useEffect(() => {
+        newInvoiceStore.setIsCustomersLoading(true);
+        fetchCustomers()
+            .catch(message => {
+                showMessage("error", message);
+            })
+            .finally(() => newInvoiceStore.setIsCustomersLoading(false));
+
+        newInvoiceStore.setIsProductsLoading(true);
+        fetchProducts()
+            .catch(message => {
+                showMessage("error", message);
+            })
+            .finally(() => newInvoiceStore.setIsProductsLoading(false));
+    }, []);
+
     const handleKeyUp = (
         e: React.KeyboardEvent<HTMLInputElement>,
         fieldId: string
@@ -113,13 +81,12 @@ export const NewInvoice: React.FC = () => {
         <>
             {contextHolder}
 
-            {/* Product Selection Modal */}
-            {/* <ProductSelectionModal
-                visible={modalVisible}
-                onCancel={() => setModalVisible(false)}
+            <ProductSelectionModal
+                visible={newInvoiceStore.modalVisible} // Updated to use MobX store
+                onCancel={() => newInvoiceStore.setModalVisible(false)} // Updated to use MobX store
                 onSelect={handleFinalProductSelection}
-                products={similarProducts}
-            /> */}
+                products={newInvoiceStore.similarProducts} // Updated to use MobX store
+            />
             <div className="newInvoiceWrapper">
                 <Col span={24}>
                     <Row
@@ -132,13 +99,10 @@ export const NewInvoice: React.FC = () => {
                         <Typography.Title
                             level={4}
                             className="customerDropdownTitle"
-                            // style={{border: "1px solid black"}}
                         >
                             New Invoice
                         </Typography.Title>
-                        <Row
-                        // style={{ border: "1px solid black" }}
-                        >
+                        <Row>
                             <Space
                                 direction="horizontal"
                                 style={{ marginRight: "8px" }}
@@ -146,7 +110,7 @@ export const NewInvoice: React.FC = () => {
                                 <Button
                                     type="primary"
                                     onClick={() => {
-                                        resetInvoiceData();
+                                        newInvoiceStore.reset();
                                     }}
                                     disabled={checkDisabilityForReset()}
                                     style={{
@@ -208,8 +172,17 @@ export const NewInvoice: React.FC = () => {
                             <InvoiceSelect
                                 label="Customer"
                                 width={380}
-                                value={invoiceData?.customer?.number}
+                                value={
+                                    newInvoiceStore.invoiceData?.customer
+                                        ?.number
+                                } // Updated to use MobX store
                                 onSelect={(_, selectedCustomer) => {
+                                    console.log(
+                                        "Select: ",
+                                        selectedCustomer,
+                                        "- ",
+                                        selectedCustomer.customValue
+                                    );
                                     if (selectedCustomer?.customValue) {
                                         fetchSelectedCustomer(
                                             selectedCustomer.customValue.id
@@ -217,7 +190,7 @@ export const NewInvoice: React.FC = () => {
                                     }
                                 }}
                                 placeholder="Select Customer"
-                                options={customersAsOptions}
+                                options={newInvoiceStore.customersAsOptions} // Updated to use MobX store
                                 filterOption={(input, option) => {
                                     return (
                                         option?.label
@@ -231,7 +204,7 @@ export const NewInvoice: React.FC = () => {
                                 allowClear
                                 defaultOpen
                                 autoFocus
-                                loading={isCustomersLoading}
+                                loading={newInvoiceStore.isCustomersLoading} // Updated to use MobX store
                             />
                             <Space
                                 direction="vertical"
@@ -244,17 +217,27 @@ export const NewInvoice: React.FC = () => {
                                     Payment Mode
                                 </Typography.Text>
                                 <Radio.Group
-                                    value={invoiceData?.paymentMode}
+                                    value={
+                                        newInvoiceStore.invoiceData?.paymentMode
+                                    } // Updated to use MobX store
                                     onChange={event => {
-                                        if (!invoiceData.customer) {
+                                        if (
+                                            !newInvoiceStore.invoiceData
+                                                ?.customer
+                                        ) {
+                                            console.log(
+                                                "Customer: ",
+                                                newInvoiceStore.invoiceData
+                                                    ?.customer
+                                            );
                                             showMessage(
                                                 "warning",
                                                 "Please select Customer"
                                             );
                                             return;
                                         }
-                                        setInvoiceData({
-                                            ...invoiceData,
+                                        newInvoiceStore.setInvoiceData({
+                                            ...newInvoiceStore.invoiceData,
                                             paymentMode: event.target.value,
                                         });
 
@@ -275,59 +258,57 @@ export const NewInvoice: React.FC = () => {
                                 label="Product"
                                 width={380}
                                 id="productSearch"
-                                value={productData?.name}
-                                // onSelect={(_, selectedProduct) => {
-                                //     if (
-                                //         (selectedProduct as ProductOption)
-                                //             ?.customValue
-                                //     ) {
-                                //         handleProductSelectWithValidation(
-                                //             selectedProduct as ProductOption
-                                //         );
-                                //     }
-                                // }}
-                                // onKeyDown={e => {
-                                //     // Handle Enter key press on dropdown
-                                //     if (
-                                //         e.key === "Enter" &&
-                                //         productsAsOptions.length > 0
-                                //     ) {
-                                //         e.preventDefault();
-                                //         e.stopPropagation();
+                                value={newInvoiceStore.productData?.name} // Updated to use MobX store
+                                onSelect={(_, selectedProduct) => {
+                                    if (
+                                        (selectedProduct as ProductOption)
+                                            ?.customValue
+                                    ) {
+                                        handleProductSelect(
+                                            selectedProduct as ProductOption
+                                        );
+                                    }
+                                }}
+                                onKeyDown={e => {
+                                    if (
+                                        e.key === "Enter" &&
+                                        newInvoiceStore.productsAsOptions
+                                            .length > 0
+                                    ) {
+                                        e.preventDefault();
+                                        e.stopPropagation();
 
-                                //         // Find the highlighted option in the dropdown
-                                //         const highlightedOption =
-                                //             document.querySelector(
-                                //                 ".ant-select-item-option-active, .ant-select-item-option-selected"
-                                //             ) as HTMLElement;
+                                        const highlightedOption =
+                                            document.querySelector(
+                                                ".ant-select-item-option-active, .ant-select-item-option-selected"
+                                            ) as HTMLElement;
 
-                                //         if (highlightedOption) {
-                                //             // Get the data-value attribute which contains the product ID
-                                //             const productId =
-                                //                 highlightedOption.getAttribute(
-                                //                     "data-value"
-                                //                 );
-                                //             if (productId) {
-                                //                 // Find the product option with this ID
-                                //                 const selectedOption =
-                                //                     productsAsOptions.find(
-                                //                         option =>
-                                //                             option.value ===
-                                //                             productId
-                                //                     );
+                                        if (highlightedOption) {
+                                            const productId =
+                                                highlightedOption.getAttribute(
+                                                    "data-value"
+                                                );
+                                            if (productId) {
+                                                const selectedOption =
+                                                    newInvoiceStore.productsAsOptions.find(
+                                                        option =>
+                                                            option.value ===
+                                                            productId
+                                                    );
 
-                                //                 if (selectedOption) {
-                                //                     // Manually trigger product selection
-                                //                     handleProductSelectWithValidation(
-                                //                         selectedOption
-                                //                     );
-                                //                 }
-                                //             }
-                                //         }
-                                //     }
-                                // }}
-                                onClear={() => setProductData(null)}
-                                options={productsAsOptions}
+                                                if (selectedOption) {
+                                                    handleProductSelect(
+                                                        selectedOption
+                                                    );
+                                                }
+                                            }
+                                        }
+                                    }
+                                }}
+                                onClear={() =>
+                                    newInvoiceStore.setProductData(null)
+                                } // Updated to use MobX store
+                                options={newInvoiceStore.productsAsOptions} // Updated to use MobX store
                                 filterOption={(input, option) =>
                                     option?.label
                                         ?.toString()
@@ -337,141 +318,193 @@ export const NewInvoice: React.FC = () => {
                                 placeholder="Select Product"
                                 showSearch
                                 allowClear
-                                loading={isProductsLoading}
+                                loading={newInvoiceStore.isProductsLoading} // Updated to use MobX store
                             />
                             <InvoiceInput
                                 label="Company"
                                 width="110px"
-                                value={productData?.company}
+                                value={newInvoiceStore.productData?.company} // Updated to use MobX store
                                 disabled={true}
                                 className="invoiceInputFields"
                             />
                             <InvoiceInput
+                                isError={newInvoiceStore.invalidProductFieldError.includes(
+                                    "quantity"
+                                )}
+                                containerStyle={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    alignItems: "flex-start",
+                                }}
                                 label="Quantity"
-                                value={productData?.quantity}
+                                value={newInvoiceStore.productData?.quantity} // Updated to use MobX store
                                 id="quantityField"
-                                onChange={event =>
-                                    setProductData(prev =>
-                                        prev === null
-                                            ? null
-                                            : {
-                                                  ...prev,
-                                                  quantity: Number(
-                                                      event.target.value
-                                                  ),
-                                              }
-                                    )
-                                }
+                                onChange={event => {
+                                    if (newInvoiceStore.productData) {
+                                        newInvoiceStore.setProductData({
+                                            ...newInvoiceStore.productData,
+                                            quantity: Number(
+                                                event.target.value
+                                            ),
+                                        });
+                                    }
+                                }}
                                 onKeyUp={e => handleKeyUp(e, "quantityField")}
                                 ref={quantityRef}
                             />
                             <InvoiceInput
+                                isError={newInvoiceStore.invalidProductFieldError.includes(
+                                    "packingType"
+                                )}
                                 label="Pack"
-                                value={productData?.packingType}
+                                value={newInvoiceStore.productData?.packingType} // Updated to use MobX store
                                 id="packingTypeField"
                                 disabled={true}
                             />
                             <InvoiceInput
+                                isError={newInvoiceStore.invalidProductFieldError.includes(
+                                    "manufacturingDate"
+                                )}
                                 label="Mf Date"
-                                value={productData?.manufacturingDate?.toString()}
+                                value={newInvoiceStore.productData?.manufacturingDate?.toString()} // Updated to use MobX store
                                 id="manufacturingDateField"
                                 disabled={true}
                             />
                             <InvoiceInput
+                                isError={newInvoiceStore.invalidProductFieldError.includes(
+                                    "expiryDate"
+                                )}
                                 label="Exp Date"
-                                value={productData?.expiryDate?.toString()}
+                                value={newInvoiceStore.productData?.expiryDate?.toString()} // Updated to use MobX store
                                 id="expiryDateField"
                                 disabled={true}
                             />
                             <InvoiceInput
+                                isError={newInvoiceStore.invalidProductFieldError.includes(
+                                    "sGst"
+                                )}
                                 label="SGST"
-                                value={productData?.sGst}
+                                value={newInvoiceStore.productData?.sGst} // Updated to use MobX store
                                 id="sGstField"
                                 disabled={true}
                             />
                             <InvoiceInput
+                                isError={newInvoiceStore.invalidProductFieldError.includes(
+                                    "cGst"
+                                )}
                                 label="CGST"
-                                value={productData?.cGst}
+                                value={newInvoiceStore.productData?.cGst} // Updated to use MobX store
                                 id="cGstField"
                                 disabled={true}
                             />
                             <InvoiceInput
+                                isError={newInvoiceStore.invalidProductFieldError.includes(
+                                    "iGst"
+                                )}
                                 label="IGST"
-                                value={productData?.iGst}
+                                value={newInvoiceStore.productData?.iGst} // Updated to use MobX store
                                 id="iGstField"
                                 disabled={true}
                             />
                             <InvoiceInput
+                                isError={newInvoiceStore.invalidProductFieldError.includes(
+                                    "rate"
+                                )}
                                 label="Rate"
-                                value={productData?.rate}
+                                value={newInvoiceStore.productData?.rate} // Updated to use MobX store
                                 id="rateField"
                                 className="invoiceInputFields rateInputFields"
-                                onChange={event =>
-                                    setProductData(prev =>
-                                        prev === null
-                                            ? null
-                                            : {
-                                                  ...prev,
-                                                  rate: Number(
-                                                      event.target.value
-                                                  ),
-                                              }
-                                    )
-                                }
+                                onChange={(
+                                    event: React.ChangeEvent<HTMLInputElement>
+                                ) => {
+                                    if (newInvoiceStore.productData) {
+                                        newInvoiceStore.setProductData({
+                                            ...newInvoiceStore.productData,
+                                            rate: Number(event.target.value),
+                                        });
+                                    }
+                                }}
                                 onKeyUp={e => handleKeyUp(e, "rateField")}
                             />
                             <InvoiceInput
+                                isError={newInvoiceStore.invalidProductFieldError.includes(
+                                    "mrp"
+                                )}
                                 label="Mrp"
-                                value={productData?.mrp}
+                                value={newInvoiceStore.productData?.mrp} // Updated to use MobX store
                                 id="mrpField"
-                                onChange={event =>
-                                    setProductData(prev =>
-                                        prev === null
-                                            ? null
-                                            : {
-                                                  ...prev,
-                                                  mrp: Number(
-                                                      event.target.value
-                                                  ),
-                                              }
-                                    )
-                                }
+                                onChange={(
+                                    event: React.ChangeEvent<HTMLInputElement>
+                                ) => {
+                                    if (newInvoiceStore.productData) {
+                                        newInvoiceStore.setProductData({
+                                            ...newInvoiceStore.productData,
+                                            mrp: Number(event.target.value),
+                                        });
+                                    }
+                                }}
                                 onKeyUp={e => handleKeyUp(e, "mrpField")}
                             />
                             <InvoiceInput
                                 label="Discount"
-                                value={"discount"}
+                                value={
+                                    newInvoiceStore.invoiceData?.customer
+                                        ?.defaultDiscount
+                                } // static value as placeholder
                                 id="discountField"
-                                // onChange={event =>
-                                //     setDiscount(Number(event.target.value))
-                                // }
                                 onKeyUp={e => handleKeyUp(e, "discountField")}
                                 ref={discountRef}
                             />
                             <InvoiceButton
                                 type="primary"
+                                onClick={onClickAddButton}
                                 id="addButton"
-                                // onClick={onClickAddButton}
                                 icon={<PlusCircleOutlined />}
                                 containerStyle={{ margin: "31px 0 0 0" }}
                             >
                                 Add
                             </InvoiceButton>
                         </Row>
+
                         <Row style={{ marginTop: "20px" }}>
                             <Table
-                                bordered
+                                style={{ marginTop: "25px", width: "100%" }}
                                 columns={invoiceItemsColumns}
-                                dataSource={invoiceData?.items}
-                                scroll={{
-                                    y: 270,
-                                }}
+                                dataSource={newInvoiceStore.invoiceData?.items} // Updated to use MobX store
                                 pagination={false}
-                            ></Table>
+                                bordered
+                                // summary={pageData => {
+                                //     const totalAmount = pageData.reduce(
+                                //         (total, record) => total + (record.total || 0),
+                                //         0
+                                //     );
+                                //     return (
+                                //         <>
+                                //             <Table.Summary.Row>
+                                //                 <Table.Summary.Cell
+                                //                     colSpan={6}
+                                //                     className="invoice-summary"
+                                //                 >
+                                //                     Total Amount
+                                //                 </Table.Summary.Cell>
+                                //                 <Table.Summary.Cell>
+                                //                     <Typography.Text
+                                //                         style={{
+                                //                             fontWeight: "bold",
+                                //                         }}
+                                //                     >
+                                //                         ₹ {totalAmount}
+                                //                     </Typography.Text>
+                                //                 </Table.Summary.Cell>
+                                //             </Table.Summary.Row>
+                                //         </>
+                                //     );
+                                // }}
+                            />
                         </Row>
                     </Card>
                 </Col>
             </div>
         </>
     );
-};
+});

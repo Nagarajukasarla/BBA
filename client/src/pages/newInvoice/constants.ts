@@ -39,7 +39,7 @@ export const invoiceItemsColumns: ColumnType<InvoiceItem>[] = [
         key: "4",
         title: "QUAN",
         dataIndex: "quantity",
-        width: "6%",
+        width: "5%",
     },
     {
         key: "5",

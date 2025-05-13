@@ -49,15 +49,15 @@ export type Product = {
     name: string;
     company: string;
     quantity: number;
-    freeQuantity?: number;
-    rate: number;
-    mrp: number;
+    freeQuantity: number;
+    packingType: string;
+    manufacturingDate: Date;
+    expiryDate: Date;
     sGst: number;
     cGst: number;
     iGst: number;
-    manufacturingDate: Date;
-    expiryDate: Date;
-    packingType: string;
+    rate: number;
+    mrp: number;
 };
 
 export type ProductSalesDetails = Product & {

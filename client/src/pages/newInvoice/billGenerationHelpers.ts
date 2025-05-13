@@ -1,28 +1,17 @@
- // Calculate amount with discount
- const calculateAmount = (
-    quantity: number,
-    rate: number,
-    discountPercent: number
-): number => {
+import { newInvoiceStore } from "@/stores/newInvoiceStore";
+
+export const calculateProductPrice = (): number => {
+    const quantity = newInvoiceStore.productData?.quantity!;
+    const rate = newInvoiceStore.productData?.rate!;
+    const discountPercent = newInvoiceStore.invoiceData?.customer?.defaultDiscount!;
     const subtotal = quantity * rate;
     const discountAmount = (subtotal * discountPercent) / 100;
+
     return subtotal - discountAmount;
 };
 
-// Generate invoice item with calculated amount
-const generateInvoiceItem = (): InvoiceItem => {
-    if (!productData) {
-        throw new Error("Product data is required");
-    }
 
-    return {
-        ...productData,
-        serialNumber: invoiceData?.items?.length + 1,
-        discount: discount,
-        amount: calculateAmount(
-            productData.quantity,
-            productData.rate,
-            discount
-        ),
-    } as InvoiceItem;
-};
+export const calculateTotalAmountOfInvoice = (): number => {
+    if (!newInvoiceStore.invoiceData?.items) return 0;
+    return newInvoiceStore.invoiceData?.items?.reduce((total, item) => total + item.price, 0);
+}

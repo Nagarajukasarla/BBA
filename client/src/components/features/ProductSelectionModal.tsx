@@ -1,9 +1,8 @@
-import React, { useEffect, useState, useRef } from "react";
-import { Modal, Table, Button, Typography, ConfigProvider } from "antd";
 import { Product } from "@/types/model";
-import dayjs from "dayjs";
+import { Button, ConfigProvider, Modal, Table, Typography } from "antd";
 import { ColumnsType } from "antd/es/table";
-import { calc } from "antd/es/theme/internal";
+import dayjs from "dayjs";
+import React, { useEffect, useRef, useState } from "react";
 
 interface ProductSelectionModalProps {
     visible: boolean;

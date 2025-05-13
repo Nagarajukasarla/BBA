@@ -1,9 +1,17 @@
-import { InvoiceData, ProductData, ProductOption } from "@/types/component";
+import { newInvoiceStore } from "@/stores/newInvoiceStore";
+import { ProductOption } from "@/types/component";
+import { Product } from "@/types/model";
+import { addItemToInvoice } from "./helpers";
+import {
+    validateCustomerSelection,
+    validatePaymentModeSelection,
+    validateProductFields,
+} from "./validators";
 
 export const findSimilarProducts = (
     productName: string,
-    allProducts: any[]
-): ProductData[] => {
+    allProducts: Product[]
+): Product[] => {
     if (!productName || !allProducts.length) return [];
 
     return allProducts.filter(
@@ -12,62 +20,40 @@ export const findSimilarProducts = (
 };
 
 // Handle product selection from dropdown
-export const handleProductSelect = (
-    selectedOption: ProductOption,
-    invoiceData: InvoiceData,
-    productsAsOptions: ProductOption[],
-    setSimilarProducts: Dispatch<SetStateAction<ProductData[]>>,
-    setModalVisible: Dispatch<SetStateAction<boolean>>,
-    handleFinalProductSelection: (product: ProductData) => void
-) => {
+export const handleProductSelect = (selectedOption: ProductOption) => {
+
     if (!selectedOption?.customValue) return;
 
-    // Validate customer selection first
-    const customerValidation = validateCustomerSelection(invoiceData.customer);
-    if (!customerValidation.isValid) {
-        showMessage("warning", customerValidation.errorMessage || "");
+    if (!validateCustomerSelection()) {
+        // showMessage("warning", "Please select a customer first");
         return;
     }
 
-    // Validate payment mode selection
-    const paymentValidation = validatePaymentModeSelection(
-        invoiceData.paymentModeValue
-    );
-    if (!paymentValidation.isValid) {
-        showMessage("warning", paymentValidation.errorMessage || "");
+    if (!validatePaymentModeSelection()) {
+        // showMessage("warning", "Please select a payment mode first");
         return;
     }
 
     const selectedProduct = selectedOption.customValue;
-    const allProducts = productsAsOptions.map(option => option.customValue);
+    const allProducts = newInvoiceStore.productsAsOptions.map(option => option.customValue);
     const similar = findSimilarProducts(selectedProduct.name, allProducts);
 
-    // Always show modal, even for a single product
-    if (similar.length >= 1) {
-        setSimilarProducts(similar);
-        setModalVisible(true);
-    } else {
-        // Fallback in case no similar products found (shouldn't happen)
-        handleFinalProductSelection(selectedProduct);
-    }
+    newInvoiceStore.setSimilarProducts(similar);
+    newInvoiceStore.setModalVisible(true);
 };
 
 // Handle final product selection (from modal or direct)
-export const handleFinalProductSelection = (
-    product: ProductData,
-    productData: ProductData | null,
-    setProductData: Dispatch<SetStateAction<ProductData | null>>,
-    setModalVisible: Dispatch<SetStateAction<boolean>>
-) => {
+export const handleFinalProductSelection = (product: Product) => {
     // First close the modal to prevent focus issues
-    setModalVisible(false);
+    newInvoiceStore.setModalVisible(false);
 
     // Create a variable to track if we need to focus
-    const needToFocus = !productData || productData.id !== product.id;
+    const needToFocus = !newInvoiceStore.productData || newInvoiceStore.productData.id !== product.id;
 
     // Then update the product data with cleared quantity
-    setProductData({
+    newInvoiceStore.setProductData({
         ...product,
+        discount: 0,
         quantity: 0,
     });
 
@@ -103,62 +89,11 @@ export const handleFinalProductSelection = (
  *
  * @return {void}
  */
-export const onClickAddButton = (
-    invoiceData: InvoiceData,
-    productData: ProductData | null,
-    discount: number,
-    setInvoiceData: Dispatch<SetStateAction<InvoiceData>>,
-    resetProduct: () => void
-): void => {
-    // Validate customer selection first
-    const customerValidation = validateCustomerSelection(invoiceData.customer);
-    if (!customerValidation.isValid) {
-        showMessage("warning", customerValidation.errorMessage || "");
-        return;
+export const onClickAddButton = (): void => {
+    console.log("Clicked Add Button");
+    newInvoiceStore.invalidProductFieldError = [];
+    if (validateProductFields()) {
+        addItemToInvoice();
     }
-
-    // Validate payment mode selection
-    const paymentValidation = validatePaymentModeSelection(
-        invoiceData.paymentModeValue
-    );
-    if (!paymentValidation.isValid) {
-        showMessage("warning", paymentValidation.errorMessage || "");
-        return;
-    }
-
-    // Validate product fields
-    const productValidation = validateProductFields(productData);
-    if (!productValidation.isValid) {
-        showMessage("warning", productValidation.errorMessage || "");
-        return;
-    }
-
-    try {
-        // Generate the invoice item
-        const newItem = generateInvoiceItem(
-            productData!,
-            discount,
-            invoiceData.items.length
-        );
-
-        // Add the item to the invoice
-        setInvoiceData({
-            ...invoiceData,
-            items: [...invoiceData.items, newItem],
-        });
-
-        // Reset product data and focus on product search
-        resetProduct();
-
-        // Focus the product search dropdown
-        const productSearchDropdown = document.getElementById("productSearch");
-        productSearchDropdown?.focus();
-    } catch (error) {
-        showMessage(
-            "error",
-            error instanceof Error
-                ? error.message
-                : "Failed to generate invoice item"
-        );
-    }
+    return;
 };
