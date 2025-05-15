@@ -91,9 +91,20 @@ export const handleFinalProductSelection = (product: Product) => {
  */
 export const onClickAddButton = (): void => {
     console.log("Clicked Add Button");
-    newInvoiceStore.invalidProductFieldError = [];
+    
+    // Clear any previous errors
+    newInvoiceStore.clearInvalidProductFieldError();
+    
+    // Check if a product is selected
+    if (!newInvoiceStore.productData) {
+        console.log("No product selected, cannot add to invoice");
+        return;
+    }
+    
+    // Validate the product fields
     if (validateProductFields()) {
         addItemToInvoice();
+    } else {
+        console.log("Product validation failed");
     }
-    return;
 };

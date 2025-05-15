@@ -1,3 +1,5 @@
+import { onClickAddButton } from "@/pages/newInvoice/handlers";
+
 interface FieldConfig {
     id: string;
     next: string;
@@ -81,6 +83,10 @@ export const handleFieldNavigation = (
 ) => {
     if (event.key !== "Enter") return;
 
+    // Prevent default to stop form submission
+    event.preventDefault();
+    event.stopPropagation();
+
     const currentField = INVOICE_FIELD_CONFIG[currentFieldId];
     if (!currentField) return;
 
@@ -93,7 +99,14 @@ export const handleFieldNavigation = (
         return;
     }
 
-    // Focus next field
+    // Special case for the discount field leading to add button
+    if (currentField.next === "addButton") {
+        // Call onClickAddButton directly once and return
+        onClickAddButton();
+        return;
+    }
+
+    // For other fields, focus the next element
     const nextElement = document.getElementById(currentField.next);
     if (nextElement) {
         if (currentField.type === "select") {

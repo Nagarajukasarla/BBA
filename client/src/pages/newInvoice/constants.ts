@@ -1,8 +1,3 @@
-import { ColumnType } from "antd/es/table";
-import { InvoiceItem } from "@/types/component";
-// Note: JSX rendering functions should be defined in the component file
-
-// Payment modes
 export const paymentModes = [
     {
         value: "cash",
@@ -21,97 +16,103 @@ export const paymentModes = [
     },
 ];
 
-// Invoice columns - without JSX render functions
-export const invoiceItemsColumns: ColumnType<InvoiceItem>[] = [
+export const invoiceItemsColumns = [
     {
         key: "2",
         title: "PRODUCT",
         dataIndex: "name",
         width: "13%",
+        editable: false,
     },
     {
         key: "3",
         title: "COMPANY",
         dataIndex: "company",
         width: "10%",
+        editable: false,
     },
     {
         key: "4",
         title: "QUAN",
         dataIndex: "quantity",
         width: "5%",
+        editable: true,
     },
     {
         key: "5",
         title: "FREE",
         dataIndex: "freeQuantity",
         width: "5%",
+        editable: false,
     },
     {
         key: "6",
         title: "PACK",
         dataIndex: "packingType",
         width: "5%",
+        editable: false,
     },
     {
         key: "7",
         title: "MFD",
         dataIndex: "manufacturingDate",
         width: "5%",
+        editable: false,
     },
     {
         key: "8",
         title: "EXP",
         dataIndex: "expiryDate",
         width: "5%",
+        editable: false,
     },
     {
         key: "9",
         title: "SGST",
         dataIndex: "sGst",
         width: "5%",
+        editable: false,
     },
     {
         key: "10",
         title: "CGST",
         dataIndex: "cGst",
         width: "5%",
+        editable: false,
     },
     {
         key: "11",
         title: "IGST",
         dataIndex: "iGst",
         width: "5%",
+        editable: false,
     },
     {
         key: "12",
         title: "RATE",
         dataIndex: "rate",
         width: "7%",
+        editable: true,
     },
     {
         key: "13",
         title: "MRP",
         dataIndex: "mrp",
         width: "6%",
+        editable: true,
     },
     {
         key: "14",
         title: "DISC",
         dataIndex: "discount",
         width: "5%",
+        editable: true,
     },
     {
         key: "15",
         title: "PRICE",
         dataIndex: "price",
         width: "7%",
-    },
-    {
-        key: "16",
-        title: "ACTION",
-        dataIndex: "action",
-        width: "6.15%",
-        // Render function will be added in the component file
+        editable: false,
     },
 ];

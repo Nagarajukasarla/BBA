@@ -60,6 +60,18 @@ class NewInvoiceStore {
         this.isProductsLoading = loading;
     }
 
+    setInvalidProductFieldError(errors: string[]) {
+        this.invalidProductFieldError = errors;
+    }
+
+    addInvalidProductFieldError(error: string) {
+        this.invalidProductFieldError.push(error);
+    }
+
+    clearInvalidProductFieldError() {
+        this.invalidProductFieldError = [];
+    }
+
     reset() {
         this.invoiceData = {
             customer: null,
@@ -68,8 +80,6 @@ class NewInvoiceStore {
             serialNumber: 0,
         };
         this.productData = null;
-        this.customersAsOptions = [];
-        this.productsAsOptions = [];
         this.similarProducts = [];
         this.modalVisible = false;
         this.isCustomersLoading = false;

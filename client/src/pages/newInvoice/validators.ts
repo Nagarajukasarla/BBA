@@ -72,10 +72,15 @@ export const retrieveInvoiceDataFromLocalStorage = (): InvoiceData | null => {
  * @returns {boolean} True if all product fields are valid, false otherwise
  */
 export const validateProductFields = (): boolean => {
+    console.log("Validating Product Fields");
     const productData = newInvoiceStore.productData;
+    
+    // Clear previous errors
+    newInvoiceStore.clearInvalidProductFieldError();
+    
+    // If no product is selected, don't show validation errors but return false
     if (!productData) {
-        newInvoiceStore.invalidProductFieldError = [
-            ...newInvoiceStore.invalidProductFieldError,
+        newInvoiceStore.setInvalidProductFieldError([
             "product",
             "quantity",
             "freeQuantity",
@@ -87,21 +92,27 @@ export const validateProductFields = (): boolean => {
             "iGst",
             "rate",
             "mrp",
-        ];
+        ]);
         return false;
     }
 
+    // Now validate the selected product's fields
+    let isValid = true;
+
     if (!productData.quantity || productData.quantity <= 0) {
-        newInvoiceStore.invalidProductFieldError.push("quantity");
+        newInvoiceStore.addInvalidProductFieldError("quantity");
+        isValid = false;
     }
 
     if (!productData.rate || productData.rate <= 0) {
-        newInvoiceStore.invalidProductFieldError.push("rate");
+        newInvoiceStore.addInvalidProductFieldError("rate");
+        isValid = false;
     }
 
     if (!productData.mrp || productData.mrp <= 0) {
-        newInvoiceStore.invalidProductFieldError.push("mrp");
+        newInvoiceStore.addInvalidProductFieldError("mrp");
+        isValid = false;
     }
     
-    return newInvoiceStore.invalidProductFieldError.length === 0;
+    return isValid;
 };

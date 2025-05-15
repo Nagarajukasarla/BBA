@@ -1,3 +1,4 @@
+import { newInvoiceStore } from "@/stores/newInvoiceStore";
 import { handleFieldNavigation } from "@/utils/newInvoiceKeyboardEvents";
 import type { InputRef } from "antd";
 import {
@@ -88,31 +89,36 @@ export const InvoiceInput = forwardRef<InputRef, InvoiceInputProps>(
             isError,
         },
         ref
-    ) => (
-        <InvoiceFieldContainer label={label} style={containerStyle}>
-            <Input
-                style={{
-                    width,
-                    padding: "4px",
-                    ...(isError && { borderColor: "red" }),
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "flex-start",
-                }}
-                value={value ?? ""}
-                onChange={onChange}
-                onKeyUp={e => {
-                    handleFieldNavigation(e, id || "");
-                    onKeyUp?.(e);
-                }}
-                id={id}
-                className={className}
-                ref={ref}
-                disabled={disabled}
-                placeholder={placeholder}
-            />
-        </InvoiceFieldContainer>
-    )
+    ) => {
+        // Only show error if there's a product selected and the field has an error
+        const showError = isError && newInvoiceStore.productData !== null;
+        
+        return (
+            <InvoiceFieldContainer label={label} style={containerStyle}>
+                <Input
+                    style={{
+                        width,
+                        padding: "4px",
+                        ...(showError && { borderColor: "red" }),
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "flex-start",
+                    }}
+                    value={value ?? ""}
+                    onChange={onChange}
+                    onKeyUp={e => {
+                        handleFieldNavigation(e, id || "");
+                        onKeyUp?.(e);
+                    }}
+                    id={id}
+                    className={className}
+                    ref={ref}
+                    disabled={disabled}
+                    placeholder={placeholder}
+                />
+            </InvoiceFieldContainer>
+        );
+    }
 );
 
 export const InvoiceSelect: React.FC<InvoiceSelectProps> = ({

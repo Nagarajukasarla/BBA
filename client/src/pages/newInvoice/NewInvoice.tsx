@@ -2,15 +2,15 @@ import {
     Button,
     Card,
     Col,
+    Form,
     message,
     Radio,
     Row,
     Space,
-    Table,
-    Typography,
+    Typography
 } from "antd";
-import { observer } from "mobx-react-lite"; // Added observer for reactivity
-import React, { useEffect, useRef } from "react";
+import { observer } from "mobx-react-lite";
+import React, { useEffect, useRef, useState } from "react";
 
 import {
     InvoiceButton,
@@ -27,9 +27,10 @@ import {
 } from "@ant-design/icons";
 import { invoiceItemsColumns, paymentModes } from "./constants";
 
+import EditableTable from "@/components/common/EditableTable";
 import ProductSelectionModal from "@/components/features/ProductSelectionModal";
 import { newInvoiceStore } from "@/stores/newInvoiceStore";
-import { ProductOption } from "@/types/component";
+import { InvoiceItem, ProductOption } from "@/types/component";
 import { NoticeType } from "antd/es/message/interface";
 import { fetchCustomers, fetchProducts, fetchSelectedCustomer } from "./fetch";
 import {
@@ -40,10 +41,14 @@ import {
 import { checkDisability, checkDisabilityForReset } from "./validators";
 
 export const NewInvoice: React.FC = observer(() => {
-    // Wrapped in observer to make it reactive
-
     const quantityRef = useRef(null);
     const discountRef = useRef(null);
+    const [form] = Form.useForm();
+    const [tableData, setTableData] = useState(
+        newInvoiceStore.invoiceData.items
+    );
+    const [editingKey, setEditingKey] = useState("");
+    const isEditing = (record: any) => record.key === editingKey;
 
     const [messageApi, contextHolder] = message.useMessage();
 
@@ -53,6 +58,67 @@ export const NewInvoice: React.FC = observer(() => {
             content: `${message}`,
         });
     };
+
+    const edit = (record: Partial<InvoiceItem> & { key: string }) => {
+        form.setFieldsValue(record); // Once check it
+        setEditingKey(record.key);
+    };
+
+    const cancel = () => {
+        setEditingKey("");
+    };
+
+    const save = async (key: React.Key) => {
+        try {
+            const row = (await form.validateFields()) as InvoiceItem;
+            const newData = [...tableData];
+            const index = newData.findIndex(item => key === item.id);
+            if (index === -1) {
+                console.log("Item not found");
+                return;
+            }
+            const item = newData[index];
+            newData.splice(index, 1, { ...item, ...row });
+            setTableData(newData);
+            newInvoiceStore.setInvoiceData({
+                ...newInvoiceStore.invoiceData,
+                items: newData,
+            });
+            setEditingKey("");
+        } catch (errInfo) {
+            console.log("Validate Failed:", errInfo);
+        }
+    };
+
+    const invoiceColumns = [
+        ...invoiceItemsColumns,
+        {
+            key: "17",
+            title: "ACTION",
+            dataIndex: "action",
+            width: "6.15%",
+            render: (_: any, record: any) => {
+                const editable = isEditing(record);
+                return editable ? (
+                    <Space>
+                        <Typography.Link onClick={() => save(record.key)}>
+                            Save
+                        </Typography.Link>
+                        <Typography.Link onClick={cancel}>
+                            Cancel
+                        </Typography.Link>
+                    </Space>
+                ) : (
+                    <Typography.Link
+                        disabled={editingKey !== ""}
+                        onClick={() => edit(record)}
+                    >
+                        Edit
+                    </Typography.Link>
+                );
+            },
+        },
+    ];
 
     useEffect(() => {
         newInvoiceStore.setIsCustomersLoading(true);
@@ -82,10 +148,10 @@ export const NewInvoice: React.FC = observer(() => {
             {contextHolder}
 
             <ProductSelectionModal
-                visible={newInvoiceStore.modalVisible} // Updated to use MobX store
-                onCancel={() => newInvoiceStore.setModalVisible(false)} // Updated to use MobX store
+                visible={newInvoiceStore.modalVisible}
+                onCancel={() => newInvoiceStore.setModalVisible(false)}
                 onSelect={handleFinalProductSelection}
-                products={newInvoiceStore.similarProducts} // Updated to use MobX store
+                products={newInvoiceStore.similarProducts}
             />
             <div className="newInvoiceWrapper">
                 <Col span={24}>
@@ -467,40 +533,45 @@ export const NewInvoice: React.FC = observer(() => {
                         </Row>
 
                         <Row style={{ marginTop: "20px" }}>
-                            <Table
-                                style={{ marginTop: "25px", width: "100%" }}
-                                columns={invoiceItemsColumns}
-                                dataSource={newInvoiceStore.invoiceData?.items} // Updated to use MobX store
-                                pagination={false}
-                                bordered
-                                // summary={pageData => {
-                                //     const totalAmount = pageData.reduce(
-                                //         (total, record) => total + (record.total || 0),
-                                //         0
-                                //     );
-                                //     return (
-                                //         <>
-                                //             <Table.Summary.Row>
-                                //                 <Table.Summary.Cell
-                                //                     colSpan={6}
-                                //                     className="invoice-summary"
-                                //                 >
-                                //                     Total Amount
-                                //                 </Table.Summary.Cell>
-                                //                 <Table.Summary.Cell>
-                                //                     <Typography.Text
-                                //                         style={{
-                                //                             fontWeight: "bold",
-                                //                         }}
-                                //                     >
-                                //                         ₹ {totalAmount}
-                                //                     </Typography.Text>
-                                //                 </Table.Summary.Cell>
-                                //             </Table.Summary.Row>
-                                //         </>
-                                //     );
-                                // }}
-                            />
+                            <Form form={form} 
+                            style={{ width: "100%" }}>
+                                <EditableTable
+                                    style={{ marginTop: "25px" }}
+                                    columns={invoiceColumns}
+                                    dataSource={
+                                        newInvoiceStore.invoiceData?.items
+                                    } // Updated to use MobX store
+                                    page={false}
+                                    isEditing={isEditing}
+                                    // summary={pageData => {
+                                    //     const totalAmount = pageData.reduce(
+                                    //         (total, record) => total + (record.total || 0),
+                                    //         0
+                                    //     );
+                                    //     return (
+                                    //         <>
+                                    //             <Table.Summary.Row>
+                                    //                 <Table.Summary.Cell
+                                    //                     colSpan={6}
+                                    //                     className="invoice-summary"
+                                    //                 >
+                                    //                     Total Amount
+                                    //                 </Table.Summary.Cell>
+                                    //                 <Table.Summary.Cell>
+                                    //                     <Typography.Text
+                                    //                         style={{
+                                    //                             fontWeight: "bold",
+                                    //                         }}
+                                    //                     >
+                                    //                         ₹ {totalAmount}
+                                    //                     </Typography.Text>
+                                    //                 </Table.Summary.Cell>
+                                    //             </Table.Summary.Row>
+                                    //         </>
+                                    //     );
+                                    // }}
+                                />
+                            </Form>
                         </Row>
                     </Card>
                 </Col>
