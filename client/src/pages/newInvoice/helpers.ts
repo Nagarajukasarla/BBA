@@ -1,6 +1,5 @@
 import { newInvoiceStore } from "@/stores/newInvoiceStore";
-import { ProductOption } from "@/types/component";
-import { InvoiceItem } from "@/types/component";
+import { InvoiceItem, ProductOption } from "@/types/component";
 import { Product } from "@/types/model";
 import { calculateProductPrice } from "./billGenerationHelpers";
 
@@ -30,7 +29,12 @@ export const getProductsAsOptions = (products: Product[]): ProductOption[] => {
 export const generateInvoiceItem = (): InvoiceItem => {
     return {
         ...newInvoiceStore.productData!,
-        price: calculateProductPrice(),
+        key: newInvoiceStore.productData?.id?.toString() || "",
+        price: calculateProductPrice({
+            quantity: newInvoiceStore.productData?.quantity || 0,
+            rate: newInvoiceStore.productData?.rate || 0,
+            discount: newInvoiceStore.productData?.discount || newInvoiceStore.invoiceData?.customer?.defaultDiscount || 0,
+        }),
     };
 };
 

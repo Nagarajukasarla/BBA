@@ -10,7 +10,7 @@ interface FieldConfig {
 export const INVOICE_FIELD_CONFIG: Record<string, FieldConfig> = {
     productSearch: {
         id: "productSearch",
-        next: "quantityField", // Now directly goes to quantity after product selection
+        next: "quantityField",
         type: "select",
     },
     companyField: {
@@ -20,58 +20,58 @@ export const INVOICE_FIELD_CONFIG: Record<string, FieldConfig> = {
     },
     quantityField: {
         id: "quantityField",
-        next: "rateField", // Changed to go to rate field next
+        next: "rateField",
         type: "input",
         validation: value => !isNaN(value) && value > 0,
     },
     packingTypeField: {
         id: "packingTypeField",
-        next: "quantityField", // Redirected but should be disabled
+        next: "quantityField",
         type: "input",
     },
     manufacturingDateField: {
         id: "manufacturingDateField",
-        next: "quantityField", // Redirected but should be disabled
+        next: "quantityField",
         type: "date",
     },
     expiryDateField: {
         id: "expiryDateField",
-        next: "quantityField", // Redirected but should be disabled
+        next: "quantityField",
         type: "date",
     },
     sGstField: {
         id: "sGstField",
-        next: "quantityField", // Redirected but should be disabled
+        next: "quantityField",
         type: "input",
         validation: value => !isNaN(value) && value >= 0,
     },
     cGstField: {
         id: "cGstField",
-        next: "quantityField", // Redirected but should be disabled
+        next: "quantityField",
         type: "input",
         validation: value => !isNaN(value) && value >= 0,
     },
     iGstField: {
         id: "iGstField",
-        next: "quantityField", // Redirected but should be disabled
+        next: "quantityField",
         type: "input",
         validation: value => !isNaN(value) && value >= 0,
     },
     rateField: {
         id: "rateField",
-        next: "mrpField", // Changed order: rate -> mrp -> discount
+        next: "mrpField",
         type: "input",
         validation: value => !isNaN(value) && value > 0,
     },
     mrpField: {
         id: "mrpField",
-        next: "discountField", // Changed order
+        next: "discountField",
         type: "input",
         validation: value => !isNaN(value) && value > 0,
     },
     discountField: {
         id: "discountField",
-        next: "addButton", // Final field before adding
+        next: "addButton",
         type: "input",
         validation: value => !isNaN(value) && value >= 0,
     },
@@ -101,8 +101,13 @@ export const handleFieldNavigation = (
 
     // Special case for the discount field leading to add button
     if (currentField.next === "addButton") {
-        // Call onClickAddButton directly once and return
-        onClickAddButton();
+        if(onClickAddButton()) {
+            const productField = INVOICE_FIELD_CONFIG.productSearch;
+            const productFieldElement = document.getElementById(productField.id);
+            if(productFieldElement) {
+                (productFieldElement as HTMLInputElement).focus();
+            }
+        }
         return;
     }
 
@@ -115,4 +120,11 @@ export const handleFieldNavigation = (
             (nextElement as HTMLInputElement).select();
         }
     }
+};
+
+export const handleKeyUp = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    fieldId: string
+) => {
+    handleFieldNavigation(e, fieldId);
 };

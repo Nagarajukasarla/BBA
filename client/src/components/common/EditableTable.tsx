@@ -8,6 +8,7 @@ interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
     inputType: "number" | "text";
     record: any;
     index: number;
+    min?: number;
 }
 
 interface TableProps {
@@ -25,11 +26,12 @@ const EditableCell: React.FC<PropsWithChildren<EditableCellProps>> = ({
     inputType,
     record,
     index,
+    min,
     children,
     ...restProps
 }) => {
     const inputNode =
-        inputType === "number" ? <InputNumber type="number" /> : <Input />;
+        inputType === "number" ? <InputNumber type="number" min={min} style={{ width: "60px" }} /> : <Input />;
     return (
         <td {...restProps}>
             {editing ? (
@@ -81,6 +83,7 @@ const EditableTable: React.FC<TableProps> = ({
                 dataIndex: col.dataIndex,
                 title: col.title,
                 editing: isEditing(record),
+                min: col.dataIndex === "discount" ? 0 : 1,
             }),
         };
     });

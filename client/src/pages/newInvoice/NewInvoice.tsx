@@ -7,7 +7,7 @@ import {
     Radio,
     Row,
     Space,
-    Typography
+    Typography,
 } from "antd";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useRef, useState } from "react";
@@ -17,8 +17,10 @@ import {
     InvoiceInput,
     InvoiceSelect,
 } from "@/components/InvoiceFormFields";
-import { handleFieldNavigation } from "@/utils/newInvoiceKeyboardEvents";
+import { handleKeyUp } from "@/utils/newInvoiceKeyboardEvents";
 import {
+    CheckOutlined,
+    CloseOutlined,
     FileAddOutlined,
     MailOutlined,
     PlusCircleOutlined,
@@ -32,6 +34,7 @@ import ProductSelectionModal from "@/components/features/ProductSelectionModal";
 import { newInvoiceStore } from "@/stores/newInvoiceStore";
 import { InvoiceItem, ProductOption } from "@/types/component";
 import { NoticeType } from "antd/es/message/interface";
+import { calculateProductPrice } from "./billGenerationHelpers";
 import { fetchCustomers, fetchProducts, fetchSelectedCustomer } from "./fetch";
 import {
     handleFinalProductSelection,
@@ -44,11 +47,8 @@ export const NewInvoice: React.FC = observer(() => {
     const quantityRef = useRef(null);
     const discountRef = useRef(null);
     const [form] = Form.useForm();
-    const [tableData, setTableData] = useState(
-        newInvoiceStore.invoiceData.items
-    );
     const [editingKey, setEditingKey] = useState("");
-    const isEditing = (record: any) => record.key === editingKey;
+    const isEditing = (record: any) => record.id === editingKey;
 
     const [messageApi, contextHolder] = message.useMessage();
 
@@ -59,9 +59,9 @@ export const NewInvoice: React.FC = observer(() => {
         });
     };
 
-    const edit = (record: Partial<InvoiceItem> & { key: string }) => {
-        form.setFieldsValue(record); // Once check it
-        setEditingKey(record.key);
+    const edit = (record: Partial<InvoiceItem> & { id: string }) => {
+        form.setFieldsValue(record);
+        setEditingKey(record.id);
     };
 
     const cancel = () => {
@@ -71,15 +71,18 @@ export const NewInvoice: React.FC = observer(() => {
     const save = async (key: React.Key) => {
         try {
             const row = (await form.validateFields()) as InvoiceItem;
-            const newData = [...tableData];
+            row.price = calculateProductPrice({
+                quantity: row.quantity,
+                rate: row.rate,
+                discount: row.discount,
+            });
+            const newData = [...newInvoiceStore.invoiceData.items];
             const index = newData.findIndex(item => key === item.id);
             if (index === -1) {
-                console.log("Item not found");
                 return;
             }
             const item = newData[index];
             newData.splice(index, 1, { ...item, ...row });
-            setTableData(newData);
             newInvoiceStore.setInvoiceData({
                 ...newInvoiceStore.invoiceData,
                 items: newData,
@@ -101,12 +104,15 @@ export const NewInvoice: React.FC = observer(() => {
                 const editable = isEditing(record);
                 return editable ? (
                     <Space>
-                        <Typography.Link onClick={() => save(record.key)}>
-                            Save
+                        <Typography.Link onClick={() => save(record.id)}>
+                            <CheckOutlined
+                                style={{ color: "green", marginRight: "4px" }}
+                            />
                         </Typography.Link>
-                        <Typography.Link onClick={cancel}>
-                            Cancel
-                        </Typography.Link>
+                        <CloseOutlined
+                            style={{ color: "red" }}
+                            onClick={() => cancel()}
+                        />
                     </Space>
                 ) : (
                     <Typography.Link
@@ -135,13 +141,6 @@ export const NewInvoice: React.FC = observer(() => {
             })
             .finally(() => newInvoiceStore.setIsProductsLoading(false));
     }, []);
-
-    const handleKeyUp = (
-        e: React.KeyboardEvent<HTMLInputElement>,
-        fieldId: string
-    ) => {
-        handleFieldNavigation(e, fieldId);
-    };
 
     return (
         <>
@@ -533,8 +532,7 @@ export const NewInvoice: React.FC = observer(() => {
                         </Row>
 
                         <Row style={{ marginTop: "20px" }}>
-                            <Form form={form} 
-                            style={{ width: "100%" }}>
+                            <Form form={form} style={{ width: "100%" }}>
                                 <EditableTable
                                     style={{ marginTop: "25px" }}
                                     columns={invoiceColumns}

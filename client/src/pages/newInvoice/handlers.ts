@@ -87,9 +87,9 @@ export const handleFinalProductSelection = (product: Product) => {
 /**
  * An onClick event handler for adding a new item to the invoice.
  *
- * @return {void}
+ * @return {boolean}
  */
-export const onClickAddButton = (): void => {
+export const onClickAddButton = (): boolean => {
     console.log("Clicked Add Button");
     
     // Clear any previous errors
@@ -98,13 +98,15 @@ export const onClickAddButton = (): void => {
     // Check if a product is selected
     if (!newInvoiceStore.productData) {
         console.log("No product selected, cannot add to invoice");
-        return;
+        return false;
     }
     
     // Validate the product fields
     if (validateProductFields()) {
         addItemToInvoice();
+        return true;
     } else {
         console.log("Product validation failed");
+        return false;
     }
 };

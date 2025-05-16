@@ -77,7 +77,6 @@ class NewInvoiceStore {
             customer: null,
             paymentMode: "",
             items: [],
-            serialNumber: 0,
         };
         this.productData = null;
         this.similarProducts = [];

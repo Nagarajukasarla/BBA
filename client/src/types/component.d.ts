@@ -48,6 +48,7 @@ export interface ProductData {
 
 export interface InvoiceItem extends ProductData {
     price: number;
+    key: string;
 };
 
 export interface InvoiceData {
@@ -55,7 +56,6 @@ export interface InvoiceData {
     customer: Customer | null;
     paymentMode: string;
     items: InvoiceItem[];
-    serialNumber?: number;
 };
 
 export interface ProductOption {

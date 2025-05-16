@@ -1,15 +1,19 @@
 import { newInvoiceStore } from "@/stores/newInvoiceStore";
 
-export const calculateProductPrice = (): number => {
-    const quantity = newInvoiceStore.productData?.quantity!;
-    const rate = newInvoiceStore.productData?.rate!;
-    const discountPercent = newInvoiceStore.invoiceData?.customer?.defaultDiscount!;
+type PricedItem = {
+    quantity: number;
+    rate: number;
+    discount?: number;
+}
+
+export const calculateProductPrice = (item: PricedItem): number => {
+    const quantity = item.quantity;
+    const rate = item.rate;
+    const discountPercent = item.discount || 0;
     const subtotal = quantity * rate;
     const discountAmount = (subtotal * discountPercent) / 100;
-
     return subtotal - discountAmount;
 };
-
 
 export const calculateTotalAmountOfInvoice = (): number => {
     if (!newInvoiceStore.invoiceData?.items) return 0;
