@@ -1,18 +1,13 @@
-// Import types if needed in the future
-// import { LiteCustomer } from "../../types/model";
+import { Address } from "@/types/model";
 
-interface Address {
-    [key: string]: string | null | undefined;
-    city?: string;
-}
+type AddressKey = keyof Address;
 
 // This interface is used for internal mapping
 interface CustomerFormatted {
     id?: number;
     customerNumber?: string;
     customerName?: string;
-    addressDto?: Address;
-    [key: string]: any;
+    address: Address;
 }
 
 interface CustomerOptionsParams {
@@ -46,10 +41,29 @@ class CustomerHelper {
     }: MapCustomerParams): string | [string, string] {
         let details = "";
 
-        for (const field of include) {
-            const value = address[field];
-            if (value !== null && value !== undefined) {
-                details += `${value}, `;
+        // if(include.length === 0) {
+        //     details = address.area ?? "" + (address.town || address.city) + "," + address.pincode ?? "";
+        // }
+        console.log("Include: ", include);
+        if (include.length === 0) {
+            console.log("Area: ", address.area);
+            console.log("City: ", address.city);
+            console.log("Town: ", address.town);
+            console.log("Pincode: ", address.pincode);
+            const parts = [
+                address.area,
+                address.city || address.town,
+                address.pincode
+            ].filter(Boolean);
+
+            details = parts.join(', ');
+        }
+        else {
+            for (const field of include) {
+                const value = address[field as AddressKey];
+                if (value !== null && value !== undefined) {
+                    details += `${value}, `;
+                }
             }
         }
 
@@ -63,13 +77,15 @@ class CustomerHelper {
      * @param {object} customer - the customer object
      * @return {string} formatted customer information
      */
-    static customerNameHelper(customer: CustomerFormatted | null): string {
+    static customerNameHelper(customer: CustomerFormatted | null, concat: boolean): string {
         if (!customer) {
             return "";
         }
-        return `${customer?.customerNumber ?? ""} - ${
-            customer?.customerName ?? ""
-        }, ${customer?.addressDto?.city ?? ""}`;
+        return `${customer?.customerNumber ?? ""} - ${CustomerHelper.mapCustomerDetails({
+            name: customer?.customerName ?? "",
+            address: customer?.address,
+            concat,
+        })}`;
     }
 
     /**
@@ -94,7 +110,7 @@ class CustomerHelper {
             customValue: CustomerFormatted | null;
         }> = customers.map(item => ({
             value: item.customerNumber ?? "",
-            label: this.customerNameHelper(item),
+            label: this.customerNameHelper(item, true),
             customValue: item,
         }));
 

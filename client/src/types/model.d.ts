@@ -1,3 +1,12 @@
+export type Address = {
+    street?: string;
+    area?: string;
+    town?: string;
+    city?: string;
+    state: string;
+    pincode?: string;
+}
+
 export type LiteShop = {
     id: number;
     email: string;
@@ -19,7 +28,7 @@ export type LiteCustomer = {
     id: number;
     number: string;
     name: string;
-    address: string;
+    address: Address;
 };
 
 export type Customer = LiteCustomer & {
@@ -60,7 +69,7 @@ export type Product = {
     mrp: number;
 };
 
-export type ProductSalesDetails = Product & {
+export type ProductSales = Product & {
     margin: number;
     grossIncome: number;
     netIncome: number;

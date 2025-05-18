@@ -104,7 +104,7 @@ export const Invoices: React.FC = () => {
                     id: customer.id,
                     customerNumber: customer.number,
                     customerName: customer.name,
-                    addressDto: { city: customer.address },
+                    address: customer.address,
                 }));
                 setCustomersAsOptions(
                     CustomerHelper.getCustomerAsOptions({
@@ -149,14 +149,22 @@ export const Invoices: React.FC = () => {
             title: "Customer",
             dataIndex: "customerDetails",
             width: "13%",
-            render: (customer: LiteCustomer) => (
+            render: (customer: LiteCustomer) => {
+                const customerDetails = CustomerHelper.mapCustomerDetails({
+                    name: customer.name,
+                    address: customer.address,
+                    concat: false,
+                });
+                console.log("CustomerDetails: ", customerDetails);
+                return (
                 <Space>
-                    <Typography.Text>{customer?.name || ""}</Typography.Text>
-                    <Popover content={customer?.address || ""}>
+                    <Typography.Text>{customerDetails[0]}</Typography.Text>
+                    <Popover content={customerDetails[1]}>
                         <InfoCircleTwoTone />
                     </Popover>
                 </Space>
-            ),
+            );
+        },
         },
         {
             key: "paymentMode",
@@ -262,13 +270,13 @@ export const Invoices: React.FC = () => {
             {contextHolder}
             <div
                 style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
+                    // display: "flex",
+                    // justifyContent: "center",
+                    // alignItems: "center",
                     // border: "1px solid red",
                 }}
             >
-                <Space direction="vertical" size="small">
+                {/* <Space direction="vertical" size="small"> */}
                     <Row
                         style={{ padding: "20px 0 0 5px" }}
                         justify="space-between"
@@ -433,7 +441,7 @@ export const Invoices: React.FC = () => {
                                 </Typography.Text>
                             </div>
                         )}
-                </Space>
+                {/* </Space> */}
             </div>
         </>
     );
