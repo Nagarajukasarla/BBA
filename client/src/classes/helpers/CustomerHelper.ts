@@ -40,16 +40,7 @@ class CustomerHelper {
         concat,
     }: MapCustomerParams): string | [string, string] {
         let details = "";
-
-        // if(include.length === 0) {
-        //     details = address.area ?? "" + (address.town || address.city) + "," + address.pincode ?? "";
-        // }
-        console.log("Include: ", include);
         if (include.length === 0) {
-            console.log("Area: ", address.area);
-            console.log("City: ", address.city);
-            console.log("Town: ", address.town);
-            console.log("Pincode: ", address.pincode);
             const parts = [
                 address.area,
                 address.city || address.town,
@@ -71,11 +62,17 @@ class CustomerHelper {
         return concat ? `${name}, ${details}` : [name, details];
     }
 
-    /**CustomerFormatted
-     * Generates a formatted string representing the customer's information including customer number, name, and city.
+    /**
+     * Generates a formatted string representing the customer's information including
+     * customer number, name, and address details.
      *
-     * @param {object} customer - the customer object
-     * @return {string} formatted customer information
+     * @static
+     * @param {CustomerFormatted | null} customer - The customer object to format
+     * @param {boolean} concat - Whether to concatenate the result into a single string
+     * @return {string} Formatted customer information string
+     * @example
+     * // Returns 'CUST123 - John Doe, Main St, New York, 10001'
+     * customerNameHelper(customer, true);
      */
     static customerNameHelper(customer: CustomerFormatted | null, concat: boolean): string {
         if (!customer) {
@@ -89,10 +86,19 @@ class CustomerHelper {
     }
 
     /**
-     * Generates options for customers to be used as dropdown options.
+     * Converts an array of customer objects into a format suitable for dropdown/select components.
      *
-     * @param {Object} param0 - Object containing customers array and addAllOption boolean
-     * @return {Array} Array of options for dropdown selection
+     * @static
+     * @param {CustomerOptionsParams} params - Configuration object
+     * @param {CustomerFormatted[]} params.customers - Array of customer objects to convert
+     * @param {boolean} [params.addAllOption=false] - Whether to include an 'All' option
+     * @return {Array<{value: string, label: string, customValue: CustomerFormatted | null}>}
+     *         Array of option objects with value, label, and original customer data
+     * @example
+     * getCustomerAsOptions({
+     *   customers: customerList,
+     *   addAllOption: true
+     * });
      */
     static getCustomerAsOptions({
         customers,

@@ -12,11 +12,6 @@ import {
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useRef, useState } from "react";
 
-import {
-    InvoiceButton,
-    InvoiceInput,
-    InvoiceSelect,
-} from "@/components/InvoiceFormFields";
 import { handleKeyUp } from "@/utils/newInvoiceKeyboardEvents";
 import {
     CheckOutlined,
@@ -29,7 +24,9 @@ import {
 } from "@ant-design/icons";
 import { invoiceItemsColumns, paymentModes } from "./constants";
 
+import { CSelect } from "@/components/common/CSelect";
 import EditableTable from "@/components/common/EditableTable";
+import { InputField } from "@/components/common/InputField";
 import ProductSelectionModal from "@/components/features/ProductSelectionModal";
 import { newInvoiceStore } from "@/stores/newInvoiceStore";
 import { InvoiceItem, ProductOption } from "@/types/component";
@@ -42,6 +39,7 @@ import {
     onClickAddButton,
 } from "./handlers";
 import { checkDisability, checkDisabilityForReset } from "./validators";
+import { CButton } from "@/components/common/CButton";
 
 export const NewInvoice: React.FC = observer(() => {
     const quantityRef = useRef(null);
@@ -145,7 +143,6 @@ export const NewInvoice: React.FC = observer(() => {
     return (
         <>
             {contextHolder}
-
             <ProductSelectionModal
                 visible={newInvoiceStore.modalVisible}
                 onCancel={() => newInvoiceStore.setModalVisible(false)}
@@ -234,20 +231,14 @@ export const NewInvoice: React.FC = observer(() => {
                     </Row>
                     <Card styles={{ body: { margin: "0px", padding: "8px" } }}>
                         <Row>
-                            <InvoiceSelect
+                            <CSelect
                                 label="Customer"
                                 width={380}
                                 value={
                                     newInvoiceStore.invoiceData?.customer
                                         ?.number
-                                } // Updated to use MobX store
+                                }
                                 onSelect={(_, selectedCustomer) => {
-                                    console.log(
-                                        "Select: ",
-                                        selectedCustomer,
-                                        "- ",
-                                        selectedCustomer.customValue
-                                    );
                                     if (selectedCustomer?.customValue) {
                                         fetchSelectedCustomer(
                                             selectedCustomer.customValue.id
@@ -255,7 +246,7 @@ export const NewInvoice: React.FC = observer(() => {
                                     }
                                 }}
                                 placeholder="Select Customer"
-                                options={newInvoiceStore.customersAsOptions} // Updated to use MobX store
+                                options={newInvoiceStore.customersAsOptions}
                                 filterOption={(input, option) => {
                                     return (
                                         option?.label
@@ -269,7 +260,7 @@ export const NewInvoice: React.FC = observer(() => {
                                 allowClear
                                 defaultOpen
                                 autoFocus
-                                loading={newInvoiceStore.isCustomersLoading} // Updated to use MobX store
+                                loading={newInvoiceStore.isCustomersLoading}
                             />
                             <Space
                                 direction="vertical"
@@ -290,11 +281,6 @@ export const NewInvoice: React.FC = observer(() => {
                                             !newInvoiceStore.invoiceData
                                                 ?.customer
                                         ) {
-                                            console.log(
-                                                "Customer: ",
-                                                newInvoiceStore.invoiceData
-                                                    ?.customer
-                                            );
                                             showMessage(
                                                 "warning",
                                                 "Please select Customer"
@@ -319,11 +305,11 @@ export const NewInvoice: React.FC = observer(() => {
                             </Space>
                         </Row>
                         <Row style={{ marginTop: "20px" }}>
-                            <InvoiceSelect
+                            <CSelect
                                 label="Product"
                                 width={380}
                                 id="productSearch"
-                                value={newInvoiceStore.productData?.name} // Updated to use MobX store
+                                value={newInvoiceStore.productData?.name}
                                 onSelect={(_, selectedProduct) => {
                                     if (
                                         (selectedProduct as ProductOption)
@@ -372,8 +358,8 @@ export const NewInvoice: React.FC = observer(() => {
                                 }}
                                 onClear={() =>
                                     newInvoiceStore.setProductData(null)
-                                } // Updated to use MobX store
-                                options={newInvoiceStore.productsAsOptions} // Updated to use MobX store
+                                }
+                                options={newInvoiceStore.productsAsOptions}
                                 filterOption={(input, option) =>
                                     option?.label
                                         ?.toString()
@@ -383,16 +369,15 @@ export const NewInvoice: React.FC = observer(() => {
                                 placeholder="Select Product"
                                 showSearch
                                 allowClear
-                                loading={newInvoiceStore.isProductsLoading} // Updated to use MobX store
+                                loading={newInvoiceStore.isProductsLoading}
                             />
-                            <InvoiceInput
+                            <InputField
                                 label="Company"
                                 width="110px"
-                                value={newInvoiceStore.productData?.company} // Updated to use MobX store
+                                value={newInvoiceStore.productData?.company}
                                 disabled={true}
-                                className="invoiceInputFields"
                             />
-                            <InvoiceInput
+                            <InputField
                                 isError={newInvoiceStore.invalidProductFieldError.includes(
                                     "quantity"
                                 )}
@@ -402,7 +387,7 @@ export const NewInvoice: React.FC = observer(() => {
                                     alignItems: "flex-start",
                                 }}
                                 label="Quantity"
-                                value={newInvoiceStore.productData?.quantity} // Updated to use MobX store
+                                value={newInvoiceStore.productData?.quantity}
                                 id="quantityField"
                                 onChange={event => {
                                     if (newInvoiceStore.productData) {
@@ -417,68 +402,67 @@ export const NewInvoice: React.FC = observer(() => {
                                 onKeyUp={e => handleKeyUp(e, "quantityField")}
                                 ref={quantityRef}
                             />
-                            <InvoiceInput
+                            <InputField
                                 isError={newInvoiceStore.invalidProductFieldError.includes(
                                     "packingType"
                                 )}
                                 label="Pack"
-                                value={newInvoiceStore.productData?.packingType} // Updated to use MobX store
+                                value={newInvoiceStore.productData?.packingType}
                                 id="packingTypeField"
                                 disabled={true}
                             />
-                            <InvoiceInput
+                            <InputField
                                 isError={newInvoiceStore.invalidProductFieldError.includes(
                                     "manufacturingDate"
                                 )}
                                 label="Mf Date"
-                                value={newInvoiceStore.productData?.manufacturingDate?.toString()} // Updated to use MobX store
+                                value={newInvoiceStore.productData?.manufacturingDate?.toString()}
                                 id="manufacturingDateField"
                                 disabled={true}
                             />
-                            <InvoiceInput
+                            <InputField
                                 isError={newInvoiceStore.invalidProductFieldError.includes(
                                     "expiryDate"
                                 )}
                                 label="Exp Date"
-                                value={newInvoiceStore.productData?.expiryDate?.toString()} // Updated to use MobX store
+                                value={newInvoiceStore.productData?.expiryDate?.toString()}
                                 id="expiryDateField"
                                 disabled={true}
                             />
-                            <InvoiceInput
+                            <InputField
                                 isError={newInvoiceStore.invalidProductFieldError.includes(
                                     "sGst"
                                 )}
                                 label="SGST"
-                                value={newInvoiceStore.productData?.sGst} // Updated to use MobX store
+                                value={newInvoiceStore.productData?.sGst}
                                 id="sGstField"
                                 disabled={true}
                             />
-                            <InvoiceInput
+                            <InputField
                                 isError={newInvoiceStore.invalidProductFieldError.includes(
                                     "cGst"
                                 )}
                                 label="CGST"
-                                value={newInvoiceStore.productData?.cGst} // Updated to use MobX store
+                                value={newInvoiceStore.productData?.cGst}
                                 id="cGstField"
                                 disabled={true}
                             />
-                            <InvoiceInput
+                            <InputField
                                 isError={newInvoiceStore.invalidProductFieldError.includes(
                                     "iGst"
                                 )}
                                 label="IGST"
-                                value={newInvoiceStore.productData?.iGst} // Updated to use MobX store
+                                value={newInvoiceStore.productData?.iGst}
                                 id="iGstField"
                                 disabled={true}
                             />
-                            <InvoiceInput
+                            <InputField
                                 isError={newInvoiceStore.invalidProductFieldError.includes(
                                     "rate"
                                 )}
                                 label="Rate"
-                                value={newInvoiceStore.productData?.rate} // Updated to use MobX store
+                                value={newInvoiceStore.productData?.rate}
                                 id="rateField"
-                                className="invoiceInputFields rateInputFields"
                                 onChange={(
                                     event: React.ChangeEvent<HTMLInputElement>
                                 ) => {
@@ -491,12 +475,12 @@ export const NewInvoice: React.FC = observer(() => {
                                 }}
                                 onKeyUp={e => handleKeyUp(e, "rateField")}
                             />
-                            <InvoiceInput
+                            <InputField
                                 isError={newInvoiceStore.invalidProductFieldError.includes(
                                     "mrp"
                                 )}
                                 label="Mrp"
-                                value={newInvoiceStore.productData?.mrp} // Updated to use MobX store
+                                value={newInvoiceStore.productData?.mrp}
                                 id="mrpField"
                                 onChange={(
                                     event: React.ChangeEvent<HTMLInputElement>
@@ -510,25 +494,25 @@ export const NewInvoice: React.FC = observer(() => {
                                 }}
                                 onKeyUp={e => handleKeyUp(e, "mrpField")}
                             />
-                            <InvoiceInput
+                            <InputField
                                 label="Discount"
                                 value={
                                     newInvoiceStore.invoiceData?.customer
                                         ?.defaultDiscount
-                                } // static value as placeholder
+                                }
                                 id="discountField"
                                 onKeyUp={e => handleKeyUp(e, "discountField")}
                                 ref={discountRef}
                             />
-                            <InvoiceButton
+                            <CButton
                                 type="primary"
                                 onClick={onClickAddButton}
                                 id="addButton"
                                 icon={<PlusCircleOutlined />}
-                                containerStyle={{ margin: "31px 0 0 0" }}
+                                style={{ margin: "31px 0 0 0" }}
                             >
                                 Add
-                            </InvoiceButton>
+                            </CButton>
                         </Row>
 
                         <Row style={{ marginTop: "20px" }}>
@@ -538,7 +522,7 @@ export const NewInvoice: React.FC = observer(() => {
                                     columns={invoiceColumns}
                                     dataSource={
                                         newInvoiceStore.invoiceData?.items
-                                    } // Updated to use MobX store
+                                    }
                                     page={false}
                                     isEditing={isEditing}
                                     // summary={pageData => {

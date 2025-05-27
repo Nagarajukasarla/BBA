@@ -1,3 +1,4 @@
+import { CSelect } from "@/components/common/CSelect";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import { Button, Row, Typography } from "antd";
 import React from "react";
@@ -16,6 +17,21 @@ const Customers: React.FC = () => {
                     <PlusCircleOutlined />
                     Add Customer
                 </Button>
+            </Row>
+            <Row style={{ marginTop: "20px" }}>
+                <CSelect
+                    label="Region"
+                    width={250}
+                    value={""}
+                    options={[]}
+                    onSelect={(_value, option) => {
+                        console.log(option);
+                    }}
+                    placeholder="Select Region"
+                    showSearch
+                    allowClear
+                    loading={false}
+                />
             </Row>
         </div>
     );

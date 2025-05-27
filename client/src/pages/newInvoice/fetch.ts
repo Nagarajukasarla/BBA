@@ -17,7 +17,7 @@ export const fetchCustomers = async (): Promise<string> => {
                 id: customer.id,
                 customerNumber: customer.number,
                 customerName: customer.name,
-                addressDto: { city: customer.address },
+                address: customer.address,
             }));
 
             newInvoiceStore.setCustomersAsOptions(

@@ -7,7 +7,6 @@ import {
 } from "@ant-design/icons";
 import {
     Button,
-    ConfigProvider,
     DatePicker,
     Input,
     Popover,
@@ -17,16 +16,17 @@ import {
     Table,
     Tooltip,
     Typography,
-    notification,
+    notification
 } from "antd";
 import { ColumnType } from "antd/es/table";
 import type { Dayjs } from "dayjs";
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import _Date from "@/classes/core/_Date";
 import APIResponse from "@/classes/APIResponse";
+import _Date from "@/classes/core/_Date";
 import CustomerHelper from "@/classes/helpers/CustomerHelper";
+import { FilterSection } from "@/components/common/FilterSection";
 import useDebounce from "@/hooks/useDebounce";
 import useInvoiceFilters from "@/hooks/useInvoiceFilters";
 import customerService from "@/services/api/customerService";
@@ -446,48 +446,6 @@ export const Invoices: React.FC = () => {
         </>
     );
 };
-
-interface FilterSectionProps {
-    label: string;
-    width: number;
-    children: React.ReactNode;
-}
-
-const FilterSection: React.FC<FilterSectionProps> = ({
-    label,
-    width,
-    children,
-}) => (
-    <Space
-        direction="vertical"
-        style={{
-            textAlign: "start",
-            paddingRight: "10px",
-            marginBottom: "16px", // Add bottom margin for wrapping
-            minHeight: "80px", // Ensure consistent height
-            display: "inline-flex",
-            verticalAlign: "top",
-        }}
-    >
-        <Typography.Text
-            className="primary-input-field-header-style"
-            style={{
-                display: "block",
-            }}
-        >
-            {label}
-        </Typography.Text>
-        <ConfigProvider
-            theme={{
-                token: {
-                    colorBgTextActive: "rgba(0, 0, 0, 0.15)",
-                },
-            }}
-        >
-            <div style={{ width }}>{children}</div>
-        </ConfigProvider>
-    </Space>
-);
 
 // Constants
 const purchaseTypeOptions = [
