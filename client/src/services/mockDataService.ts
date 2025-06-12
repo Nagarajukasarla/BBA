@@ -226,10 +226,7 @@ class MockDataService {
      * @param filters The filters to apply
      * @returns Filtered invoices
      */
-    private filterInvoices(
-        invoices: Invoice[],
-        filters: Record<string, any>
-    ): Invoice[] {
+    private filterInvoices(invoices: Invoice[], filters: Record<string, any>): Invoice[] {
         return invoices.filter(invoice => {
             // Filter by customer ID
             if (filters.customerId) {
@@ -246,19 +243,12 @@ class MockDataService {
             }
 
             // Filter by payment mode
-            if (
-                filters.paymentMode &&
-                invoice.paymentMode.toLowerCase() !==
-                    filters.paymentMode.toLowerCase()
-            ) {
+            if (filters.paymentMode && invoice.paymentMode.toLowerCase() !== filters.paymentMode.toLowerCase()) {
                 return false;
             }
 
             // Filter by status
-            if (
-                filters.status &&
-                invoice.status.toLowerCase() !== filters.status.toLowerCase()
-            ) {
+            if (filters.status && invoice.status.toLowerCase() !== filters.status.toLowerCase()) {
                 return false;
             }
 

@@ -14,6 +14,7 @@ const DATA_ROUTES = {
     FETCH_CUSTOMERS: "/customers",
     FETCH_LITE_CUSTOMERS: "/lite-customers",
     FETCH_CUSTOMER_BY_ID: "/customers/:id",
+    FETCH_CUSTOMERS_WITH_BASIC_SALES: "/customers-with-basic-sales",
     FETCH_STOCKS: "/stocks",
     FETCH_INVOICES: "/invoices",
     FETCH_INVOICE_BY_ID: "/invoices/:id",

@@ -1,4 +1,4 @@
-import { dummyLiteCustomers, dummyCustomers } from "./customers";
+import { dummyLiteCustomers, dummyCustomers, dummyCustomersBasicSales, dummyCityTownMap } from "./customers";
 import { dummyInvoices } from "./invoices";
 import { dummyProducts } from "./products";
 import {
@@ -7,6 +7,7 @@ import {
     LiteShop,
     Customer,
     Product,
+    CustomersWithBasicSales,
 } from "../types/model";
 
 // Mock shop data
@@ -21,9 +22,11 @@ export const mockShop: LiteShop = {
 export const mockData = {
     liteCustomers: dummyLiteCustomers,
     customers: dummyCustomers,
+    customersBasicSales: dummyCustomersBasicSales,
     invoices: dummyInvoices,
     products: dummyProducts,
     shop: mockShop,
+    cityTownMap: dummyCityTownMap,
     // Add more mock data as needed
 };
 
@@ -31,10 +34,12 @@ export const mockData = {
 export interface MockDataType {
     liteCustomers: LiteCustomer[];
     customers: Customer[];
+    customersBasicSales: CustomersWithBasicSales[];
     invoices: Invoice[];
     products: Product[];
     shop: LiteShop;
+    cityTownMap: Record<string, string[]>;
     // Add more types as needed
 }
 
-export { dummyCustomers, dummyInvoices };
+export { dummyCustomers, dummyInvoices, dummyCustomersBasicSales, dummyCityTownMap };

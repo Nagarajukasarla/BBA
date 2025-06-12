@@ -15,6 +15,16 @@ export interface InvoiceFilters {
 }
 
 /**
+ * Interface for customer filters and state in the component
+ */
+export interface CustomerFilters {
+    city?: string | null;
+    town?: string | null;
+    viewType?: string | null;
+    searchQuery?: string | null;
+}
+
+/**
  * Interface for invoice filter state in the component
  */
 export interface InvoiceFilterState {
@@ -37,5 +47,15 @@ export type InvoiceFilterAction =
     | { type: "SET_DAY_WISE"; payload: string | null }
     | { type: "SET_SPECIFIC_DATE"; payload: Dayjs | null }
     | { type: "SET_DATE_RANGE"; payload: [Dayjs | null, Dayjs | null] }
+    | { type: "SET_SEARCH_QUERY"; payload: string }
+    | { type: "RESET_FILTERS" };
+
+/**
+ * Type for customer filter actions
+ */
+export type CustomerFilterAction =
+    | { type: "SET_CITY"; payload: string | null }
+    | { type: "SET_TOWN"; payload: string | null }
+    | { type: "SET_VIEW_TYPE"; payload: string | null }
     | { type: "SET_SEARCH_QUERY"; payload: string }
     | { type: "RESET_FILTERS" };

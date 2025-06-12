@@ -140,6 +140,10 @@ export const NewInvoice: React.FC = observer(() => {
             .finally(() => newInvoiceStore.setIsProductsLoading(false));
     }, []);
 
+    const fieldStyles = {
+        margin: "0 10px",
+    };
+
     return (
         <>
             {contextHolder}
@@ -232,6 +236,7 @@ export const NewInvoice: React.FC = observer(() => {
                     <Card styles={{ body: { margin: "0px", padding: "8px" } }}>
                         <Row>
                             <CSelect
+                                containerStyle={fieldStyles}
                                 label="Customer"
                                 width={380}
                                 value={
@@ -306,6 +311,7 @@ export const NewInvoice: React.FC = observer(() => {
                         </Row>
                         <Row style={{ marginTop: "20px" }}>
                             <CSelect
+                                containerStyle={fieldStyles}
                                 label="Product"
                                 width={380}
                                 id="productSearch"
@@ -372,12 +378,14 @@ export const NewInvoice: React.FC = observer(() => {
                                 loading={newInvoiceStore.isProductsLoading}
                             />
                             <InputField
-                                label="Company"
                                 width="110px"
+                                containerStyle={fieldStyles}
+                                label="Company"
                                 value={newInvoiceStore.productData?.company}
                                 disabled={true}
                             />
                             <InputField
+                                width="50px"
                                 isError={newInvoiceStore.invalidProductFieldError.includes(
                                     "quantity"
                                 )}
@@ -385,6 +393,7 @@ export const NewInvoice: React.FC = observer(() => {
                                     display: "flex",
                                     flexDirection: "column",
                                     alignItems: "flex-start",
+                                    ...fieldStyles,
                                 }}
                                 label="Quantity"
                                 value={newInvoiceStore.productData?.quantity}
@@ -403,6 +412,8 @@ export const NewInvoice: React.FC = observer(() => {
                                 ref={quantityRef}
                             />
                             <InputField
+                                width="60px"
+                                containerStyle={fieldStyles}
                                 isError={newInvoiceStore.invalidProductFieldError.includes(
                                     "packingType"
                                 )}
@@ -412,6 +423,8 @@ export const NewInvoice: React.FC = observer(() => {
                                 disabled={true}
                             />
                             <InputField
+                                width="50px"
+                                containerStyle={fieldStyles}
                                 isError={newInvoiceStore.invalidProductFieldError.includes(
                                     "manufacturingDate"
                                 )}
@@ -421,6 +434,8 @@ export const NewInvoice: React.FC = observer(() => {
                                 disabled={true}
                             />
                             <InputField
+                                width="50px"
+                                containerStyle={fieldStyles}
                                 isError={newInvoiceStore.invalidProductFieldError.includes(
                                     "expiryDate"
                                 )}
@@ -430,6 +445,8 @@ export const NewInvoice: React.FC = observer(() => {
                                 disabled={true}
                             />
                             <InputField
+                                width="40px"
+                                containerStyle={fieldStyles}
                                 isError={newInvoiceStore.invalidProductFieldError.includes(
                                     "sGst"
                                 )}
@@ -439,6 +456,8 @@ export const NewInvoice: React.FC = observer(() => {
                                 disabled={true}
                             />
                             <InputField
+                                width="40px"
+                                containerStyle={fieldStyles}
                                 isError={newInvoiceStore.invalidProductFieldError.includes(
                                     "cGst"
                                 )}
@@ -448,6 +467,8 @@ export const NewInvoice: React.FC = observer(() => {
                                 disabled={true}
                             />
                             <InputField
+                                width="40px"
+                                containerStyle={fieldStyles}
                                 isError={newInvoiceStore.invalidProductFieldError.includes(
                                     "iGst"
                                 )}
@@ -457,6 +478,8 @@ export const NewInvoice: React.FC = observer(() => {
                                 disabled={true}
                             />
                             <InputField
+                                width="50px"
+                                containerStyle={fieldStyles}
                                 isError={newInvoiceStore.invalidProductFieldError.includes(
                                     "rate"
                                 )}
@@ -476,6 +499,8 @@ export const NewInvoice: React.FC = observer(() => {
                                 onKeyUp={e => handleKeyUp(e, "rateField")}
                             />
                             <InputField
+                                width="50px"
+                                containerStyle={fieldStyles}
                                 isError={newInvoiceStore.invalidProductFieldError.includes(
                                     "mrp"
                                 )}
@@ -495,6 +520,8 @@ export const NewInvoice: React.FC = observer(() => {
                                 onKeyUp={e => handleKeyUp(e, "mrpField")}
                             />
                             <InputField
+                                width="50px"
+                                containerStyle={fieldStyles}
                                 label="Discount"
                                 value={
                                     newInvoiceStore.invoiceData?.customer

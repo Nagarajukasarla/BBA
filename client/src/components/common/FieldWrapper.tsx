@@ -16,8 +16,9 @@ export const FieldWrapper: React.FC<FieldWrapperProps> = ({
     <Space
         direction="vertical"
         style={{
-            textAlign: "start",
-            marginLeft: "20px",
+            // textAlign: "start",
+            // margin: "0 10px",
+            // border: "1px solid red",
             ...style,
         }}
     >

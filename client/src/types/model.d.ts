@@ -40,14 +40,18 @@ export type Customer = LiteCustomer & {
     defaultBillDiscount: number;
 };
 
-export type CustomerSales = Customer & {
+export type CustomersWithBasicSales = LiteCustomer & {
     purchase: {
-        amount: number;
+        totalAmount: number;
+        paidAmount: number;
         totalInvoices: number;
+        pendingInvoices: number;
     };
     sold: {
-        amount: number;
+        totalAmount: number;
+        paidAmount: number;
         totalInvoices: number;
+        pendingInvoices: number;
     };
 };
 

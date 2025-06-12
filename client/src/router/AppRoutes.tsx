@@ -15,9 +15,9 @@ const ResetPassword = React.lazy(
 );
 
 const Dashboard = React.lazy(() => import("../pages/Dashboard"));
-const Invoice = React.lazy(() => import("../pages/Invoice"));
+const Invoice = React.lazy(() => import("../pages/invoice/Invoice"));
 const Stocks = React.lazy(() => import("../pages/Stocks"));
-const Customers = React.lazy(() => import("../pages/Customers"));
+const Customers = React.lazy(() => import("../pages/customers/Customers"));
 const Subscriptions = React.lazy(() => import("../pages/Subscriptions"));
 const About = React.lazy(() => import("../pages/About"));
 const Settings = React.lazy(() => import("../pages/Settings"));

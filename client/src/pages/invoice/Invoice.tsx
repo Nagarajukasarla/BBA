@@ -7,11 +7,8 @@ import {
 } from "@ant-design/icons";
 import {
     Button,
-    DatePicker,
-    Input,
     Popover,
     Row,
-    Select,
     Space,
     Table,
     Tooltip,
@@ -26,7 +23,11 @@ import { useNavigate } from "react-router-dom";
 import APIResponse from "@/classes/APIResponse";
 import _Date from "@/classes/core/_Date";
 import CustomerHelper from "@/classes/helpers/CustomerHelper";
-import { FilterSection } from "@/components/common/FilterSection";
+import { CButton } from "@/components/common/CButton";
+import { CDatePicker } from "@/components/common/CDatePicker";
+import { CDateRangePicker } from "@/components/common/CDateRangePicker";
+import { CSelect } from "@/components/common/CSelect";
+import { InputField } from "@/components/common/InputField";
 import useDebounce from "@/hooks/useDebounce";
 import useInvoiceFilters from "@/hooks/useInvoiceFilters";
 import customerService from "@/services/api/customerService";
@@ -96,19 +97,11 @@ export const Invoices: React.FC = () => {
     const fetchCustomers = async () => {
         try {
             setLoading(true);
-            // Use the CustomerService which will use MockDataService in development
-            // and the real API in production
             const response = await customerService.fetchLiteCustomers();
             if (response.code === APIResponse.SUCCESS && response.data) {
-                const customers = response.data.map(customer => ({
-                    id: customer.id,
-                    customerNumber: customer.number,
-                    customerName: customer.name,
-                    address: customer.address,
-                }));
                 setCustomersAsOptions(
                     CustomerHelper.getCustomerAsOptions({
-                        customers,
+                        customers: response.data,
                         addAllOption: true,
                     })
                 );
@@ -157,14 +150,14 @@ export const Invoices: React.FC = () => {
                 });
                 console.log("CustomerDetails: ", customerDetails);
                 return (
-                <Space>
-                    <Typography.Text>{customerDetails[0]}</Typography.Text>
-                    <Popover content={customerDetails[1]}>
-                        <InfoCircleTwoTone />
-                    </Popover>
-                </Space>
-            );
-        },
+                    <Space>
+                        <Typography.Text>{customerDetails[0]}</Typography.Text>
+                        <Popover content={customerDetails[1]}>
+                            <InfoCircleTwoTone />
+                        </Popover>
+                    </Space>
+                );
+            },
         },
         {
             key: "paymentMode",
@@ -268,179 +261,137 @@ export const Invoices: React.FC = () => {
     return (
         <>
             {contextHolder}
-            <div
-                style={{
-                    // display: "flex",
-                    // justifyContent: "center",
-                    // alignItems: "center",
-                    // border: "1px solid red",
-                }}
-            >
-                {/* <Space direction="vertical" size="small"> */}
-                    <Row
-                        style={{ padding: "20px 0 0 5px" }}
-                        justify="space-between"
-                        align="middle"
+            <div>
+                <Row
+                    style={{ padding: "20px 0 0 5px" }}
+                    justify="space-between"
+                    align="middle"
+                >
+                    <Typography.Title level={3}>Invoices</Typography.Title>
+                    <Button
+                        onClick={newInvoice}
+                        type="primary"
+                        shape="round"
+                        size="large"
+                        className="newInvoiceBtn addOrEditInvoiceBtn"
                     >
-                        <Typography.Title level={3}>Invoices</Typography.Title>
-                        <Button
-                            onClick={newInvoice}
-                            type="primary"
-                            shape="round"
-                            size="large"
-                            className="newInvoiceBtn addOrEditInvoiceBtn"
-                        >
-                            <Typography.Text className="newInvoiceBtnText">
-                                New Invoice
-                            </Typography.Text>
-                            <PlusCircleOutlined
-                                style={{ paddingLeft: "5px", fontSize: "20px" }}
-                            />
-                        </Button>
-                    </Row>
+                        <Typography.Text className="newInvoiceBtnText">
+                            New Invoice
+                        </Typography.Text>
+                        <PlusCircleOutlined
+                            style={{ paddingLeft: "5px", fontSize: "20px" }}
+                        />
+                    </Button>
+                </Row>
+                <Row style={{ padding: "0 5px" }}>
+                    <CSelect
+                        containerStyle={{ margin: "0 10px 10px 0" }}
+                        label="Customer"
+                        width={400}
+                        value={selectedCustomerNumber}
+                        options={customersAsOptions}
+                        onSelect={onSelectedCustomer}
+                    />
+                    <CSelect
+                        containerStyle={{ margin: "0 10px 10px 0" }}
+                        label="Purchase Type"
+                        width={170}
+                        value={filters.paymentMode || "--All--"}
+                        options={purchaseTypeOptions}
+                        onSelect={onSelectPurchaseType}
+                    />
+                    <CSelect
+                        containerStyle={{ margin: "0 10px 10px 0" }}
+                        label="Status"
+                        width={170}
+                        value={filters.status || "--All--"}
+                        options={invoiceStatusOptions}
+                        onSelect={onSelectedInvoiceStatus}
+                    />
+                    <CSelect
+                        containerStyle={{ margin: "0 10px 10px 0" }}
+                        label="Day Wise"
+                        width={170}
+                        value={filters.dayWise || "--All--"}
+                        options={dayWiseOptions}
+                        onSelect={onSelectedDayWise}
+                    />
+                    <CDatePicker
+                        containerStyle={{ margin: "0 10px 10px 0" }}
+                        label="Pick a Date"
+                        width={200}
+                        value={filters.specificDate}
+                        onChange={onPickSpecificDate}
+                    />
+                    <CDateRangePicker
+                        containerStyle={{ margin: "0 10px 10px 0" }}
+                        label="Date Range"
+                        width={300}
+                        value={filters.dateRange}
+                        onChange={onSelectDateRange}
+                    />
+                    <InputField
+                        containerStyle={{ margin: "10px 0 0 0" }}
+                        label="Search"
+                        width={450}
+                        value={filters.searchQuery}
+                        onChange={onSearchChange}
+                        placeholder="Invoices number, customer name, amount etc..."
+                        suffix={<SearchOutlined style={{ fontSize: "16px", margin:"0 8px 0 0"}}/>}
+                    />
+                    <CButton
+                        style={{ margin: "41px 0 0 20px" }}
+                        onClick={() => {
+                            resetFilters();
+                            setSelectedCustomer(null);
+                            setSelectedCustomerNumber("--All--");
+                        }}
+                        type="primary"
+                        icon={<ReloadOutlined />}
+                        disabled={!hasActiveFilters()}
+                    >
+                        Reset Filters
+                    </CButton>
+                </Row>                
+                <Table
+                    style={{ width: "100%", marginTop: "20px" }}
+                    bordered
+                    loading={loading}
+                    columns={columns}
+                    dataSource={invoices}
+                    pagination={{
+                        pageSize: 10,
+                        showSizeChanger: true,
+                        showTotal: total => `Total ${total} items`,
+                    }}
+                    locale={{
+                        emptyText:
+                            "No invoices found. Try adjusting your filters.",
+                    }}
+                />
 
-                    {/* Filters Section */}
-                    <Row style={{ padding: "0 5px" }} align="middle">
-                        {/* Customer Filter */}
-                        <FilterSection label="Customer" width={400}>
-                            <Select
-                                style={{ width: "100%" }}
-                                value={selectedCustomerNumber}
-                                options={customersAsOptions}
-                                onSelect={onSelectedCustomer}
-                            />
-                        </FilterSection>
-
-                        {/* Purchase Type Filter */}
-                        <FilterSection label="Purchase Type" width={170}>
-                            <Select
-                                style={{ width: "100%" }}
-                                value={filters.paymentMode || "--All--"}
-                                options={purchaseTypeOptions}
-                                onSelect={onSelectPurchaseType}
-                            />
-                        </FilterSection>
-
-                        {/* Status Filter */}
-                        <FilterSection label="Status" width={170}>
-                            <Select
-                                style={{ width: "100%" }}
-                                value={filters.status || "--All--"}
-                                options={invoiceStatusOptions}
-                                onSelect={onSelectedInvoiceStatus}
-                            />
-                        </FilterSection>
-
-                        {/* Day Wise Filter */}
-                        <FilterSection label="Day Wise" width={200}>
-                            <Select
-                                style={{ width: "100%" }}
-                                value={filters.dayWise || "--All--"}
-                                options={dayWiseOptions}
-                                onSelect={onSelectedDayWise}
-                            />
-                        </FilterSection>
-
-                        {/* Specific Date Filter */}
-                        <FilterSection label="Pick a Date" width={200}>
-                            <DatePicker
-                                style={{ width: "100%" }}
-                                value={filters.specificDate}
-                                onChange={onPickSpecificDate}
-                            />
-                        </FilterSection>
-
-                        {/* Date Range Filter */}
-                        <FilterSection label="Date Range" width={300}>
-                            <DatePicker.RangePicker
-                                style={{ width: "100%" }}
-                                value={filters.dateRange}
-                                onChange={onSelectDateRange}
-                                format="DD-MM-YYYY"
-                                allowClear={true}
-                                placeholder={["Start Date", "End Date"]}
-                            />
-                        </FilterSection>
-
-                        {/* Search Filter */}
-                        <FilterSection label="Search" width={350}>
-                            <Input
-                                type="text"
-                                value={filters.searchQuery}
-                                onChange={onSearchChange}
-                                placeholder="Invoices number, customer name, amount etc..."
-                                className="primary-input-field"
-                                suffix={<SearchOutlined />}
-                            />
-                        </FilterSection>
-
-                        {/* Reset Filters Button */}
-                        <FilterSection label="Reset Filters" width={150}>
+                {/* Show a message when filters are applied but no results */}
+                {!loading && invoices.length === 0 && hasActiveFilters() && (
+                    <div style={{ textAlign: "center", marginTop: 20 }}>
+                        <Typography.Text type="secondary">
+                            No invoices match your current filters. Try
+                            adjusting or
                             <Button
+                                type="primary"
+                                size="small"
+                                icon={<ReloadOutlined />}
                                 onClick={() => {
                                     resetFilters();
                                     setSelectedCustomer(null);
                                     setSelectedCustomerNumber("--All--");
                                 }}
-                                type="primary"
-                                icon={<ReloadOutlined />}
-                                style={{ width: "100%" }}
-                                disabled={!hasActiveFilters()}
+                                style={{ marginLeft: 5 }}
                             >
                                 Reset Filters
                             </Button>
-                        </FilterSection>
-                    </Row>
-
-                    {/* Table Section */}
-                    <Row style={{ padding: "15px 0 0 10px" }}>
-                        <Typography.Text className="invoiceHeader">
-                            Recent Orders
                         </Typography.Text>
-                    </Row>
-                    <Table
-                        style={{ width: "100%" }}
-                        bordered
-                        loading={loading}
-                        columns={columns}
-                        dataSource={invoices}
-                        pagination={{
-                            pageSize: 10,
-                            showSizeChanger: true,
-                            showTotal: total => `Total ${total} items`,
-                        }}
-                        locale={{
-                            emptyText:
-                                "No invoices found. Try adjusting your filters.",
-                        }}
-                    />
-
-                    {/* Show a message when filters are applied but no results */}
-                    {!loading &&
-                        invoices.length === 0 &&
-                        hasActiveFilters() && (
-                            <div style={{ textAlign: "center", marginTop: 20 }}>
-                                <Typography.Text type="secondary">
-                                    No invoices match your current filters. Try
-                                    adjusting or
-                                    <Button
-                                        type="primary"
-                                        size="small"
-                                        icon={<ReloadOutlined />}
-                                        onClick={() => {
-                                            resetFilters();
-                                            setSelectedCustomer(null);
-                                            setSelectedCustomerNumber(
-                                                "--All--"
-                                            );
-                                        }}
-                                        style={{ marginLeft: 5 }}
-                                    >
-                                        Reset Filters
-                                    </Button>
-                                </Typography.Text>
-                            </div>
-                        )}
+                    </div>
+                )}
                 {/* </Space> */}
             </div>
         </>

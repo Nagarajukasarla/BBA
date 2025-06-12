@@ -3,8 +3,9 @@ import { forwardRef } from "react";
 import { FieldWrapper } from "./FieldWrapper";
 import { handleFieldNavigation } from "@/utils/newInvoiceKeyboardEvents";
 import { newInvoiceStore } from "@/stores/newInvoiceStore";
+import { InputProps } from "antd";
 
-interface InputFieldProps {
+interface InputFieldProps extends Omit<InputProps, "value" | "onChange" | "onKeyUp"> {
     label?: string;
     value?: string | number | null;
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -26,13 +27,14 @@ export const InputField = forwardRef<InputRef, InputFieldProps>(
             value,
             onChange,
             onKeyUp,
-            width = "50px",
+            width = "100%",
             id,
             className,
             disabled,
             placeholder,
             containerStyle,
             isError,
+            ...restProps
         },
         ref
     ) => {
@@ -46,9 +48,6 @@ export const InputField = forwardRef<InputRef, InputFieldProps>(
                         width,
                         padding: "4px",
                         ...(showError && { borderColor: "red" }),
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "flex-start",
                     }}
                     value={value ?? ""}
                     onChange={onChange}
@@ -61,6 +60,7 @@ export const InputField = forwardRef<InputRef, InputFieldProps>(
                     ref={ref}
                     disabled={disabled}
                     placeholder={placeholder}
+                    {...restProps}
                 />
             </FieldWrapper>
         );

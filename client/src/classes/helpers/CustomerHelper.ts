@@ -5,8 +5,8 @@ type AddressKey = keyof Address;
 // This interface is used for internal mapping
 interface CustomerFormatted {
     id?: number;
-    customerNumber?: string;
-    customerName?: string;
+    number?: string;
+    name?: string;
     address: Address;
 }
 
@@ -78,8 +78,8 @@ class CustomerHelper {
         if (!customer) {
             return "";
         }
-        return `${customer?.customerNumber ?? ""} - ${CustomerHelper.mapCustomerDetails({
-            name: customer?.customerName ?? "",
+        return `${customer?.number ?? ""} - ${CustomerHelper.mapCustomerDetails({
+            name: customer?.name ?? "",
             address: customer?.address,
             concat,
         })}`;
@@ -115,7 +115,7 @@ class CustomerHelper {
             label: string;
             customValue: CustomerFormatted | null;
         }> = customers.map(item => ({
-            value: item.customerNumber ?? "",
+            value: item.number ?? "",
             label: this.customerNameHelper(item, true),
             customValue: item,
         }));
