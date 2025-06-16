@@ -1,0 +1,64 @@
+.titleContinaer {
+    background: rgb(35, 46, 62);
+    height: 65px;
+    width: 200px;
+}
+
+.titleContinaer p {
+    margin-top: 20px;
+    margin-left: 30px;
+    font-size: 23px;
+    letter-spacing: 1px;
+    color: #FFFFFF;
+}
+
+.header {
+    background: #FFFFFF;
+    display: flex;
+    height: 65px;
+}
+
+.profileContainer {
+    width: 200px;
+    display: flex;
+    background-color: rgb(235,238,242);
+    position: absolute;
+    top: 13px;
+    right: 130px;
+    height: 40px;
+    border-radius: 6px;
+    align-items: center;
+}
+
+.username {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.helpContainer {
+    /* background-color: rgb(235,238,242); */
+    width: 45px;
+    position: absolute;
+    top: 13px;
+    right: 50px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+}
+
+.helpIcon {
+    font-size: 20px;
+}
+
+.userImage {
+    width: 30px;
+    height: 30px;
+    margin-left: 15px;
+    margin-right: 10px;
+    z-index: +10000;
+    border: 2px solid #000000;
+    border-radius: 50px;
+}

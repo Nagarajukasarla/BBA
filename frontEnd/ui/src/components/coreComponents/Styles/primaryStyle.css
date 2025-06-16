@@ -1,0 +1,26 @@
+.primary-save-button-style {
+    letter-spacing: .3px;
+    font-size: 14px;
+    border: 2px solid #1677ff;
+    padding: 6px 11px;
+    border-radius: 6px;
+    color: white;
+    background-color: #1677ff;
+    cursor: pointer;
+    transition: transform .15s ease-in-out;
+}
+
+.primary-save-button-style:hover {
+    background-color: #4d97ff;
+    border: 2px solid #4d97ff;
+}
+
+.primary-save-button-style:active {
+    background-color: #156ae2;
+    transform: scale(0.90);
+}
+
+.primary-input-field-header-style {
+    font-size: 14px;
+    font-weight: 500;
+}

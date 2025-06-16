@@ -1,0 +1,48 @@
+.selectableDropdown {
+    width: 300px;
+    text-align: start;
+    border: .8px solid rgb(156, 156, 156);
+    border-radius: 6px;
+    outline: none;
+}
+
+.selectableDropdown:hover {
+    border: .8px solid #4096FF;
+}
+
+.selectableDropdown:active {
+    border: .8px solid #4096FF;
+}
+
+.invoiceInputFields {
+    border: 1px solid rgb(156, 156, 156);
+}
+
+
+/* --------- Button Styles ---------- */
+
+.primaryButtonStyle {
+    margin-right: 7px;
+    letter-spacing: .3px;
+    font-size: 14px;
+    border: 2px solid #1677ff;
+    padding: 6px 11px;
+    border-radius: 6px;
+    color: white;
+    background-color: #1677ff;
+    cursor: pointer;
+    transition: transform .15s ease-in-out;
+}
+
+.primaryButtonStyle:hover {
+    background-color: #4d97ff;
+    border: 2px solid #4d97ff;
+}
+
+.primaryButtonStyle:active {
+    border: 2px solid #1677ff;
+    background-color: #1677ff;
+    transform: scale(0.90);
+}
+
+/* --------- Button Styles ---------- */

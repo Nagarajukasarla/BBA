@@ -1,0 +1,40 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    /* height: 100vh; */
+}
+
+.header {
+    /* position: fixed; */
+    z-index: 1000;
+    width: 100%;
+    height: 65px;
+}
+
+.sidebarWrapper {
+    width: 200px;
+    height: 100%;
+}
+
+.sideMenuWithDashborad {
+    display: flex;
+    flex: 1;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.appContent {
+    padding: 10px 0px 5px 5px;
+}
+
+.appContentContainer {
+    max-height: 90vh;
+    overflow-y: scroll;
+    /* border: 1px solid red; */
+}

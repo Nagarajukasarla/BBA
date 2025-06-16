@@ -1,0 +1,17 @@
+/* .sidebarWrapper {
+    background-color: rgb(31, 41, 55);
+    color: #FFFFFF;
+} */
+
+.sidebarMenu {
+    padding: 10px;
+    text-align: start;
+    font-size: 16px;
+    background-color: rgb(31, 41, 55);
+    color: rgb(255, 255, 255);
+    height: 90.7vh;
+}
+
+/* 
+Invoice pages should conatins list of all invoices with pagination at the bottom
+and should conatins some filter such as paid, pending, payment mode etc. */
