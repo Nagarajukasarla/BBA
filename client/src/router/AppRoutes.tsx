@@ -1,9 +1,9 @@
+import { NewInvoice } from "@/pages/newInvoice/NewInvoice";
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import Spinner from "../components/common/Spinner";
+import Spinner from "../components/core/Spinner";
 import AppLayout from "../components/layouts/AppLayout";
 import RouteGuard from "./RouteGuard";
-import { NewInvoice } from "@/pages/newInvoice/NewInvoice";
 
 const Login = React.lazy(() => import("../pages/Login"));
 const Register = React.lazy(() => import("../pages/Register"));
@@ -55,6 +55,9 @@ const AppRoutes: React.FC = () => (
                     </RouteGuard>
                 }
             >
+                {/** @FIX , @Dependency ROUTING-PLAN  */}
+                {/** ROUTING-PLAN: "/" should be authnetication page, if authenticated then redirect to "/dashboard". */}
+                {/** ROUTING-PLAN: Later map each route a string or number with something to maintain active state in sider */}
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/app">
                     <Route path="dashboard" element={<Dashboard />} />

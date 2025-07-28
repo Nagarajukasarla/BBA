@@ -1,9 +1,10 @@
 import { newInvoiceStore } from "@/stores/newInvoiceStore";
-import { InvoiceItem, ProductOption } from "@/types/component";
+import { InvoiceItem } from "@/types/component";
+import { CSelectOption } from "@/types/core";
 import { Product } from "@/types/model";
 import { calculateProductPrice } from "./billGenerationHelpers";
 
-const productNameHelper = (product: any) => {
+const productNameHelper = (product: any):string => {
     if (!product) {
         return "";
     }
@@ -18,7 +19,7 @@ const productNameHelper = (product: any) => {
     return `${product.name} - ${expiryDateStr}`;
 };
 
-export const getProductsAsOptions = (products: Product[]): ProductOption[] => {
+export const getProductsAsOptions = (products: Product[]): CSelectOption<Product>[] => {
     return products.map(product => ({
         value: product.id.toString(),
         label: productNameHelper(product),

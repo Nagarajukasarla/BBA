@@ -24,12 +24,11 @@ import {
 } from "@ant-design/icons";
 import { invoiceItemsColumns, paymentModes } from "./constants";
 
-import { CSelect } from "@/components/common/CSelect";
-import EditableTable from "@/components/common/EditableTable";
-import { InputField } from "@/components/common/InputField";
+import { CSelect } from "@/components/core/CSelect";
+import EditableTable from "@/components/core/EditableTable";
 import ProductSelectionModal from "@/components/features/ProductSelectionModal";
 import { newInvoiceStore } from "@/stores/newInvoiceStore";
-import { InvoiceItem, ProductOption } from "@/types/component";
+import { InvoiceItem } from "@/types/component";
 import { NoticeType } from "antd/es/message/interface";
 import { calculateProductPrice } from "./billGenerationHelpers";
 import { fetchCustomers, fetchProducts, fetchSelectedCustomer } from "./fetch";
@@ -39,7 +38,10 @@ import {
     onClickAddButton,
 } from "./handlers";
 import { checkDisability, checkDisabilityForReset } from "./validators";
-import { CButton } from "@/components/common/CButton";
+import { CButton } from "@/components/core/CButton";
+import CInputField from "@/components/core/CInputField";
+import { CSelectOption } from "@/types/core";
+import { Product } from "@/types/model";
 
 export const NewInvoice: React.FC = observer(() => {
     const quantityRef = useRef(null);
@@ -140,10 +142,6 @@ export const NewInvoice: React.FC = observer(() => {
             .finally(() => newInvoiceStore.setIsProductsLoading(false));
     }, []);
 
-    const fieldStyles = {
-        margin: "0 10px",
-    };
-
     return (
         <>
             {contextHolder}
@@ -236,7 +234,6 @@ export const NewInvoice: React.FC = observer(() => {
                     <Card styles={{ body: { margin: "0px", padding: "8px" } }}>
                         <Row>
                             <CSelect
-                                containerStyle={fieldStyles}
                                 label="Customer"
                                 width={380}
                                 value={
@@ -309,20 +306,19 @@ export const NewInvoice: React.FC = observer(() => {
                                 />
                             </Space>
                         </Row>
-                        <Row style={{ marginTop: "20px" }}>
+                        <Row style={{ marginTop: "20px", rowGap: "8px", gap: "12px" }}>
                             <CSelect
-                                containerStyle={fieldStyles}
                                 label="Product"
                                 width={380}
                                 id="productSearch"
                                 value={newInvoiceStore.productData?.name}
                                 onSelect={(_, selectedProduct) => {
                                     if (
-                                        (selectedProduct as ProductOption)
+                                        (selectedProduct as CSelectOption<Product>)
                                             ?.customValue
                                     ) {
                                         handleProductSelect(
-                                            selectedProduct as ProductOption
+                                            selectedProduct as CSelectOption<Product>
                                         );
                                     }
                                 }}
@@ -377,14 +373,13 @@ export const NewInvoice: React.FC = observer(() => {
                                 allowClear
                                 loading={newInvoiceStore.isProductsLoading}
                             />
-                            <InputField
+                            <CInputField
                                 width="110px"
-                                containerStyle={fieldStyles}
                                 label="Company"
                                 value={newInvoiceStore.productData?.company}
                                 disabled={true}
                             />
-                            <InputField
+                            <CInputField
                                 width="50px"
                                 isError={newInvoiceStore.invalidProductFieldError.includes(
                                     "quantity"
@@ -393,7 +388,6 @@ export const NewInvoice: React.FC = observer(() => {
                                     display: "flex",
                                     flexDirection: "column",
                                     alignItems: "flex-start",
-                                    ...fieldStyles,
                                 }}
                                 label="Quantity"
                                 value={newInvoiceStore.productData?.quantity}
@@ -411,9 +405,8 @@ export const NewInvoice: React.FC = observer(() => {
                                 onKeyUp={e => handleKeyUp(e, "quantityField")}
                                 ref={quantityRef}
                             />
-                            <InputField
+                            <CInputField
                                 width="60px"
-                                containerStyle={fieldStyles}
                                 isError={newInvoiceStore.invalidProductFieldError.includes(
                                     "packingType"
                                 )}
@@ -422,9 +415,8 @@ export const NewInvoice: React.FC = observer(() => {
                                 id="packingTypeField"
                                 disabled={true}
                             />
-                            <InputField
+                            <CInputField
                                 width="50px"
-                                containerStyle={fieldStyles}
                                 isError={newInvoiceStore.invalidProductFieldError.includes(
                                     "manufacturingDate"
                                 )}
@@ -433,9 +425,8 @@ export const NewInvoice: React.FC = observer(() => {
                                 id="manufacturingDateField"
                                 disabled={true}
                             />
-                            <InputField
+                            <CInputField
                                 width="50px"
-                                containerStyle={fieldStyles}
                                 isError={newInvoiceStore.invalidProductFieldError.includes(
                                     "expiryDate"
                                 )}
@@ -444,9 +435,8 @@ export const NewInvoice: React.FC = observer(() => {
                                 id="expiryDateField"
                                 disabled={true}
                             />
-                            <InputField
+                            <CInputField
                                 width="40px"
-                                containerStyle={fieldStyles}
                                 isError={newInvoiceStore.invalidProductFieldError.includes(
                                     "sGst"
                                 )}
@@ -455,9 +445,8 @@ export const NewInvoice: React.FC = observer(() => {
                                 id="sGstField"
                                 disabled={true}
                             />
-                            <InputField
+                            <CInputField
                                 width="40px"
-                                containerStyle={fieldStyles}
                                 isError={newInvoiceStore.invalidProductFieldError.includes(
                                     "cGst"
                                 )}
@@ -466,9 +455,9 @@ export const NewInvoice: React.FC = observer(() => {
                                 id="cGstField"
                                 disabled={true}
                             />
-                            <InputField
+                            <CInputField
                                 width="40px"
-                                containerStyle={fieldStyles}
+
                                 isError={newInvoiceStore.invalidProductFieldError.includes(
                                     "iGst"
                                 )}
@@ -477,9 +466,9 @@ export const NewInvoice: React.FC = observer(() => {
                                 id="iGstField"
                                 disabled={true}
                             />
-                            <InputField
+                            <CInputField
                                 width="50px"
-                                containerStyle={fieldStyles}
+
                                 isError={newInvoiceStore.invalidProductFieldError.includes(
                                     "rate"
                                 )}
@@ -498,9 +487,8 @@ export const NewInvoice: React.FC = observer(() => {
                                 }}
                                 onKeyUp={e => handleKeyUp(e, "rateField")}
                             />
-                            <InputField
+                            <CInputField
                                 width="50px"
-                                containerStyle={fieldStyles}
                                 isError={newInvoiceStore.invalidProductFieldError.includes(
                                     "mrp"
                                 )}
@@ -519,9 +507,9 @@ export const NewInvoice: React.FC = observer(() => {
                                 }}
                                 onKeyUp={e => handleKeyUp(e, "mrpField")}
                             />
-                            <InputField
+                            <CInputField
                                 width="50px"
-                                containerStyle={fieldStyles}
+
                                 label="Discount"
                                 value={
                                     newInvoiceStore.invoiceData?.customer
@@ -552,33 +540,33 @@ export const NewInvoice: React.FC = observer(() => {
                                     }
                                     page={false}
                                     isEditing={isEditing}
-                                    // summary={pageData => {
-                                    //     const totalAmount = pageData.reduce(
-                                    //         (total, record) => total + (record.total || 0),
-                                    //         0
-                                    //     );
-                                    //     return (
-                                    //         <>
-                                    //             <Table.Summary.Row>
-                                    //                 <Table.Summary.Cell
-                                    //                     colSpan={6}
-                                    //                     className="invoice-summary"
-                                    //                 >
-                                    //                     Total Amount
-                                    //                 </Table.Summary.Cell>
-                                    //                 <Table.Summary.Cell>
-                                    //                     <Typography.Text
-                                    //                         style={{
-                                    //                             fontWeight: "bold",
-                                    //                         }}
-                                    //                     >
-                                    //                         ₹ {totalAmount}
-                                    //                     </Typography.Text>
-                                    //                 </Table.Summary.Cell>
-                                    //             </Table.Summary.Row>
-                                    //         </>
-                                    //     );
-                                    // }}
+                                // summary={pageData => {
+                                //     const totalAmount = pageData.reduce(
+                                //         (total, record) => total + (record.total || 0),
+                                //         0
+                                //     );
+                                //     return (
+                                //         <>
+                                //             <Table.Summary.Row>
+                                //                 <Table.Summary.Cell
+                                //                     colSpan={6}
+                                //                     className="invoice-summary"
+                                //                 >
+                                //                     Total Amount
+                                //                 </Table.Summary.Cell>
+                                //                 <Table.Summary.Cell>
+                                //                     <Typography.Text
+                                //                         style={{
+                                //                             fontWeight: "bold",
+                                //                         }}
+                                //                     >
+                                //                         ₹ {totalAmount}
+                                //                     </Typography.Text>
+                                //                 </Table.Summary.Cell>
+                                //             </Table.Summary.Row>
+                                //         </>
+                                //     );
+                                // }}
                                 />
                             </Form>
                         </Row>

@@ -23,16 +23,16 @@ import { useNavigate } from "react-router-dom";
 import APIResponse from "@/classes/APIResponse";
 import _Date from "@/classes/core/_Date";
 import CustomerHelper from "@/classes/helpers/CustomerHelper";
-import { CButton } from "@/components/common/CButton";
-import { CDatePicker } from "@/components/common/CDatePicker";
-import { CDateRangePicker } from "@/components/common/CDateRangePicker";
-import { CSelect } from "@/components/common/CSelect";
-import { InputField } from "@/components/common/InputField";
+import { CButton } from "@/components/core/CButton";
+import { CDatePicker } from "@/components/core/CDatePicker";
+import { CDateRangePicker } from "@/components/core/CDateRangePicker";
+import { CSelect } from "@/components/core/CSelect";
 import useDebounce from "@/hooks/useDebounce";
 import useInvoiceFilters from "@/hooks/useInvoiceFilters";
 import customerService from "@/services/api/customerService";
 import invoiceService from "@/services/api/invoiceService";
 import { Invoice, LiteCustomer } from "@/types/model";
+import CInputField from "@/components/core/CInputField";
 
 export const Invoices: React.FC = () => {
     const [invoices, setInvoices] = useState<Invoice[]>([]);
@@ -263,7 +263,7 @@ export const Invoices: React.FC = () => {
             {contextHolder}
             <div>
                 <Row
-                    style={{ padding: "20px 0 0 5px" }}
+                    style={{ padding: "20px 0 0 8px" }}
                     justify="space-between"
                     align="middle"
                 >
@@ -283,7 +283,7 @@ export const Invoices: React.FC = () => {
                         />
                     </Button>
                 </Row>
-                <Row style={{ padding: "0 5px" }}>
+                <Row style={{ padding: "0 8px", flexWrap: "wrap", gap: "8px", rowGap: "20px" }} >
                     <CSelect
                         containerStyle={{ margin: "0 10px 10px 0" }}
                         label="Customer"
@@ -330,8 +330,8 @@ export const Invoices: React.FC = () => {
                         value={filters.dateRange}
                         onChange={onSelectDateRange}
                     />
-                    <InputField
-                        containerStyle={{ margin: "10px 0 0 0" }}
+                    <CInputField
+                        containerStyle={{ margin: "0 0 0 0" }}
                         label="Search"
                         width={450}
                         value={filters.searchQuery}
@@ -340,7 +340,7 @@ export const Invoices: React.FC = () => {
                         suffix={<SearchOutlined style={{ fontSize: "16px", margin:"0 8px 0 0"}}/>}
                     />
                     <CButton
-                        style={{ margin: "41px 0 0 20px" }}
+                        style={{ margin: "31px 0 0 20px" }}
                         onClick={() => {
                             resetFilters();
                             setSelectedCustomer(null);

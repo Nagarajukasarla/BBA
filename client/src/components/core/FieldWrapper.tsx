@@ -5,6 +5,7 @@ interface FieldWrapperProps {
     width?: string | number;
     children: React.ReactNode;
     style?: React.CSSProperties;
+    required?: boolean;
 }
 
 export const FieldWrapper: React.FC<FieldWrapperProps> = ({
@@ -12,6 +13,7 @@ export const FieldWrapper: React.FC<FieldWrapperProps> = ({
     width,
     children,
     style,
+    required
 }) => (
     <Space
         direction="vertical"
@@ -24,7 +26,7 @@ export const FieldWrapper: React.FC<FieldWrapperProps> = ({
     >
         {label && (
             <Typography.Text className="primary-input-field-header-style">
-                {label}
+                {label} {required && <span style={{color: "red"}}>*</span>}
             </Typography.Text>
         )}
         <div style={{ width }}>{children}</div>

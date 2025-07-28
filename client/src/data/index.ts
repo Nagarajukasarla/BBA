@@ -1,4 +1,4 @@
-import { dummyLiteCustomers, dummyCustomers, dummyCustomersBasicSales, dummyCityTownMap } from "./customers";
+import { dummyLiteCustomers, dummyCustomers, dummyCityTownMap, dummyCustomersWithBasicSales } from "./customers";
 import { dummyInvoices } from "./invoices";
 import { dummyProducts } from "./products";
 import {
@@ -22,7 +22,7 @@ export const mockShop: LiteShop = {
 export const mockData = {
     liteCustomers: dummyLiteCustomers,
     customers: dummyCustomers,
-    customersBasicSales: dummyCustomersBasicSales,
+    customersWithBasicSales: dummyCustomersWithBasicSales,
     invoices: dummyInvoices,
     products: dummyProducts,
     shop: mockShop,
@@ -34,7 +34,7 @@ export const mockData = {
 export interface MockDataType {
     liteCustomers: LiteCustomer[];
     customers: Customer[];
-    customersBasicSales: CustomersWithBasicSales[];
+    customersWithBasicSales: CustomersWithBasicSales[];
     invoices: Invoice[];
     products: Product[];
     shop: LiteShop;
@@ -42,4 +42,4 @@ export interface MockDataType {
     // Add more types as needed
 }
 
-export { dummyCustomers, dummyInvoices, dummyCustomersBasicSales, dummyCityTownMap };
+export { dummyCustomers, dummyInvoices, dummyCustomersWithBasicSales, dummyCityTownMap };

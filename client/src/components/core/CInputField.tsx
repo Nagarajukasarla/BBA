@@ -16,11 +16,12 @@ interface InputFieldProps extends Omit<InputProps, "value" | "onChange" | "onKey
     disabled?: boolean;
     placeholder?: string;
     containerStyle?: React.CSSProperties;
+    required?: boolean;
+    /**@ignore only applicable for NewInvoice*/
     isError?: boolean;
 }
 
-
-export const InputField = forwardRef<InputRef, InputFieldProps>(
+export const CInputField = forwardRef<InputRef, InputFieldProps>(
     (
         {
             label,
@@ -34,15 +35,18 @@ export const InputField = forwardRef<InputRef, InputFieldProps>(
             placeholder,
             containerStyle,
             isError,
+            required,
             ...restProps
         },
         ref
     ) => {
+
+        {/** @DANGEROUS @DEPENDENCY showError is only application for NewInvoice component, convert to resuable */} 
         // Only show error if there's a product selected and the field has an error
         const showError = isError && newInvoiceStore.productData !== null;
         
         return (
-            <FieldWrapper label={label} style={containerStyle}>
+            <FieldWrapper label={label} style={containerStyle} required={required}>
                 <Input
                     style={{
                         width,
@@ -66,3 +70,7 @@ export const InputField = forwardRef<InputRef, InputFieldProps>(
         );
     }
 );
+
+
+export default CInputField;
+

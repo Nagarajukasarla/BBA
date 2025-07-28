@@ -58,8 +58,15 @@ export interface InvoiceData {
     items: InvoiceItem[];
 };
 
-export interface ProductOption {
-    value: string;
-    label: string;
-    customValue: Product;
-};
+export interface SiderItem {
+    key: string;
+    label: JSX.Element;
+    icon: JSX.Element;
+    onClick: () => void;
+    styles?: React.CSSProperties;
+}
+
+export interface NewCustomerRef {
+    submit: () => void;
+    reset: () => void;
+}

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import APIResponse from "../classes/APIResponse";
-import Spinner from "../components/common/Spinner";
+import Spinner from "../components/core/Spinner";
 import { authenticate } from "../services/api";
 
 type RouteGuardProps = {

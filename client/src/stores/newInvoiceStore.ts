@@ -1,4 +1,5 @@
-import { InvoiceData, ProductData, ProductOption } from "@/types/component";
+import { InvoiceData, ProductData } from "@/types/component";
+import { CSelectOption } from "@/types/core";
 import { Product } from "@/types/model";
 import { makeAutoObservable } from "mobx";
 
@@ -15,7 +16,7 @@ class NewInvoiceStore {
         label: string;
         customValue: any;
     }> = [];
-    productsAsOptions: ProductOption[] = [];
+    productsAsOptions: CSelectOption<Product>[] = [];
     similarProducts: Product[] = [];
     modalVisible: boolean = false;
     isCustomersLoading: boolean = false;
@@ -40,7 +41,7 @@ class NewInvoiceStore {
         this.customersAsOptions = options;
     }
 
-    setProductsAsOptions(options: ProductOption[]) {
+    setProductsAsOptions(options: CSelectOption<Product>[]) {
         this.productsAsOptions = options;
     }
 

@@ -10,10 +10,15 @@
     --font-size-normal: 15px;
     --font-size-medium: 18px;
     --font-size-large: 20px;
-
+    
     --icon-size-small: 18px;
     --icon-size-default: 22px;
     --icon-size-normal: 25px;
     --icon-size-medium: 30px;
     --icon-size-large: 35px;
+
+    --sidebar-active-background: #80c0fc;
+    --sidebar-active-box-shadow: #baddfd;
+    --sidebar-active-border-color: #80c0fc;
+    --sidebar-active-item-color: #003c74;
 }

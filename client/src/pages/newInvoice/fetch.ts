@@ -15,8 +15,8 @@ export const fetchCustomers = async (): Promise<string> => {
 
             const customers = response.data.map(customer => ({
                 id: customer.id,
-                customerNumber: customer.number,
-                customerName: customer.name,
+                number: customer.number,
+                name: customer.name,
                 address: customer.address,
             }));
 
@@ -40,7 +40,6 @@ export const fetchCustomers = async (): Promise<string> => {
 };
 
 export const fetchProducts = async (): Promise<string> => {
-
     try {
         const response = await productService.fetchProducts();
         if (response.code === APIResponse.SUCCESS && response.data) {

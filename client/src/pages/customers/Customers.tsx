@@ -1,35 +1,42 @@
-import { CSelect } from "@/components/common/CSelect";
-import { InputField } from "@/components/common/InputField";
-import useCustomerFilters from "@/hooks/useCustomerFilters";
-import { CustomersWithBasicSales } from "@/types/model";
-import { PlusCircleOutlined, SearchOutlined } from "@ant-design/icons";
-import { Button, Row, Space, Table, Typography } from "antd";
-import React, { useState } from "react";
 
-export const options = [
-    "--All--",
-    "Bills",
-    "Pending Bills",
-    "Outstanding Amount"
-];
+import CInputField from "@/components/core/CInputField";
+import CustomerFilters from "@/components/features/CustomerFilters";
+import NewCustomer from "@/components/features/NewCustomer";
+import { NewCustomerRef } from "@/types/component";
+import { CustomersWithBasicSales } from "@/types/model";
+import { FilterOutlined, PlusCircleOutlined, ReloadOutlined, SearchOutlined } from "@ant-design/icons";
+import { Button, Modal, Row, Table, Typography } from "antd";
+import React, { useRef, useState } from "react";
 
 const Customers: React.FC = () => {
     const [customers, setCustomers] = useState<CustomersWithBasicSales[]>([]);
-    const [cityTownMap, setCityTownMap] = useState<Record<string, string[]>>({});
     const [loading, setLoading] = useState<boolean>(false);
 
-    const 
+    const [open, setOpen] = useState<boolean>(false);
+    const [openFilter, setOpenFilter] = useState<boolean>(false);
+    const [activeFilters, setActiveFilters] = useState<boolean>(false);
 
-    const {
-        filters,
-        getApiFilters,
-        hasActiveFilters,
-        setCity,
-        setTown,
-        setViewType,
-        setSearchQuery,
-        resetFilters,
-    } = useCustomerFilters();
+    const newCustomerRef = useRef<NewCustomerRef>(null);
+
+    // const {
+    //     filters,
+    //     getApiFilters,
+    //     hasActiveFilters,
+    //     setCity,
+    //     setTown,
+    //     setViewType,
+    //     setSearchQuery,
+    //     resetFilters,
+    // } = useCustomerFilters();
+
+    // const fetchCustomers = useCallback(async () => {
+    //     try {
+    //         setLoading(true);
+    //         const apiFilters = getApiFilters();
+    //         const response = await customerService.fetchCustomersWithBasicSales(getApiFilters());
+
+    //     }
+    // } [getApiFilters])
 
     return (
         <div
@@ -40,79 +47,31 @@ const Customers: React.FC = () => {
         >
             <Row justify="space-between" align="middle">
                 <Typography.Title level={3}>Customers</Typography.Title>
-                <Button type="primary" shape="round" size="large">
+                <Button type="primary" shape="round" size="large" onClick={() => setOpen(!open)}>
                     <PlusCircleOutlined />
                     Add Customer
                 </Button>
             </Row>
-            <Row style={{ marginTop: "20px", justifyContent: "space-between" }}>
-                <Space>
-                    <CSelect
-                        containerStyle={{
-                            marginRight: "10px",
-                        }}
-                        label="City"
-                        width={250}
-                        value={""}
-                        options={[]}
-                        onSelect={(_value, option) => {
-                            console.log(option);
-                        }}
-                        placeholder="Select Region"
-                        showSearch
-                        allowClear
-                        loading={false}
-                    />
-                    <CSelect
-                        containerStyle={{
-                            marginRight: "10px",
-                        }}
-                        label="Village/Town"
-                        width={200}
-                        value={""}
-                        options={[]}
-                        onSelect={(_value, option) => {
-                            console.log(option);
-                        }}
-                        placeholder="Select Region"
-                        showSearch
-                        allowClear
-                        loading={false}
-                    />
-                </Space>
-                <Space>
-                    <InputField
-                        containerStyle={{
-                            marginRight: "10px",
-                            width: "350px",
-                        }}
-                        label="Customer Name"
-                        style={{ padding: "4px 8px" }}
-                        value={""}
-                        onChange={value => {
-                            console.log(value);
-                        }}
-                        placeholder="Enter Customer Name"
-                        suffix={
-                            <SearchOutlined style={{ cursor: "pointer" }} />
-                        }
-                    />
-                    <CSelect
-                        containerStyle={{
-                            marginRight: "10px",
-                        }}
-                        label="View Type"
-                        width={200}
-                        value={""}
-                        options={options.map(option => ({
-                            value: option,
-                            label: option,
-                        }))}
-                        onSelect={value => {
-                            console.log(value);
-                        }}
-                    />
-                </Space>
+            <Row style={{ marginTop: "20px", alignItems: "end" }}>
+                <CInputField
+                    containerStyle={{
+                        marginRight: "20px",
+                        width: "75%"
+                    }}
+                    label="Search"
+                    style={{ padding: "4px 8px" }}
+                    value={""}
+                    onChange={value => {
+                        console.log(value);
+                    }}
+                    placeholder="Number, Customer Name, Pincode"
+                    suffix={
+                        <SearchOutlined style={{ cursor: "pointer" }} />
+                    }
+                />
+                <Button type="primary" shape="round" size="middle" onClick={() => setOpenFilter(!openFilter)}>
+                    {activeFilters ? (<><ReloadOutlined style={{ marginRight: "8px" }} /> Reset</>) : (<><FilterOutlined style={{ marginRight: "8px" }} /> Filter</>)}
+                </Button>
             </Row>
             <Table
                 style={{ width: "100%", marginTop: "20px" }}
@@ -122,6 +81,28 @@ const Customers: React.FC = () => {
                 loading={false}
                 pagination={false}
             />
+            <Modal
+                open={open}
+                onCancel={() => { setOpen(false); newCustomerRef.current?.reset() }}
+                onOk={() => newCustomerRef.current?.submit()}
+                title={<Typography.Text>New Customer</Typography.Text>}
+                maskClosable={false}
+                keyboard={false}
+                width="70%"
+            >
+                <NewCustomer ref={newCustomerRef} />
+            </Modal>
+            <Modal
+                open={openFilter}
+                onCancel={() => { setOpenFilter(false); }}
+                onOk={() => { setOpenFilter(false); }}
+                title={<Typography.Text>Customer Filter</Typography.Text>}
+                maskClosable={false}
+                keyboard={false}
+                width="70%"
+            >
+                <CustomerFilters />
+            </Modal>
         </div>
     );
 };

@@ -1,0 +1,115 @@
+/* Head section for logo and expand button */
+
+.header-title {
+    padding: 0 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 22px;
+}
+
+.header-title img {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header-title img,
+.header-title button {
+    transition: opacity 0.2s ease-in-out;
+}
+
+.header-title .logoBtn {
+    background-color: transparent;
+    outline: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.header-title button:hover {
+    background-color: #f1f1f1;
+}
+
+#hiddenLogoImg {
+    position: absolute;
+    /* left: 30px */
+}
+
+#hiddenLogoImg:hover {
+    display: none;
+}
+
+.hidden-wrapper {
+    display: flex;
+}
+
+.logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50px;
+    cursor: pointer;
+}
+
+/* Head section for logo and expand button */
+
+.menu-item-text {
+    font-size: var(--font-size-normal);
+}
+
+.menu-item-icon {
+    font-size: var(--icon-size-small);
+}
+
+.sider-wrapper {
+    height: 100%;
+    width: 200px;
+    padding: 10px 8px;
+    /* remove the 5px 4px */
+    transition: width 0.3s ease;
+}
+
+.sider-closed {
+    width: 74px;
+}
+
+.sider-item {
+    padding: 8px 18px;
+    display: flex;
+    flex-direction: row;
+    text-align: start;
+    cursor: pointer;
+    margin-bottom: 10px;
+    max-width: 100%;
+}
+
+.label-slot {
+    position: absolute;
+    left: 60px;
+    display: block;
+}
+
+.label-hidden {
+    display: none;
+}
+
+.icon-slot {
+    position: relative;
+}
+
+.active {
+    background-color: var(--sidebar-active-background);
+    border: 1px solid var(--sidebar-active-border-color);
+    box-shadow: 0 0 0 4px var(--sidebar-active-box-shadow);
+    border-radius: 4px;
+    color: var(--sidebar-active-item-color);
+    font-weight: bold;
+    outline: none;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}

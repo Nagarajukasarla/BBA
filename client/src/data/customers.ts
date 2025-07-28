@@ -39,7 +39,7 @@ export const dummyCustomers: any[] = [
             street: "Road No 4",
             area: "Ashok Nagar Colony",
             city: "Kamareddy",
-            town: "Kamareddy",  
+            town: "Kamareddy",
             pincode: "503111",
             state: "Telangana",
         },
@@ -69,7 +69,7 @@ export const dummyCustomers: any[] = [
         address: {
             area: "Shanmuka Nagar",
             city: "Kamareddy",
-            town: "Banswada",
+            town: "Banswada", 
             pincode: "503111",
             state: "Telangana",
         },
@@ -223,7 +223,7 @@ export const toLiteCustomer = (customer: any): LiteCustomer => {
 };
 
 // Helper function to convert any to CustomersWithBasicSales
-export const toCustomerBasicSales = (customer: any): CustomersWithBasicSales => {
+export const toCustomerWithBasicSales = (customer: any): CustomersWithBasicSales => {
     const { id, number, name, address, purchase, sold } = customer;
     return { id, number, name, address, purchase, sold };
 };
@@ -234,14 +234,14 @@ export const getLiteCustomers = (): LiteCustomer[] => {
 };
 
 // Get all customers as CustomersWithBasicSales
-export const getCustomersBasicSales = (): CustomersWithBasicSales[] => {
-    return dummyCustomers.map(toCustomerBasicSales);
+export const getCustomersWithBasicSales = (): CustomersWithBasicSales[] => {
+    return dummyCustomers.map(toCustomerWithBasicSales);
 };
 
 // Get a specific customer basic sales by ID
 export const getCustomerBasicSalesById = (id: number): CustomersWithBasicSales | undefined => {
     const customer = dummyCustomers.find((customer) => customer.id === id);
-    return customer ? toCustomerBasicSales(customer) : undefined;
+    return customer ? toCustomerWithBasicSales(customer) : undefined;
 }
 
 // Get all customers as Customer
@@ -292,5 +292,5 @@ export const getCityTownMap = (): Record<string, string[]> => {
 };
 
 export const dummyLiteCustomers: LiteCustomer[] = getLiteCustomers();
-export const dummyCustomersBasicSales: CustomersWithBasicSales[] = getCustomersBasicSales();
+export const dummyCustomersWithBasicSales: CustomersWithBasicSales[] = getCustomersWithBasicSales();
 export const dummyCityTownMap: Record<string, string[]> = getCityTownMap();

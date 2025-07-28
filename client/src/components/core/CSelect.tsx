@@ -13,7 +13,7 @@ interface CSelectProps extends Omit<SelectProps, "onChange"> {
 
 export const CSelect: React.FC<CSelectProps> = ({
     label,
-    width = "100%",
+    width,
     value,
     options,
     onSelect,

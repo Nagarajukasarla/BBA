@@ -89,12 +89,11 @@ const Register: React.FC = () => {
                 duration: 0,
             });
 
-            const { confirmPassword, ...registrationData } = values;
             const registerData: RegisterRequest = {
-                firstname: registrationData.firstname,
-                lastname: registrationData.lastname,
-                email: registrationData.email,
-                password: registrationData.password,
+                firstname: values.firstname,
+                lastname: values.lastname,
+                email: values.email,
+                password: values.password,
             };
 
             const response = await authService.register(registerData);
@@ -119,8 +118,8 @@ const Register: React.FC = () => {
                 });
             }
 
+            setEmail(values.email);
             setShowOTP(true);
-            setEmail(registrationData.email);
         } catch (error) {
             message.error({
                 content: "Registration failed. Please try again.",

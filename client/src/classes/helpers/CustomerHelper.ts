@@ -1,3 +1,4 @@
+import { CSelectOption } from "@/types/core";
 import { Address } from "@/types/model";
 
 type AddressKey = keyof Address;
@@ -71,7 +72,7 @@ class CustomerHelper {
      * @param {boolean} concat - Whether to concatenate the result into a single string
      * @return {string} Formatted customer information string
      * @example
-     * // Returns 'CUST123 - John Doe, Main St, New York, 10001'
+     * // Returns 'CUST123 - Ram Chandran, Ayodhya Nagar, Ayodhya, 10001'
      * customerNameHelper(customer, true);
      */
     static customerNameHelper(customer: CustomerFormatted | null, concat: boolean): string {
@@ -87,13 +88,11 @@ class CustomerHelper {
 
     /**
      * Converts an array of customer objects into a format suitable for dropdown/select components.
-     *
      * @static
      * @param {CustomerOptionsParams} params - Configuration object
      * @param {CustomerFormatted[]} params.customers - Array of customer objects to convert
      * @param {boolean} [params.addAllOption=false] - Whether to include an 'All' option
-     * @return {Array<{value: string, label: string, customValue: CustomerFormatted | null}>}
-     *         Array of option objects with value, label, and original customer data
+     * @return {CSelectOption<CustomerFormatted | null>[]} Array of option objects with value, label, and original customer data
      * @example
      * getCustomerAsOptions({
      *   customers: customerList,
@@ -103,18 +102,10 @@ class CustomerHelper {
     static getCustomerAsOptions({
         customers,
         addAllOption,
-    }: CustomerOptionsParams): {
-        value: string;
-        label: string;
-        customValue: CustomerFormatted | null;
-    }[] {
+    }: CustomerOptionsParams): CSelectOption<CustomerFormatted | null>[] {
         if (!customers || customers.length === 0) return [];
 
-        const options: Array<{
-            value: string;
-            label: string;
-            customValue: CustomerFormatted | null;
-        }> = customers.map(item => ({
+        const options: CSelectOption<CustomerFormatted | null>[] = customers.map(item => ({
             value: item.number ?? "",
             label: this.customerNameHelper(item, true),
             customValue: item,

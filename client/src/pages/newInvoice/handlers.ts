@@ -1,5 +1,5 @@
 import { newInvoiceStore } from "@/stores/newInvoiceStore";
-import { ProductOption } from "@/types/component";
+import { CSelectOption } from "@/types/core";
 import { Product } from "@/types/model";
 import { addItemToInvoice } from "./helpers";
 import {
@@ -20,7 +20,7 @@ export const findSimilarProducts = (
 };
 
 // Handle product selection from dropdown
-export const handleProductSelect = (selectedOption: ProductOption) => {
+export const handleProductSelect = (selectedOption: CSelectOption<Product>) => {
 
     if (!selectedOption?.customValue) return;
 

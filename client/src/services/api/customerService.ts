@@ -2,6 +2,8 @@ import APIResponse from "@/classes/APIResponse";
 import DATA_ROUTES from "@/constants/dataRoutes";
 import { Customer, LiteCustomer, CustomersWithBasicSales } from "@/types/model";
 import BaseService from "@/services/api/baseService";
+import { CustomerFilters } from "@/types/filters";
+import { buildQueryString } from "@/utils/queryUtils";
 
 class CustomerService extends BaseService {
     /**
@@ -20,10 +22,19 @@ class CustomerService extends BaseService {
         return this.get<LiteCustomer[]>(DATA_ROUTES.FETCH_LITE_CUSTOMERS);
     }
 
-    async fetchCustomersWithBasicSales(): Promise<APIResponse<CustomersWithBasicSales[]>> {
+    /**
+     * 
+     * Make sure to write the below api clearly
+     * It should work based on filter once refer fetchFilteredInvoices
+     * 
+     */
+
+    async fetchCustomersWithBasicSales(filters: CustomerFilters): Promise<APIResponse<CustomersWithBasicSales[]>> {
         // In development, this will use MockDataService via BaseService
         // In production, this will use the real API
-        return this.get<CustomersWithBasicSales[]>(DATA_ROUTES.FETCH_CUSTOMERS_WITH_BASIC_SALES);
+        const queryString = buildQueryString(filters);
+        const url = `${DATA_ROUTES.FETCH_CUSTOMERS_WITH_BASIC_SALES}${queryString}`;
+        return this.get<CustomersWithBasicSales[]>(url);
     }
 
     /**
