@@ -19,14 +19,14 @@ export const dummyCustomers: any[] = [
         billPeriod: 30,
         defaultBillDiscount: 5,
         purchase: {
-            totalAmount: 18000,
-            paidAmount: 10000,
+            totalAmount: 18000.00,
+            paidAmount: 10000.00,
             totalInvoices: 10,
             pendingInvoices: 5
         },
         sold: {
-            totalAmount: 64000,
-            paidAmount: 50000,
+            totalAmount: 64000.00,
+            paidAmount: 50000.00,
             totalInvoices: 19,
             pendingInvoices: 10
         }
@@ -50,14 +50,14 @@ export const dummyCustomers: any[] = [
         billPeriod: 45,
         defaultBillDiscount: 7,
         purchase: {
-            totalAmount: 16000,
-            paidAmount: 10000,
+            totalAmount: 16000.00,
+            paidAmount: 10000.00,
             totalInvoices: 10,
             pendingInvoices: 5
         },
         sold: {
-            totalAmount: 64000,
-            paidAmount: 50000,
+            totalAmount: 64000.00,
+            paidAmount: 50000.00,
             totalInvoices: 19,
             pendingInvoices: 10
         }
@@ -80,14 +80,14 @@ export const dummyCustomers: any[] = [
         billPeriod: 30,
         defaultBillDiscount: 5,
         purchase: {
-            totalAmount: 19000,
-            paidAmount: 8000,
+            totalAmount: 19000.00,
+            paidAmount: 8000.00,
             totalInvoices: 10,
             pendingInvoices: 7
         },
         sold: {
-            totalAmount: 64000,
-            paidAmount: 50000,
+            totalAmount: 64000.00,
+            paidAmount: 50000.00,
             totalInvoices: 22,
             pendingInvoices: 18
         }
@@ -110,14 +110,14 @@ export const dummyCustomers: any[] = [
         billPeriod: 15,
         defaultBillDiscount: 3,
         purchase: {
-            totalAmount: 19000,
-            paidAmount: 8000,
+            totalAmount: 19000.00,
+            paidAmount: 8000.00,
             totalInvoices: 9,
             pendingInvoices: 7
         },
         sold: {
-            totalAmount: 64000,
-            paidAmount: 50000,
+            totalAmount: 64000.00,
+            paidAmount: 50000.00,
             totalInvoices: 15,
             pendingInvoices: 9
         }
@@ -140,14 +140,14 @@ export const dummyCustomers: any[] = [
         billPeriod: 30,
         defaultBillDiscount: 5,
         purchase: {
-            totalAmount: 22000,
-            paidAmount: 10000,
+            totalAmount: 22000.00,
+            paidAmount: 10000.00,
             totalInvoices: 12,
             pendingInvoices: 9
         },
         sold: {
-            totalAmount: 64000,
-            paidAmount: 50000,
+            totalAmount: 64000.00,
+            paidAmount: 50000.00,
             totalInvoices: 16,
             pendingInvoices: 10
         }
@@ -171,14 +171,14 @@ export const dummyCustomers: any[] = [
         billPeriod: 30,
         defaultBillDiscount: 5,
         purchase: {
-            totalAmount: 27000,
-            paidAmount: 15000,
+            totalAmount: 27000.00,
+            paidAmount: 15000.00,
             totalInvoices: 17,
             pendingInvoices: 8
         },
         sold: {
-            totalAmount: 82000,
-            paidAmount: 60000,
+            totalAmount: 82000.00,
+            paidAmount: 60000.00,
             totalInvoices: 85,
             pendingInvoices: 52
         }
@@ -202,14 +202,14 @@ export const dummyCustomers: any[] = [
         billPeriod: 25,
         defaultBillDiscount: 3,
         purchase: {
-            totalAmount: 56000,
-            paidAmount: 12000,
+            totalAmount: 56000.00,
+            paidAmount: 12000.00,
             totalInvoices: 22,
             pendingInvoices: 10
         },
         sold: {
-            totalAmount: 78000,
-            paidAmount: 22000,
+            totalAmount: 78000.00,
+            paidAmount: 22000.00,
             totalInvoices: 40,
             pendingInvoices: 28
         }
@@ -217,61 +217,61 @@ export const dummyCustomers: any[] = [
 ];
 
 // Helper function to convert any to LiteCustomer
-export const toLiteCustomer = (customer: any): LiteCustomer => {
+const toLiteCustomer = (customer: any): LiteCustomer => {
     const { id, number, name, address } = customer;
     return { id, number, name, address };
 };
 
 // Helper function to convert any to CustomersWithBasicSales
-export const toCustomerWithBasicSales = (customer: any): CustomersWithBasicSales => {
+const toCustomerWithBasicSales = (customer: any): CustomersWithBasicSales => {
     const { id, number, name, address, purchase, sold } = customer;
     return { id, number, name, address, purchase, sold };
 };
     
 // Get all customers as LiteCustomer
-export const getLiteCustomers = (): LiteCustomer[] => {
+const getLiteCustomers = (): LiteCustomer[] => {
     return dummyCustomers.map(toLiteCustomer);
 };
 
 // Get all customers as CustomersWithBasicSales
-export const getCustomersWithBasicSales = (): CustomersWithBasicSales[] => {
+const getCustomersWithBasicSales = (): CustomersWithBasicSales[] => {
     return dummyCustomers.map(toCustomerWithBasicSales);
 };
 
 // Get a specific customer basic sales by ID
-export const getCustomerBasicSalesById = (id: number): CustomersWithBasicSales | undefined => {
+const getCustomerBasicSalesById = (id: number): CustomersWithBasicSales | undefined => {
     const customer = dummyCustomers.find((customer) => customer.id === id);
     return customer ? toCustomerWithBasicSales(customer) : undefined;
 }
 
 // Get all customers as Customer
-export const getCustomers = (): Customer[] => {
+const getCustomers = (): Customer[] => {
     return dummyCustomers.map(toCustomer);
 };
 
 // Get a specific lite customer by ID
-export const getLiteCustomerById = (id: number): LiteCustomer | undefined => {
+const getLiteCustomerById = (id: number): LiteCustomer | undefined => {
     const customer = dummyCustomers.find(customer => customer.id === id);
     return customer ? toLiteCustomer(customer) : undefined;
 };
 
 // Helper function to convert any to Customer
-export const toCustomer = (customer: any): Customer => {
+const toCustomer = (customer: any): Customer => {
     return customer as Customer;
 };
 
 // Get a specific customer by ID
-export const getCustomerById = (id: number): Customer | undefined => {
+const getCustomerById = (id: number): Customer | undefined => {
     return dummyCustomers.find(customer => customer.id === id);
 };
 
 // Example usage of type guards
-export const isFullCustomer = (customer: LiteCustomer | Customer): customer is Customer => {
+const isFullCustomer = (customer: LiteCustomer | Customer): customer is Customer => {
     return 'defaultDiscount' in customer;
 };
 
 // Get all CityTown records
-export const getCityTownMap = (): Record<string, string[]> => {
+const getCityTownMap = (): Record<string, string[]> => {
     const result: Record<string, string[]> = {};
     
     for (const { address } of dummyCustomers) {

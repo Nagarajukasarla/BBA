@@ -42,4 +42,4 @@ export interface MockDataType {
     // Add more types as needed
 }
 
-export { dummyCustomers, dummyInvoices, dummyCustomersWithBasicSales, dummyCityTownMap };
+export default mockData;

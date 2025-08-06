@@ -10,10 +10,10 @@ class CustomerService extends BaseService {
      * Fetches a list of customers from the API
      * @returns A promise that resolves to an `APIResponse` containing an array of `LiteCustomer` objects.
      */
-    async fetchCustomers(): Promise<APIResponse<LiteCustomer[]>> {
+    async fetchCustomers(): Promise<APIResponse<Customer[]>> {
         // In development, this will use MockDataService via BaseService
         // In production, this will use the real API
-        return this.get<LiteCustomer[]>(DATA_ROUTES.FETCH_CUSTOMERS);
+        return this.get<Customer[]>(DATA_ROUTES.FETCH_CUSTOMERS);
     }
 
     async fetchLiteCustomers(): Promise<APIResponse<LiteCustomer[]>> {

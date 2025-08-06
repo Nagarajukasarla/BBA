@@ -1,7 +1,8 @@
+import { CustomerFilters } from "@/types/filters";
 import APIResponse from "../classes/APIResponse";
 import DATA_ROUTES from "../constants/dataRoutes";
 import { mockData, MockDataType } from "../data";
-import { Invoice } from "../types/model";
+import { CustomersWithBasicSales, Invoice } from "../types/model";
 import { parseQueryString } from "../utils/queryUtils";
 import dayjs from "dayjs";
 
@@ -57,6 +58,22 @@ class MockDataService {
                 return new APIResponse<T>(
                     APIResponse.SUCCESS,
                     this.data.liteCustomers as unknown as T
+                );
+
+            case DATA_ROUTES.FETCH_CUSTOMERS_WITH_BASIC_SALES:
+                if (Object.keys(queryParams).length > 0) {
+                    const customer = this.filterCustomers(
+                        this.data.customersWithBasicSales,
+                        queryParams
+                    );
+                    return new APIResponse<T>(
+                        customer ? APIResponse.SUCCESS : APIResponse.NOT_FOUND,
+                        customer as unknown as T
+                    );
+                }
+                return new APIResponse<T>(
+                    APIResponse.SUCCESS,
+                    this.data.customersWithBasicSales as unknown as T
                 );
 
             case DATA_ROUTES.FETCH_INVOICES:
@@ -321,6 +338,36 @@ class MockDataService {
                     !invoiceNumber.includes(query) &&
                     !customerName.includes(query) &&
                     !amount.includes(query)
+                ) {
+                    return false;
+                }
+            }
+
+            return true;
+        });
+    }
+
+    private filterCustomers(customers: CustomersWithBasicSales[], filters: CustomerFilters): CustomersWithBasicSales[] {
+        return customers.filter(customer => {
+            // Filter by city
+            if (filters.city && customer.address.city?.toLowerCase() !== filters.city.toLowerCase()) {
+                return false;
+            }
+
+            // Filter by town
+            if (filters.town && customer.address.town?.toLowerCase() !== filters.town.toLowerCase()) {
+                return false;
+            }
+
+            // Filter by search query
+            if (filters.searchQuery) {
+                const query = filters.searchQuery.toLowerCase();
+                const customerName = customer.name.toLowerCase();
+                const customerNumber = customer.number.toLowerCase();
+
+                if (
+                    !customerName.includes(query) &&
+                    !customerNumber.includes(query)
                 ) {
                     return false;
                 }

@@ -1,13 +1,13 @@
 import { CSelectOption } from "@/types/core";
 
 class CSelectHelper {
-    static getAsCSelectOptions<T extends { id: string }>(
+    static getAsCSelectOptions<T>(
         options: T[],
         formatter?: (item: T) => string,
         addAllOption: boolean = false,
     ): CSelectOption<T>[] {
         const result: CSelectOption<T>[] = options.map(item => ({
-            value: String(item.id),
+            value: String(item),
             label: formatter ? formatter(item) : String(item),
             customValue: item,
         }));

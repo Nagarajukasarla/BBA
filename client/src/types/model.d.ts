@@ -47,7 +47,7 @@ export type CustomersWithBasicSales = LiteCustomer & {
         totalInvoices: number;
         pendingInvoices: number;
     };
-    sold: {
+    sold: {  // How much customer has sold current user(customer)
         totalAmount: number;
         paidAmount: number;
         totalInvoices: number;
