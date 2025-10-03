@@ -3,6 +3,9 @@ import { CSelectOption } from "@/types/core";
 import { Product } from "@/types/model";
 import { makeAutoObservable } from "mobx";
 
+/**
+ *  Need to migrate to Redux using reduxtool kit
+ */
 class NewInvoiceStore {
     invoiceData: InvoiceData = {
         customer: null,
